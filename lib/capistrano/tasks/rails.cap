@@ -1,0 +1,85 @@
+namespace :rails do
+  desc "Start a rails console, for now just with the primary server"
+  task :c do
+    on roles(:app), primary: true do |role|
+      rails_env = fetch(:rails_env)
+      execute_remote_command_with_input "#{bundle_cmd_with_rbenv} bundle exec rails console #{rails_env}"
+    end
+  end
+  desc "Seed the Primary DB"
+  task :seed do
+    puts "\n=== Seeding Database ===\n"
+    on primary :db do
+      within current_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'db:seed'
+        end
+      end
+    end
+  end
+
+  desc "Start Server"
+  task :start do
+    puts "\n\n=========Starting Server=========\n\n"
+    on roles(:app) do |role|
+      rails_env = fetch(:rails_env)
+      exec_command = "#{bundle_cmd_with_rbenv} rails s -e #{fetch(:rails_env)} -d"
+      puts "\n\n========Command======="
+      puts exec_command
+      execute_remote_command_with_input exec_command
+    end
+  end
+
+  desc "run rake tasks"
+  task :rake, :space, :task do |t, args|
+    if args[:task] and args[:space]
+      on roles(:db) do
+        with rails_env: fetch(:rails_env) do
+          within current_path do
+            execute :rake, "#{args[:space]}"
+          end
+        end
+      end
+    end
+  end
+
+  desc "run rake regenerate_styles"
+  task :regenerate_styles do |t, args|
+    on roles(:db) do
+      with rails_env: fetch(:rails_env) do
+        within current_path do
+          execute :rake, "paperclip:refresh:thumbnails CLASS=Photo"
+        end
+      end
+    end
+  end
+
+  desc "run rake refresh"
+  task :refresh_styles do |t, args|
+    on roles(:db) do
+      with rails_env: fetch(:rails_env) do
+        within current_path do
+          execute :rake, "paperclip:refresh:missing_styles"
+        end
+      end
+    end
+  end
+
+  def execute_remote_command_with_input(command)
+    port = fetch(:port) || 22
+    puts "opening a console on: #{host}...."
+    cmd = "ssh -l #{fetch(:deploy_user)} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
+    puts "Executing the following command =====> #{cmd}"
+
+    exec cmd
+  end
+
+  def bundle_cmd_with_rbenv
+    if fetch(:rbenv_ruby)
+      puts "Command To Execute =====> RBENV_VERSION=#{fetch(:rbenv_ruby)} RBENV_ROOT=#{fetch(:rbenv_path)}  #{File.join(fetch(:rbenv_path), '/bin/rbenv')} exec bundle exec"
+      "RBENV_VERSION=#{fetch(:rbenv_ruby)} RBENV_ROOT=#{fetch(:rbenv_path)}  #{File.join(fetch(:rbenv_path), '/bin/rbenv')} exec bundle exec"
+    else
+      "ruby "
+    end
+  end
+end
