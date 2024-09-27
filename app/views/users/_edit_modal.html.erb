@@ -1,0 +1,82 @@
+<%= form_with model: user, url: update_user_path, method: :post, multipart: true do |form| %>
+  <input hidden type="text" name="id" value="<%= user.id %>">
+  <div class="modal fade" id="editModal<%= user.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="iq-card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="fullName<%= user.id %>">Full Name <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="fullName<%= user.id %>" name="full_name" value="<%= user.full_name %>" placeholder="Enter Full Name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">User Type <span style="color: red">*</span></label>
+                <select required class="form-control" name="user_type" placeholder="Select User Type">
+                  <option value="administrator" <%= "selected" if user.user_type == 'administrator' %>>Administrator</option>
+                  <option value="member" <%= "selected" if user.user_type == 'member' %>>Member</option>
+                  <option value="employee" <%= "selected" if user.user_type == 'employee' %>>Employee</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Rank</label>
+                <select required class="form-control" name="rank" placeholder="Select Rank">
+                  <option disabled selected>No Rank</option>
+                  <option value="gold" <%= "selected" if user.rank == 'gold' %>>Gold</option>
+                  <option value="platinum" <%= "selected" if user.rank == 'platinum' %>>Platinum</option>
+                  <option value="diamond" <%= "selected" if user.rank == 'diamond' %>>Diamond</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="Email<%= user.id %>">Email <span style="color: red">*</span></label>
+                <input type="email" class="form-control" id="Email<%= user.id %>" name="email" value="<%= user.email %>" placeholder="Enter Email">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Role <span style="color: red">*</span></label>
+                <select class="form-control sumoselect2"  name="role_id" placeholder="Select User Role">
+                  <% Role.where(:is_active => true).each do |role| %>
+                    <option value="<%= role.id %>" <%= 'selected' if user.role_id == role.id %>><%= role.name.capitalize %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6"style="margin-top: 2.2rem">
+              <div class="form-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="validatedCustomFile<%= user.id %>" name="avatar" accept=".jpg, .jpeg, .png" value="<%= user.avatar %>" onchange="updateFileName(this)">
+                  <label class="custom-file-label" for="validatedCustomFile<%= user.id %>">Choose profile...</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mt-2">
+              <div class="form-group">
+                <div class="custom-control custom-switch custom-control-inline">
+                  <input type="checkbox" class="custom-control-input" name="is_active" id="ActiveEdit<%= user.id %>" <%= 'checked' if user.is_active %>>
+                  <label class="custom-control-label" for="ActiveEdit<%= user.id %>">Inactive / active</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

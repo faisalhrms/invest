@@ -1,0 +1,281 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between">
+          <div class="iq-header-title">
+            <h4 class="card-title">Personal Info</h4>
+          </div>
+        </div>
+        <div class="iq-card-body">
+          <div class="m-auto d-block text-center pb-3">
+            <div class="iq-user mb-3">
+              <%= image_tag(current_user.avatar.present? ? url_for(current_user.avatar) : "user/05.jpg", class: "avatar-70 rounded-circle") %>
+
+            </div>
+            <h5 class="mb-0 "><%= current_user.full_name %></h5>
+            <p class="text-primary"><%= current_user.role.name %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="iq-card iq-card-block iq-card-stretch">
+            <div class="iq-card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="ml-2">
+                  <h5 class="mb-1">Total Referrals</h5>
+                  <span class="h4 text-dark mb-0 counter d-inline-block w-100"><%= current_user.total_referrals %></span>
+                </div>
+                <div class="icon iq-icon-box bg-primary rounded-circle m-0 dark-icon" data-wow-delay="0.2s">
+                  <i class="ri-user-fill"></i>
+                </div>
+              </div>
+            </div>
+            <div id="service-chart-01"></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="iq-card iq-card-block iq-card-stretch">
+            <div class="iq-card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="ml-2">
+                  <h5 class="mb-1">Total Users</h5>
+                  <span class="h4 text-dark mb-0 counter d-inline-block w-100"><%= User.count %></span>
+                </div>
+                <div class="icon iq-icon-box bg-success rounded-circle m-0" data-wow-delay="0.2s">
+                  <i class="ri-user-fill"></i>
+                </div>
+              </div>
+            </div>
+            <div id="service-chart-02"></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="iq-card iq-card-block iq-card-stretch">
+            <div class="iq-card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="ml-2">
+                  <h5 class="mb-1">Total Deposit $</h5>
+                  <span class="h4 text-dark mb-0 counter d-inline-block w-100"><%=  Purchase.sum(:deposit_amount) %></span>
+                </div>
+                <div class="icon iq-icon-box bg-danger rounded-circle m-0" data-wow-delay="0.2s">
+                  <i class="ri-user-fill"></i>
+                </div>
+              </div>
+            </div>
+            <div id="service-chart-03"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="iq-card iq-card-block iq-card-stretch">
+            <div class="iq-card-body">
+              <div id="service-chart-04"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="iq-card iq-card-block iq-card-stretch">
+            <div class="iq-card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon iq-icon-box rounded dark-icon-light iq-bg-primary mr-3">
+                  <i class="ri-home-8-line"></i>
+                </div>
+                <div class="iq-details col-sm-9 p-0">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="title text-dark">Investment Plan</span>
+                    <div class="text-primary "><b><span>$</span> 230 </b></div>
+                  </div>
+                  <span class="">38 Transaction</span>
+                  <div class="iq-progress-bar-linear d-inline-block w-100">
+                    <div class="iq-progress-bar">
+                      <span class="bg-primary" data-percent="32"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-2 mb-2">
+              <div class="d-flex align-items-center">
+                <div class="icon iq-icon-box rounded iq-bg-success mr-3">
+                  <i class="ri-camera-lens-line"></i>
+                </div>
+                <div class="iq-details col-sm-9 p-0">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="title text-dark">Trading Plan</span>
+                    <div class="text-success"><b><span>$</span> 120 </b></div>
+                  </div>
+                  <span class="">9 Transaction</span>
+                  <div class="iq-progress-bar-linear d-inline-block w-100">
+                    <div class="iq-progress-bar">
+                      <span class="bg-success" data-percent="20"></span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-2 mb-2">
+              <div class="d-flex align-items-center">
+                <div class="icon iq-icon-box rounded iq-bg-info mr-3">
+                  <i class="ri-bank-line"></i>
+                </div>
+                <div class="iq-details col-sm-9 p-0">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="title text-dark">Staking</span>
+                    <div class="text-info"><b><span>$</span> 110 </b></div>
+                  </div>
+                  <span class="">50 Transaction</span>
+                  <div class="iq-progress-bar-linear d-inline-block w-100">
+                    <div class="iq-progress-bar">
+                      <span class="bg-info" data-percent="60"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between border-bottom">
+          <div class="iq-header-title">
+            <h4 class="card-title">Activity Details</h4>
+          </div>
+        </div>
+        <%     @activity_streams = ActivityStream.where(:action_date => (Date.today - 1.days)..Date.today).last(7) %>
+        <div class="iq-card-body">
+          <ul class="iq-timeline">
+            <% @activity_streams.each do |activity| %>
+            <li>
+              <div class="timeline-dots"></div>
+              <h6 class="float-left mb-1"><%= activity.action_datetime.strftime("%d-%b-%Y at %I:%M %P") %></h6>
+              <div class="d-inline-block w-100">
+                <p class="mb-0"><%= activity.action_name %></p>
+              </div>
+            </li>
+              <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between border-none">
+          <div class="iq-header-title">
+            <h5 class="card-title">Load time by country</h5>
+          </div>
+        </div>
+        <div class="iq-card-body">
+          <div id="world-map" style="height: 200px; position: relative;"></div>
+          <div class="table-responsive mt-3">
+            <table class="table mb-0 table-borderless">
+              <thead>
+              <tr>
+                <th scope="col">Location</th>
+                <th scope="col">Order No</th>
+                <th scope="col">Review</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>Australia</td>
+                <td>#1234</td>
+                <td>3.5<i class="ri-star-fill text-warning pl-2"></i></td>
+              </tr>
+              <tr>
+                <td>United States</td>
+                <td>#5647</td>
+                <td>4.5<i class="ri-star-fill text-warning pl-2"></i></td>
+              </tr>
+              <tr>
+                <td>UK</td>
+                <td>#8741</td>
+                <td>5.5<i class="ri-star-fill text-warning pl-2"></i></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5 col-md-6">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-header d-flex justify-content-between">
+          <div class="iq-header-title">
+            <h4 class="card-title">Best Seller</h4>
+          </div>
+          <div class="iq-card-header-toolbar d-flex align-items-center">
+            <div class="dropdown">
+                                 <span class="dropdown-toggle" id="dropdownMenuButton1" data-toggle="dropdown">
+                                 <i class="ri-more-fill"></i>
+                                 </span>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1" style="">
+                <a class="dropdown-item" href="#"><i class="ri-eye-fill mr-2"></i>View</a>
+                <a class="dropdown-item" href="#"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>
+                <a class="dropdown-item" href="#"><i class="ri-pencil-fill mr-2"></i>Edit</a>
+                <a class="dropdown-item" href="#"><i class="ri-printer-fill mr-2"></i>Print</a>
+                <a class="dropdown-item" href="#"><i class="ri-file-download-fill mr-2"></i>Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="iq-card-body">
+          <ul class="list-inline p-0 m-0">
+            <li class="d-flex mb-3 align-items-center p-3 sell-list border-primary rounded">
+              <div class="user-img img-fluid">
+                <img src="images/user/01.jpg" alt="story-img" class="img-fluid rounded-circle avatar-40">
+              </div>
+              <div class="media-support-info ml-3">
+                <h6>Pete Sariya</h6>
+                <p class="mb-0 font-size-12">24 jan, 2020</p>
+              </div>
+              <div class="iq-card-header-toolbar d-flex align-items-center">
+                <div class="badge badge-pill badge-primary">157</div>
+              </div>
+            </li>
+            <li class="d-flex mb-3 align-items-center p-3 sell-list border-success rounded">
+              <div class="user-img img-fluid">
+                <img src="images/user/02.jpg" alt="story-img" class="img-fluid rounded-circle avatar-40">
+              </div>
+              <div class="media-support-info ml-3">
+                <h6>Anna Mull</h6>
+                <p class="mb-0 font-size-12">15 feb, 2020</p>
+              </div>
+              <div class="iq-card-header-toolbar d-flex align-items-center">
+                <div class="badge badge-pill badge-success">280</div>
+              </div>
+            </li>
+            <li class="d-flex mb-3 align-items-center p-3 sell-list border-danger rounded">
+              <div class="user-img img-fluid">
+                <img src="images/user/03.jpg" alt="story-img" class="img-fluid rounded-circle avatar-40">
+              </div>
+              <div class="media-support-info ml-3">
+                <h6>Alex john</h6>
+                <p class="mb-0 font-size-12">05 March, 2020</p>
+              </div>
+              <div class="iq-card-header-toolbar d-flex align-items-center">
+                <div class="badge badge-pill badge-danger">200</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-center p-3 sell-list border-info rounded">
+              <div class="user-img img-fluid">
+                <img src="images/user/04.jpg" alt="story-img" class="img-fluid rounded-circle avatar-40">
+              </div>
+              <div class="media-support-info ml-3">
+                <h6>Cliff Hanger</h6>
+                <p class="mb-0 font-size-12">10 April, 2020</p>
+              </div>
+              <div class="iq-card-header-toolbar d-flex align-items-center">
+                <div class="badge badge-pill badge-info">150</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

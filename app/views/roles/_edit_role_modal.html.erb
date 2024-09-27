@@ -1,0 +1,160 @@
+<%= form_with model: role, url: update_role_path, method: :post, multipart: true do |form| %>
+  <input hidden type="text" name="role_id" value="<%= role.id %>">
+  <div class="modal fade" id="editModalsRoles<%= role.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Menus</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="iq-card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="RoleName">Role Name <span style="color: red">*</span></label>
+                <input required type="text" class="form-control" id="RoleName" name="name" value="<%= role.name %>" placeholder="Enter Role Name">
+              </div>
+            </div>
+            <div class="col-md-6 mt-5">
+              <div class="form-group">
+                <div class="custom-control custom-switch custom-control-inline">
+                  <input type="checkbox" class="custom-control-input" name="is_active" id="Active" <%= 'checked' if role.is_active %> >
+                  <label class="custom-control-label" for="Active">Inactive / active</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row p-2">
+            <div class="col-12">
+              <h4 class="font-weight-bold text-dark mb-4">Permissions</h4>
+            </div>
+            <% if @menus.present? %>
+              <% @menus.each do |menu| %>
+                <% permission = menu.permissions.find_by(role_id: role.id) %>
+                <input hidden type="text" name="permission_ids[]" value="<%= permission.id %>">
+                <div class="col-lg-12 col-xl-12">
+                  <div class="accordion iq-accordion career-style faq-style" id="editaccordion<%= menu.id %>">
+                    <div class="iq-card iq-accordion-block iq-bg-primary">
+                      <div class="active-faq clearfix">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-sm-12">
+                              <a class="accordion-title" data-toggle="collapse" href="editcollapse<%= menu.id %>" aria-expanded="false" aria-controls="collapse<%= menu.id %>">
+                                <span><%= menu.name.upcase %></span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="editcollapse<%= menu.id %>" class="accordion-details collapse" aria-labelledby="heading<%= menu.id %>" data-parent="#editaccordion<%= menu.id %>">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                              <thead>
+                              <tr>
+                                <th>Menu Name</th>
+                                <th>Is Index?</th>
+                                <th>Is Create?</th>
+                                <th>Is View?</th>
+                                <th>Is Edit?</th>
+                                <th>Is Delete?</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr>
+                                <td><%= menu.name.capitalize %></td>
+                                <td>
+                                  <select required class="form-control form-control-sm mb-3" name="is_index[]">
+                                    <option value="on" <%= permission.is_index ? 'selected' : '' %>>Yes</option>
+                                    <option value="off" <%= permission.is_index ? '' : 'selected' %>>No</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <select required class="form-control form-control-sm mb-3" name="is_create[]">
+                                    <option value="on" <%= permission.is_create ? 'selected' : '' %>>Yes</option>
+                                    <option value="off" <%= permission.is_create ? '' : 'selected' %>>No</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <select required class="form-control form-control-sm mb-3" name="is_view[]">
+                                    <option value="on" <%= permission.is_view ? 'selected' : '' %>>Yes</option>
+                                    <option value="off" <%= permission.is_view ? '' : 'selected' %>>No</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <select required class="form-control form-control-sm mb-3" name="is_edit[]">
+                                    <option value="on" <%= permission.is_edit ? 'selected' : '' %>>Yes</option>
+                                    <option value="off" <%= permission.is_edit ? '' : 'selected' %>>No</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <select required class="form-control form-control-sm mb-3" name="is_delete[]">
+                                    <option value="on" <%= permission.is_delete ? 'selected' : '' %>>Yes</option>
+                                    <option value="off" <%= permission.is_delete ? '' : 'selected' %>>No</option>
+                                  </select>
+                                </td>
+                              </tr>
+                              <% menu.sub_menus.each do |sub_menu| %>
+                                <% permission = sub_menu.permissions.find_by(role_id: role.id) %>
+                                <input hidden type="text" name="permission_ids[]" value="<%= permission.id %>">
+                                <tr>
+                                  <td><%= sub_menu.name.capitalize %></td>
+                                  <td>
+                                    <select required class="form-control form-control-sm mb-3" name="is_index[]">
+                                      <option value="on" <%= permission.is_index ? 'selected' : '' %>>Yes</option>
+                                      <option value="off" <%= permission.is_index ? '' : 'selected' %>>No</option>
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <select required class="form-control form-control-sm mb-3" name="is_create[]">
+                                      <option value="on" <%= permission.is_create ? 'selected' : '' %>>Yes</option>
+                                      <option value="off" <%= permission.is_create ? '' : 'selected' %>>No</option>
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <select required class="form-control form-control-sm mb-3" name="is_view[]">
+                                      <option value="on" <%= permission.is_view ? 'selected' : '' %>>Yes</option>
+                                      <option value="off" <%= permission.is_view ? '' : 'selected' %>>No</option>
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <select required class="form-control form-control-sm mb-3" name="is_edit[]">
+                                      <option value="on" <%= permission.is_edit ? 'selected' : '' %>>Yes</option>
+                                      <option value="off" <%= permission.is_edit ? '' : 'selected' %>>No</option>
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <select required class="form-control form-control-sm mb-3" name="is_delete[]">
+                                      <option value="on" <%= permission.is_delete ? 'selected' : '' %>>Yes</option>
+                                      <option value="off" <%= permission.is_delete ? '' : 'selected' %>>No</option>
+                                    </select>
+                                  </td>
+                                </tr>
+                              <% end %>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="col-12">
+                <p>No menus available.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

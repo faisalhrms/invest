@@ -1,0 +1,128 @@
+<% permissions = fetch_permissions(@current_user) %>
+<% if current_user.user_type == "administrator" %>
+  <% dashboard = admin_path %>
+<% else %>
+  <% dashboard = dashboard_path %>
+<% end %>
+<div class="iq-sidebar-logo d-flex justify-content-between">
+  <a href="<%= dashboard %>">
+    <div class="iq-light-logo">
+      <img src="<%= image_path("logo.gif") %>" class="img-fluid item img" alt="">
+    </div>
+    <div class="iq-dark-logo">
+      <img src="<%= image_path("logo-dark.gif") %>" class="img-fluid item img" alt="">
+    </div>
+  </a>
+  <div class="iq-menu-bt-sidebar">
+    <div class="iq-menu-bt align-self-center">
+      <div class="wrapper-menu">
+        <div class="main-circle"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="hover-circle"><i class="ri-arrow-right-s-line"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sidebar-scrollbar">
+  <nav class="iq-sidebar-menu">
+    <ul id="iq-sidebar-toggle" class="iq-menu">
+      <% if permissions[:dashboard] %>
+        <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Dashboards</span></li>
+        <li class="<%= is_active('dashboards') %>">
+
+          <a href="<%= dashboard %>" class="iq-waves-effect" target="<%= link_target_attribute %>"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
+        </li>
+      <% end %>
+
+      <% if permissions[:referrals] %>
+        <li class="<%= is_active('referrals') %>">
+          <a href="<%= referrals_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
+            <i class="ri-refund-line"></i>
+            <span>My Referrals</span>
+          </a>
+        </li>
+      <% end %>
+
+      <% if permissions[:purchases] %>
+        <li class="<%= is_active('purchases') %>">
+          <a href="<%= pending_approvals_purchases_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
+            <i class="ri-pass-pending-line"></i>
+            <span>Pending Approvals</span>
+            <% if pending_approval_count > 0 %>
+              <span class="badge badge-danger" style="width: 15px"><%= pending_approval_count %></span>
+            <% end %>
+          </a>
+        </li>
+      <% end %>
+
+
+      <% if permissions[:plans] %>
+        <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Menus</span></li>
+        <% controller_class = %w[investment_plans trading_plans staking].detect { |c| params[:controller] == c } %>
+        <li class="<%= is_active(controller_class) %>">
+          <a href="#plans" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false">
+            <i class="ri-wallet-3-line"></i><span>Plans</span><i class="ri-arrow-right-s-line iq-arrow-right"></i>
+          </a>
+          <ul id="plans" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+            <% if permissions[:investment_plans] %>
+              <li class="<%= is_active('investment_plans') %>">
+                <a href="<%= investment_plan_path %>" target="<%= link_target_attribute %>"><i class="ri-money-dollar-box-line"></i>
+                  Investment Plans</a>
+              </li>
+            <% end %>
+            <% if permissions[:trading_plans] %>
+              <li class="<%= is_active('trading_plans') %>">
+                <a href="<%= trading_plan_path %>" target="<%= link_target_attribute %>"><i class="ri-p2p-line"></i>
+                  Trading Plans</a>
+              </li>
+            <% end %>
+            <% if permissions[:staking] %>
+              <li class="<%= is_active('staking') %>">
+                <a href="<%= staking_plan_path %>" target="<%= link_target_attribute %>"><i class="ri-line-chart-fill"></i>
+                  Staking</a>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+
+
+      <% if permissions[:authentication] %>
+        <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Settings</span></li>
+        <% controller_class = %w[users menus roles activity_streams].detect { |c| params[:controller] == c } %>
+        <li class="<%= is_active(controller_class) %>">
+          <a href="#authentication" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false">
+            <i class="ri-pages-line"></i><span>Settings</span><i class="ri-arrow-right-s-line iq-arrow-right"></i>
+          </a>
+          <ul id="authentication" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+            <% if permissions[:users] %>
+              <li class="<%= is_active('users') %>">
+                <a href="<%= user_path %>" target="<%= link_target_attribute %>"><i class="ri-user-add-line"></i>User
+                  Add</a>
+              </li>
+            <% end %>
+            <% if permissions[:menus] %>
+              <li class="<%= is_active('menus') %>">
+                <a href="<%= menu_path %>" target="<%= link_target_attribute %>"><i class="ri-menu-2-fill"></i>Menus</a>
+              </li>
+            <% end %>
+            <% if permissions[:roles] %>
+              <li class="<%= is_active('roles') %>">
+                <a href="<%= role_path %>" target="<%= link_target_attribute %>"><i class="ri-user-unfollow-fill"></i>Roles
+                  & Permissions</a>
+              </li>
+            <% end %>
+            <% if permissions[:activity_streams] %>
+              <li class="<%= is_active('activity_streams') %>">
+                <a href="<%= activity_stream_path %>" target="<%= link_target_attribute %>"><i class="ri-list-check-2"></i>Activity
+                  Streams</a>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+  <div class="p-3"></div>
+</div>
+

@@ -1,0 +1,185 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <% if @can_create %>
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+            <i class="ri-add-fill"><span class="pl-1">Add New</span></i></button>
+          <%= form_with url: new_menu_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-form-label">Menu Type <span style="color: red">*</span></label>
+                          <select required class="form-control sumoselect2" name="menu_type" onchange="check_menu_type(this.value)" placeholder="Select Menu Type">
+                            <option selected disabled>Select Menu Type</option>
+                            <option value="main_menu">Main Menu</option>
+                            <option value="sub_menu">Sub Menu</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="MenuName">Menu Name <span style="color: red">*</span></label>
+                          <input required type="text" class="form-control" id="MenuName" name="name" placeholder="Enter Menu Name">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6" id="main_menu_id">
+                        <div class="form-group">
+                          <label class="col-form-label">Main Menu<span style="color: red">*</span></label>
+                          <select  class="form-control sumoselect2" name="main_menu_id" placeholder="Select Main Menu">
+                            <option selected disabled>Select Menu Menu</option>
+                            <% Menu.where(:menu_type => "main_menu").each do |menu| %>
+                              <option value="<%= menu.id %>"><%= menu.name.capitalize %></option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mt-5">
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" class="custom-control-input" name="is_active" id="Active" checked="checked">
+                            <label class="custom-control-label" for="Active">Inactive / active</label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        <% end %>
+
+        <div class="iq-header-title">
+          <h4 class="card-title"><%= @sub_module_name.upcase_first %></h4>
+        </div>
+
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table class="table mb-2 mt-2 table-borderless datatable">
+            <thead>
+            <tr>
+              <th scope="col">Sr #</th>
+              <th scope="col" class="font-weight-bold">Menu Name</th>
+              <th scope="col" class="font-weight-bold">Menu Type</th>
+              <th scope="col" class="font-weight-bold">Main Menu Name</th>
+              <th scope="col" class="font-weight-bold">Is Active?</th>
+              <th scope="col" class="font-weight-bold">Action</th>
+            </tr>
+            </thead>
+            <% if @menus.present? %>
+              <tbody>
+              <% @menus.order("id DESC").each_with_index do |menu, index| %>
+                <tr>
+                  <td class="text-center">
+                    <p><%= index + 1 %></p>
+                  </td>
+                  <td>
+                    <h6><%= menu.name %></h6>
+                  </td>
+                  <td>
+                    <p><%= menu.menu_type.gsub("_", " ").split.map(&:capitalize).join(' ') %></p>
+                  </td>
+                  <td>
+                    <% if menu.main_menu_id.present? %>
+                      <% main_menu = Menu.find(menu.main_menu_id) %>
+                      <span class="badge badge-info"><%= main_menu.name.capitalize %></span>
+                    <% else %>
+                      <span class="badge badge-warning">Self Main Menu</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill <%= menu.is_active ? 'badge-success' : 'badge-danger' %>">
+                      <%= menu.is_active ? 'Active' : 'In Active' %>
+                      <span class="ri-<%= menu.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+                    </span>
+                  </td>
+                  <td>
+                    <% if @can_edit %>
+                      <a data-menu-id="<%= menu.id %>" class="animate editMenuModal">
+                        <i class="ri-ball-pen-fill text-primary pr-1 font-size-18"></i>
+                      </a>
+                    <% end %>
+                    <% if @can_delete %>
+                      <a data-toggle="modal" data-target="#modalBootstrapdelete<%= menu.id %>" class="animate">
+                        <i class="ri-delete-bin-5-line text-danger font-size-18"></i>
+                      </a>
+                    <% end %>
+                    <%= render 'menus/delete_menu_modal', menu: menu if @can_delete %>
+                  </td>
+                </tr>
+
+              <% end %>
+              </tbody>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<style>
+    .animate i {
+        transition: all 0.3s ease;
+    }
+
+    .animate:hover i {
+        font-size: 22px;
+    }
+
+</style>
+<script>
+    function check_menu_type(menu_type) {
+        if (menu_type == "sub_menu") {
+            $('#main_menu_id').show();
+        } else {
+            $('#main_menu_id').hide();
+        }
+    }
+</script>
+<script>
+
+    $(document).ready(function() {
+        $('.editMenuModal').on('click', function(e) {
+            e.preventDefault();
+            var menuId = $(this).data('menu-id');
+            var url = '/menus/' + menuId + '/edit_modal';
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(data) {
+                    $('body').append(data);
+                    var modalId = '#editModal' + menuId;
+                    $(modalId).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading edit modal content:', error);
+                }
+            });
+        });
+    });
+
+
+</script>

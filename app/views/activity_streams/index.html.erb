@@ -1,0 +1,166 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+            <i class="ri-search-2-line"><span class="pl-1">Filter</span></i></button>
+          <%= form_with url: filter_activity_stream_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-form-label">User <span style="color: red">*</span></label>
+                          <select required class="form-control sumoselect2" name="user_id" placeholder="Select User">
+                            <% User.all.each do |user| %>
+                              <option value="<%= user.id %>"><%= user.full_name.capitalize %></option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-form-label">Table <span style="color: red">*</span></label>
+                          <select  class="form-control sumoselect2" name="table_name" placeholder="Select Table">
+                            <% ActivityStream.pluck(:table_name).uniq.each do |table| %>
+                              <option value="<%= table %>"><%= table.capitalize %></option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-form-label">Action</label>
+                          <select multiple class="form-control sumoselect2" name="slug" placeholder="Select Action">
+                            <option value="create">Create</option>
+                            <option value="edit">Edit/Update</option>
+                            <option value="view">View</option>
+                            <option value="delete">Delete</option>
+                            <option value="filter">Filter</option>
+                            <option value="login">Login</option>
+                            <option value="logout">Logout</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleStart">Start Date</label>
+                          <input type="date" class="form-control" id="exampleStart" name="start_date">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleEnd">End Date</label>
+                          <input type="date" class="form-control" id="exampleEnd" name="end_date">
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+
+
+        <div class="iq-header-title">
+          <h4 class="card-title">Activity Streams</h4>
+        </div>
+
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table class="table mb-2 mt-2 table-borderless" id="activityStreamsTable">
+            <thead>
+            <tr>
+              <th scope="col">Sr #</th>
+              <th scope="col" class="font-weight-bold">User Name</th>
+              <th scope="col" class="font-weight-bold">User Email</th>
+              <th scope="col" class="font-weight-bold">Action Performed</th>
+              <th scope="col" class="font-weight-bold">Action Date Time</th>
+            </tr>
+            </thead>
+              <tbody>
+              <tr id="loadingRow" style="display: none;">
+                <td colspan="5" style="text-align: center; font-weight: bold">
+                  <div class="loader"></div>
+                  <span id="loadingText">Loading</span>
+                </td>
+              </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Show loading row
+        $('#loadingRow').show();
+
+        // Update loading text with increasing dots
+        var dots = 0;
+        var intervalId = setInterval(function() {
+            $('#loadingText').text('Loading' + '.'.repeat(dots));
+            dots = (dots + 1) % 6;
+        }, 500);
+
+        $.ajax({
+            url: '/activity_streams',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                clearInterval(intervalId); // Stop updating loading text
+                var activityStreams = response.activity_stream; // Accessing the array
+                var tbody = $('#activityStreamsTable tbody');
+                tbody.empty();
+                // Populate table with received data
+                $.each(activityStreams, function(index, activity_stream) {
+                    tbody.append('<tr>' +
+                        '<td>' + (index + 1) + '</td>' +
+                        '<td>' + (activity_stream.user_name || '') + '</td>' +
+                        '<td>' + (activity_stream.email || '') + '</td>' +
+                        '<td>' + (activity_stream.action_name || '') + '</td>' +
+                        '<td>' + (activity_stream.action_datetime || '') + '</td>' +
+                        '</tr>');
+                });
+                // Initialize DataTables after table population
+                $('#activityStreamsTable').DataTable();
+            },
+            error: function(xhr, status, error) {
+                console.error(status + ': ' + error);
+                clearInterval(intervalId); // Stop updating loading text
+                // Display an error message within the table body
+                $('#activityStreamsTable tbody').html('<tr><td colspan="5">Error loading data</td></tr>');
+            },
+            complete: function() {
+                // Hide loading row when AJAX request is complete
+                $('#loadingRow').hide();
+            }
+        });
+    });
+
+</script>

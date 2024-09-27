@@ -1,0 +1,154 @@
+<div class="row">
+  <div class="col-lg-8">
+    <div class="iq-card">
+      <div class="iq-card-header d-flex justify-content-between">
+        <div class="iq-header-title">
+          <h4 class="card-title">Payment Options</h4>
+        </div>
+      </div>
+      <div class="iq-card-body">
+
+        <!-- Account Information Section -->
+        <div class="bank-details mb-4">
+          <h4 class="font-weight-bold">Admin Bank Details</h4>
+          <ul class="list-unstyled">
+            <li><strong>Account Name:</strong> Admin Bank Account</li>
+            <li><strong>Account Number:</strong> 123456789</li>
+            <li><strong>Bank Name:</strong> XYZ Bank</li>
+            <li><strong>IBAN:</strong> PK00XYZ123456789000000</li>
+          </ul>
+        </div>
+
+        <!-- Date Display -->
+        <div class="d-flex justify-content-between align-items-center">
+          <span><%= Date.today.strftime("%d/%m/%Y") %></span>
+        </div>
+
+        <!-- Purchase form starts -->
+        <%= form_for @purchase, url: purchases_path, html: { multipart: true } do |f| %>
+          <input hidden value="<%= params[:plan_type] %>" name="plan_type">
+          <input hidden value="<%= @plan.id %>" name="plan_id">
+          <input hidden value="<%= @plan.price %>" name="deposit_amount">
+          <!-- Display plan details -->
+
+
+
+          <div class="d-flex justify-content-between">
+            <span><strong>Plan Selected:</strong></span>
+            <span class="font-weight-bolder font-size-18"><%= @plan.name %></span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span><strong>Plan Price:</strong></span>
+            <span class="font-weight-bolder font-size-18"><%= @plan.price %>$</span>
+          </div>
+
+
+
+          <hr>
+
+
+          <div class="form-group">
+            <label>Upload Payment Attachment</label>
+            <div class="dropzone" onclick="document.getElementById('attachment-upload').click()">
+              <i class="ri-upload-cloud-line"></i>
+              Click to upload
+              <span id="file-name" style="margin-left: 10px;"></span> <!-- This will show the file name -->
+              <%= f.file_field :attachment, id: "attachment-upload", class: "form-control", required: true, style: "display:none;" %>
+            </div>
+          </div>
+
+
+          <hr>
+
+          <div class="form-group mt-3">
+            <%= f.submit "Submit Payment", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+        <!-- Purchase form ends -->
+
+        <hr>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price details section -->
+  <div class="col-lg-4">
+    <div class="iq-card">
+      <div class="iq-card-body">
+        <h4 class="mb-2">Price Details</h4>
+        <div class="d-flex justify-content-between">
+          <span>Plan Price</span>
+          <span><strong><%= @plan.price %>$</strong></span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between">
+          <span>Amount Payable</span>
+          <span><strong><%= @plan.price %>$</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .dropzone {
+        width: 100%;
+        height: 150px;
+        border: 2px dashed #8a2be2; /* Purple dashed border */
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #8a2be2;
+        background-color: #f8f9fa;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+
+    .dropzone:hover {
+        border-color: #ff00ff; /* Change border color on hover */
+    }
+
+    .dropzone input {
+        display: none; /* Hide the default file input */
+    }
+
+    .dropzone i {
+        margin-right: 8px;
+        font-size: 24px;
+        color: #ffcc00; /* Yellow circle icon */
+    }
+
+    .bank-details ul {
+        padding-left: 0;
+    }
+
+    .bank-details ul li {
+        font-size: 13px;
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .bank-details ul li strong {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('attachment-upload');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        });
+    });
+
+</script>

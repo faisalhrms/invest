@@ -1,0 +1,205 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="iq-card">
+        <div class="iq-card-body profile-page p-0">
+          <div class="profile-header">
+            <div class="cover-container">
+              <img src="<%= asset_path("page-img/profile-bg.jpg") %>" alt="profile-bg" class="rounded img-fluid">
+            </div>
+            <div class="profile-info p-4">
+              <div class="row">
+                <div class="col-sm-12 col-md-6">
+                  <div class="user-detail pl-5">
+                    <div class="d-flex flex-wrap align-items-center">
+                      <div class="profile-img pr-4">
+                        <%= image_tag(current_user.avatar.present? ? url_for(current_user.avatar) : "user/05.jpg", class: "avatar-130 img-fluid") %>
+                      </div>
+                      <div class="profile-detail d-flex align-items-center">
+                        <h3><%= current_user.full_name %></h3>
+                        <p class="m-0 pl-3"> - <%= current_user.role.name %></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                  <ul class="nav nav-pills d-flex align-items-end float-right profile-feed-items p-0 m-0">
+                    <li>
+                      <a class="nav-link active" data-toggle="pill" href="#profile-activity">Activity</a>
+                    </li>
+                    <li>
+                      <a class="nav-link" data-toggle="pill" href="#change-password">Change Password</a>
+                    </li>
+                    <li>
+                      <a class="nav-link" data-toggle="pill" href="#email-sms">Email and SMS</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-lg-6 profile-center">
+          <div class="tab-content">
+            <div class="tab-pane fade active show" id="profile-activity" role="tabpanel">
+              <div class="iq-card">
+                <div class="iq-card-header d-flex justify-content-between">
+                  <div class="iq-header-title">
+                    <h4 class="card-title">Activity timeline</h4>
+                  </div>
+                </div>
+                <div class="iq-card-body">
+                  <% if @activity_streams.present? %>
+
+                    <% months = @activity_streams.pluck(:action_date).uniq.map { |x| x.to_date.strftime("%B-%Y") } %>
+                    <% months.uniq.each do |month| %>
+                      <ul class="iq-timeline">
+                        <% @activity_streams.where(:action_date => month.to_date.beginning_of_month..month.to_date.end_of_month).order("id DESC").first(10).each do |activity| %>
+
+                          <li>
+                            <div class="timeline-dots"></div>
+                            <h6 class="float-left mb-1"><%= activity.slug.upcase_first %></h6>
+                            <small class="float-right mt-1"><%= activity.action_datetime.strftime("%d-%b-%Y at %I:%M %P") %></small>
+                            <div class="d-inline-block w-100">
+                              <p><%= activity.action_name %></p>
+                            </div>
+                          </li>
+
+                        <% end %>
+
+                      </ul>
+                    <% end %>
+
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="change-password" role="tabpanel">
+              <div class="iq-card">
+                <div class="iq-card-header d-flex justify-content-between">
+                  <div class="iq-header-title">
+                    <h4 class="card-title">Change Password</h4>
+                  </div>
+                </div>
+                <div class="iq-card-body">
+                  <%= form_with url: change_password_user_path, method: :post, id: 'myForm', multipart: true do |form| %>
+                    <input hidden type="text" name="id" value="<%= current_user.id %>">
+                    <div class="form-group">
+                      <label for="cPass">Current Password:</label>
+                      <input type="Password" class="form-control" name="old_password" id="cPass">
+                    </div>
+                    <div class="form-group">
+                      <label for="nPass">New Password:</label>
+                      <input type="Password" class="form-control" name="password" id="nPass">
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="email-sms" role="tabpanel">
+              <div class="iq-card">
+                <div class="iq-card-header d-flex justify-content-between">
+                  <div class="iq-header-title">
+                    <h4 class="card-title">Email & SMS</h4>
+                  </div>
+                </div>
+                <div class="iq-card-body">
+                    <div class="form-group row align-items-center">
+                      <label class="col-md-4" for="emailNotification">Email Notification:</label>
+                      <div class="col-md-8 custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="emailNotification">
+                        <label class="custom-control-label" for="emailNotification"></label>
+                      </div>
+                    </div>
+                    <div class="form-group row align-items-center">
+                      <label class="col-md-4" for="smsNotification">SMS Notification:</label>
+                      <div class="col-md-8 custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="smsNotification">
+                        <label class="custom-control-label" for="smsNotification"></label>
+                      </div>
+                    </div>
+                    <div class="form-group row align-items-center">
+                      <label class="col-md-4" for="newWindow">Open Page In New Window:</label>
+                      <div class="col-md-8 custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" name="open_links_in_new_window" id="newWindow" <%= 'checked' if current_user.target %>>
+                        <label class="custom-control-label" for="newWindow"></label>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-lg-4 profile-left">
+          <div class="iq-card">
+            <div class="iq-card-header d-flex justify-content-between">
+              <div class="iq-header-title">
+                <h4 class="card-title">About</h4>
+              </div>
+            </div>
+            <div class="iq-card-body">
+              <div class="about-info m-0 p-0">
+                <div class="row">
+                  <div class="col-3">Email:</div>
+                  <div class="col-9"><a href="mailto:<%= current_user.email %>"> <%= current_user.email %> </a></div>
+                  <div class="col-3">Permissions:</div>
+                  <div class="col-9"><a href="#"><%= current_user.role.name %></a></div>
+                  <div class="col-3">Rank:</div>
+                  <div class="col-9"><a href="#"><%= "No Rank" %></a></div>
+                  <div class="col-3">Mobile:</div>
+                  <div class="col-9"><a href="#"><%= current_user.mobile_with_country_code %></a></div>
+                  <div class="col-3">Country:</div>
+                  <div class="col-9"><a href="#"><%= current_user.country %></a></div>
+                  <div class="col-3">Last Login:</div>
+                  <% created_at_in_pakistan_time = current_user.login_histories.last.created_at.in_time_zone("Asia/Karachi") %>
+                  <div class="col-9"><%= created_at_in_pakistan_time.strftime("%d-%b-%Y at %I:%M %P") %></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var checkbox = document.querySelector('#newWindow');
+
+        checkbox.addEventListener('change', function() {
+            var openInNewWindow = checkbox.checked;
+            updatePreference(openInNewWindow);
+        });
+
+        function updatePreference(openInNewWindow) {
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('/update_preference', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ open_links_in_new_window: openInNewWindow })
+            }).then(response => {
+                if (response.ok) {
+                    console.log('User preference updated successfully');
+                    window.location.reload(); // Reload the page upon successful update
+                } else {
+                    console.error('Failed to update user preference');
+                }
+            }).catch(error => {
+                console.error('Error updating user preference:', error);
+                // Optionally handle error
+            });
+        }
+    });
+</script>
+
+

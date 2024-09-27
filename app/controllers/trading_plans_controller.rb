@@ -1,0 +1,66 @@
+class TradingPlansController < ApplicationController
+  before_action :authenticate_user!
+  before_action :set_module_name
+  before_action :set_permissions, only: [:index, :create, :update, :destroy]
+
+
+  def index
+    @trading_plan = TradingPlan.all
+    ActivityStream.create_activity_stream("View Trading Plans Index Page", "TradingPlans", 0, @current_user, "view")
+  end
+
+  def edit_modal
+    @trading_plan = TradingPlan.find(params[:id])
+    render partial: 'trading_plans/edit_modal', locals: { trading_plan: @trading_plan}
+  end
+
+
+  def create
+    trading_plan = TradingPlan.new(trading_plan_params)
+    if trading_plan.save
+      ActivityStream.create_activity_stream("Create #{User.last.email} New Trading Plans", "TradingPlans", User.last.id, @current_user, "create")
+      flash[:notice] = "Trading Created Successfully"
+    else
+      if trading_plan.errors.full_messages.first == "TradingPlans has already been taken"
+        flash[:alert] = trading_plan.errors.full_messages.first
+      else
+        flash[:alert] = "Something Went Wrong"
+      end
+    end
+    redirect_to trading_plan_path
+  end
+  def update
+    if params[:is_active].nil?
+      params[:is_active] = false
+    end
+    trading_plan = TradingPlan.find(params[:id])
+    if trading_plan.update(trading_plan_params)
+      ActivityStream.create_activity_stream("Update #{trading_plan.name} Existing TradingPlans", "TradingPlans", trading_plan.id, @current_user, "edit")
+      flash[:notice] = "TradingPlans Updated Successfully"
+    else
+      flash[:alert] = "Something Went Wrong"
+    end
+    redirect_to trading_plan_path
+  end
+
+  def destroy
+    trading_plan = TradingPlan.find(params[:id])
+    if  trading_plan.present?
+      ActivityStream.create_activity_stream("Delete #{trading_plan.name} From TradingPlans", "TradingPlans", trading_plan.id, @current_user, "delete")
+      menu.delete
+      flash[:notice] = "TradingPlans Deleted"
+    end
+    redirect_to trading_plan_path
+  end
+
+  private
+  def trading_plan_params
+    params.permit(:name, :description, :price, :is_active)
+  end
+  def set_module_name
+    @module_name = "plans"
+    @sub_module_name = "trading_plans"
+
+  end
+
+end

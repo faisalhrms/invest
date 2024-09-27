@@ -1,0 +1,148 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <% if @can_create %>
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+            <i class="ri-add-fill"><span class="pl-1">Add New</span></i></button>
+          <%= form_with url: new_trading_plan_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Trading Plan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="name">Plan Name <span style="color: red">*</span></label>
+                          <input type="text" class="form-control" id="name" name="name" placeholder="Enter Full Name">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="price">Price <span style="color: red">*</span></label>
+                          <input type="number" class="form-control" id="price" name="price" placeholder="Enter price">
+                        </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="description">Description <span style="color: red">*</span></label>
+                          <textarea class="form-control" id="description" name="description" placeholder="Enter Description" rows="5" maxlength="100"></textarea>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-6 mt-2">
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" class="custom-control-input" name="is_active" id="Active" checked="checked">
+                            <label class="custom-control-label" for="Active">Inactive / active</label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        <% end %>
+
+        <div class="iq-header-title">
+          <h4 class="card-title"><%= @sub_module_name.gsub('_', ' ').titleize %></h4>
+        </div>
+
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table id="datatable" class="table mb-0 mt-2 table-borderless">
+            <thead>
+            <tr>
+              <th scope="col" class="font-weight-bold">Plan Name</th>
+              <th scope="col" class="font-weight-bold">Price</th>
+              <th scope="col" class="font-weight-bold">Users</th>
+              <th scope="col" class="font-weight-bold">Is Active?</th>
+              <th scope="col" class="font-weight-bold">Action</th>
+            </tr>
+            </thead>
+            <% if @trading_plan.present? %>
+              <tbody>
+              <% @trading_plan.order(id: :desc).each do |plan| %>
+                <tr>
+                  <td>
+                    <h6><%= plan.name %></h6>
+                  </td>
+                  <td>
+                    <h6><%= plan.price %></h6>
+                  </td>
+                  <td>
+                    <% if plan.present? %>
+                      <span class="badge badge-success"><%= 0 %></span>
+                    <% else %>
+                      <span class="badge badge-warning">-</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill <%= plan.is_active ? 'badge-info' : 'badge-danger' %>">
+                      <%= plan.is_active ? 'Active' : 'In Active' %>
+                      <span class="ri-<%= plan.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+                    </span>
+                  </td>
+                  <td>
+                    <% if @can_edit %>
+                      <a data-toggle="modal" data-target="#editModal<%= plan.id %>" class="animate">
+                        <i class="ri-ball-pen-fill text-success pr-1 font-size-18"></i>
+                      </a>
+                    <% end %>
+                    <% if @can_delete %>
+                      <a data-toggle="modal" data-target="#modalBootstrapdelete<%= plan.id %>" class="animate">
+                        <i class="ri-delete-bin-5-line text-danger font-size-18"></i>
+                      </a>
+                    <% end %>
+                  </td>
+                  <%= render 'edit_modal', plan: plan if @can_edit %>
+                  <%= render 'delete_modal', plan: plan if @can_delete %>
+
+
+                </tr>
+              <% end %>
+              </tbody>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<style>
+    .animate i {
+        transition: all 0.3s ease;
+    }
+
+    .animate:hover i {
+        font-size: 22px;
+    }
+</style>
+<script>
+    function updateFileName(input) {
+        var fileName = input.files[0].name;
+        var label = input.nextElementSibling;
+        label.innerText = fileName;
+    }
+</script>

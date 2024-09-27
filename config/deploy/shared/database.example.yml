@@ -1,0 +1,8 @@
+<%=fetch(:rails_env)%>:
+  adapter: postgresql
+  host: localhost
+  database: db_user
+  user: db_user
+  password: db_users
+  pool: 25
+  timeout: 5000

@@ -1,0 +1,2 @@
+class Staking < ApplicationRecord
+end

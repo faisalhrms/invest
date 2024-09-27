@@ -1,0 +1,2 @@
+class TradingPlan < ApplicationRecord
+end

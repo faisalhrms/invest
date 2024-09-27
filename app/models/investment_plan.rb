@@ -1,0 +1,2 @@
+class InvestmentPlan < ApplicationRecord
+end

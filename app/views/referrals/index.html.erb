@@ -1,0 +1,75 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <div class="iq-header-title">
+          <h4 class="card-title">My Referrals</h4>
+        </div>
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table class="table mb-2 mt-2 table-borderless">
+            <thead>
+            <tr>
+              <th scope="col" class="font-weight-bold">Full Name</th>
+              <th scope="col" class="font-weight-bold">Email</th>
+              <th scope="col" class="font-weight-bold">Referred By</th>
+              <th scope="col" class="font-weight-bold">Plan</th>
+              <th scope="col" class="font-weight-bold">Deposit Amount</th>
+              <th scope="col" class="font-weight-bold">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% displayed_referrals = [] %> <!-- Array to track displayed referrals -->
+            <% @referrals.each do |referral| %>
+              <% referral_purchases = referral.purchases.present? ? referral.purchases : [nil] %>
+              <% referral_purchases.each_with_index do |purchase, index| %>
+                <tr>
+                  <!-- Display the referral details only for the first purchase to avoid duplication -->
+                  <td><%= referral.full_name unless displayed_referrals.include?(referral.id) %></td>
+                  <td><%= referral.email unless displayed_referrals.include?(referral.id) %></td>
+
+                  <!-- Display referred_by user -->
+                  <td>
+                    <%= referral.referred_by_user.present? ? referral.referred_by_user.full_name : "Direct Signup" %>
+                  </td>
+
+                  <!-- Display plan details or show 'No Plan' if no purchase -->
+                  <td>
+                    <% if purchase.present? %>
+                      <% if purchase.investment_plan_id %>
+                        <%= link_to purchase.investment_plan.name, purchase.investment_plan %>
+                      <% elsif purchase.trading_plan_id %>
+                        <%= link_to purchase.trading_plan.name, purchase.trading_plan %>
+                      <% elsif purchase.staking_id %>
+                        <%= link_to purchase.staking.name, purchase.staking %>
+                      <% end %>
+                    <% else %>
+                      No Plan
+                    <% end %>
+                  </td>
+
+                  <!-- Display deposit amount or show $0 if no purchase -->
+                  <td><%= purchase.present? ? number_to_currency(purchase.deposit_amount, unit: "$") : "$0.00" %></td>
+
+                  <!-- Display status with badge -->
+                  <td>
+          <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
+            <%= referral.is_active ? 'Active' : 'In Active' %>
+            <span class="ri-<%= referral.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+          </span>
+                  </td>
+                </tr>
+
+                <!-- Add referral ID to displayed_referrals to prevent duplicating it for further purchases -->
+                <% displayed_referrals << referral.id unless displayed_referrals.include?(referral.id) %>
+              <% end %>
+            <% end %>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

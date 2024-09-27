@@ -1,0 +1,61 @@
+<%= form_with model: menu, url: update_menu_path, method: :post, multipart: true do |form| %>
+  <input hidden type="text" name="id" value="<%= menu.id %>">
+  <div class="modal fade" id="editModal<%= menu.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Menus</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="iq-card-body">
+          <div class="row">
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Menu Type <span style="color: red">*</span></label>
+                <select required class="form-control sumoselect2" name="menu_type" onchange="check_menu_type(this.value)" placeholder="Select Menu Type">
+                  <option value="main_menu" <%='selected' if menu.menu_type == "main_menu" %>>Main Menu</option>
+                  <option value="sub_menu" <%='selected' if menu.menu_type == "sub_menu" %>>Sub Menu</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="MenuName">Menu Name <span style="color: red">*</span></label>
+                <input required type="text" class="form-control" id="MenuName" name="name" value="<%= menu.name %>">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Main Menu<span style="color: red">*</span></label>
+                <select required class="form-control sumoselect2" name="main_menu_id" placeholder="Select Main Menu">
+                  <% Menu.where(:menu_type => "main_menu").each do |menus| %>
+                    <option value="<%= menus.id %>" <%= 'selected' if menu.id == menus.id %>><%= menus.name.capitalize %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6 mt-5">
+              <div class="form-group">
+                <div class="custom-control custom-switch custom-control-inline">
+                  <input type="checkbox" class="custom-control-input" name="is_active" id="menuActive<%= menu.id %>" <%= 'checked' if menu.is_active == true %>>
+                  <label class="custom-control-label" for="menuActive<%= menu.id %>">Inactive / active</label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

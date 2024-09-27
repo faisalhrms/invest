@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Investment App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+    <%#= javascript_importmap_tags %>
+  <%= stylesheet_link_tag "application" %>
+  <%= stylesheet_link_tag "css/bootstrap.min" %>
+  <%= stylesheet_link_tag "css/chartist"%>
+  <%= stylesheet_link_tag "css/typography" %>
+  <%= stylesheet_link_tag "css/style" %>
+  <%= stylesheet_link_tag "css/responsive"%>
+  <%= stylesheet_link_tag "css/sumoselect.min"%>
+  <%= stylesheet_link_tag "css/custom"%>
+  <%= stylesheet_link_tag "css/datatables.min"%>
+  <%= stylesheet_link_tag "css/toastr.min"%>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+</head>
+<body>
+
+
+
+  <% if current_user.present? %>
+
+  <div id="loading" class="item img">
+    <div id="loading-center">
+    </div>
+  </div>
+
+    <div class="wrapper">
+      <div class="iq-sidebar">
+        <%= render "layouts/sidebar" %>
+      </div>
+      <div class="iq-top-navbar">
+        <%= render "layouts/top_navbar" %>
+      </div>
+      <div id="content-page" class="content-page">
+        <%= yield %>
+      </div>
+    </div>
+    <footer class="iq-footer">
+      <%= render "layouts/footer" %>
+    </footer>
+    <nav class="iq-float-menu">
+      <%= render "layouts/float_menu" %>
+    </nav>
+  <% else %>
+    <%= yield %>
+  <% end %>
+
+
+<%= javascript_include_tag 'js/jquery.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/rtl.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/customizer.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/popper.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/bootstrap.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/jquery.appear.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/countdown.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/waypoints.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/jquery.counterup.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/wow.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/apexcharts.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/slick.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/select2.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/jquery.magnific-popup.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/smooth-scrollbar.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/lottie.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/core.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/charts.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/animated.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/kelly.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/morris.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/maps.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/worldLow.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/chartist/chartist.min.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/chart-custom.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/custom.js', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/jquery.sumoselect.min', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/datatables.min', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'toastr', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'js/sweetalert', 'data-turbolinks-track': 'reload' %>
+<script>
+    $('.sumoselect2').SumoSelect({selectAll: true, search: true});``
+
+    $(document).ready(function() {
+        $('.datatable').DataTable({
+            "pageLength": 8
+        });
+    });
+
+</script>
+<% if alert.present? %>
+  <script>
+      $(document).ready(function () {
+          Swal.fire({
+              icon: 'warning',
+              title: 'Oops...',
+              text: '<%= alert %>'
+          })
+      });
+      <% flash[:alert] = nil %>
+  </script>
+<% end %>
+<% if notice.present? %>
+  <script>
+      $(document).ready(function () {
+          toastr.options.timeout = 1000;
+          toastr.success('<%= notice %>');
+      });
+      <% flash[:notice] = nil %>
+  </script>
+<% end %>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!-- app/views/roles/_permissions.html.erb -->
+<tr>
+  <td><%= menu.name.capitalize %></td>
+  <td>
+    <%= form.select :is_index, options_for_select([['Yes', 'on'], ['No', 'off']], permission&.is_index ? 'on' : 'off'), {}, class: "form-control form-control-sm mb-3" %>
+  </td>
+  <td>
+    <%= form.select :is_create, options_for_select([['Yes', 'on'], ['No', 'off']], permission&.is_create ? 'on' : 'off'), {}, class: "form-control form-control-sm mb-3" %>
+  </td>
+  <td>
+    <%= form.select :is_view, options_for_select([['Yes', 'on'], ['No', 'off']], permission&.is_view ? 'on' : 'off'), {}, class: "form-control form-control-sm mb-3" %>
+  </td>
+  <td>
+    <%= form.select :is_edit, options_for_select([['Yes', 'on'], ['No', 'off']], permission&.is_edit ? 'on' : 'off'), {}, class: "form-control form-control-sm mb-3" %>
+  </td>
+  <td>
+    <%= form.select :is_delete, options_for_select([['Yes', 'on'], ['No', 'off']], permission&.is_delete ? 'on' : 'off'), {}, class: "form-control form-control-sm mb-3" %>
+  </td>
+</tr>

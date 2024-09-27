@@ -1,0 +1,12 @@
+default: &default
+  adapter: postgresql
+  host: localhost
+  user: db_user
+  password: db_user
+  pool: 5
+  timeout: 5000
+
+development:
+  <<: *default
+  database: investment_app
+

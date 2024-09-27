@@ -1,0 +1,4 @@
+fetch_emails:
+  cron: "*/3 * * * *"  # Runs every 3 minutes
+  class: "FetchEmailsJob"
+  queue: default

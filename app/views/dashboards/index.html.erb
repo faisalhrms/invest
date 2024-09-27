@@ -1,0 +1,364 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 col-lg-3">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-body relative-background">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle iq-card-icon dark-icon-light iq-bg-primary mr-3"> <i class="ri-exchange-dollar-line"></i></div>
+            <div class="text-left">
+              <h4 class="">425</h4>
+              <h5 class="">Investment</h5>
+            </div>
+          </div>
+          <p class=" mb-0 mt-3">Total for This Month.</p>
+          <div class="background-image">
+            <img src="<%= asset_path "page-img/36.png" %>" class="img-fluid" alt="img-36">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-body relative-background">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle iq-card-icon iq-bg-info mr-3"> <i class="ri-numbers-line"></i></div>
+            <div class="text-left">
+              <h4 class="">425</h4>
+              <h5 class="">Profit</h5>
+            </div>
+          </div>
+          <p class=" mb-0 mt-3">Total for This Month.</p>
+          <div class="background-image">
+            <img src="<%= asset_path "page-img/39.png" %>" class="img-fluid" alt="img-39">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <div class="iq-card-body relative-background">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle iq-card-icon iq-bg-danger mr-3"> <i class="ri-refund-line"></i></div>
+            <div class="text-left">
+              <h4 class=""><%= current_user.total_referrals %></h4>
+              <h5 class="">Total Referrals</h5>
+            </div>
+          </div>
+          <p class=" mb-0 mt-3">Copy Referral Link.</p>
+          <button class="btn btn-primary" type="button" onclick="copyReferralUrl()">
+            <i class="ri-file-copy-line"></i>
+          </button>
+          <input type="hidden" id="referral-url" value="<%= "http://localhost:3000/signup?ref=#{current_user.referral_id}" %>">
+
+          <div class="background-image">
+            <img src="<%= asset_path "page-img/38.png" %>" class="img-fluid" alt="img-38">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-6 col-lg-3">
+      <div class="iq-card iq-card-block iq-card-stretch">
+        <div class="iq-card-body">
+          <h2 class="mb-1">
+            <%= number_to_currency(current_user.total_deposit_amount) %>
+          </h2>
+          <p class="mb-2">Total Deposit</p>
+          <h6 class="mb-4"><span class="text-success">0%</span> ($0)</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      function copyReferralUrl() {
+          // Get the hidden referral URL input field
+          var copyText = document.getElementById("referral-url");
+
+          // Copy the hidden referral URL to the clipboard
+          navigator.clipboard.writeText(copyText.value).then(function() {
+              alert("Referral URL copied: " + copyText.value);
+          }, function(err) {
+              console.error('Could not copy text: ', err);
+          });
+      }
+  </script>
+  <div class="row">
+    <div class="col-lg-7">
+      <div class="iq-card iq-card-block iq-card-stretch ">
+        <div class="iq-card-header d-flex justify-content-between">
+          <div class="iq-header-title">
+            <h4 class="card-title">Payment History</h4>
+          </div>
+          <div class="iq-card-header-toolbar d-flex align-items-center">
+            <div class="dropdown">
+                                 <span class="dropdown-toggle" id="dropdownMenuButton-four" data-toggle="dropdown" >
+                                 <i class="ri-more-fill"></i>
+                                 </span>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-four" style="">
+                <a class="dropdown-item" href="#"><i class="ri-eye-fill mr-2"></i>View</a>
+                <a class="dropdown-item" href="#"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>
+                <a class="dropdown-item" href="#"><i class="ri-pencil-fill mr-2"></i>Edit</a>
+                <a class="dropdown-item" href="#"><i class="ri-printer-fill mr-2"></i>Print</a>
+                <a class="dropdown-item" href="#"><i class="ri-file-download-fill mr-2"></i>Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="iq-card-body">
+          <ul class="suggestions-lists m-0 p-0">
+            <li class="d-flex mb-4 align-items-center">
+              <div class="profile-icon bg-secondary"><span><i class="ri-refresh-line"></i></span></div>
+              <div class="media-support-info ml-3">
+                <h6>Deposit from ATL</h6>
+                <p class="mb-0 fontsize-sm">5 march, 18:33</p>
+              </div>
+              <div class="media-support-amount ml-3">
+                <h6 class="text-info">- $1,470</h6>
+              </div>
+            </li>
+            <li class="d-flex mb-4 align-items-center">
+              <div class="profile-icon bg-info"><span><i class="ri-arrow-go-back-fill"></i></span></div>
+              <div class="media-support-info ml-3">
+                <h6>Refund</h6>
+                <p class="mb-0 fontsize-sm">5 march, 18:33</p>
+              </div>
+              <div class="media-support-amount ml-3">
+                <h6 class="text-info">- $500</h6>
+              </div>
+            </li>
+            <li class="d-flex mb-4 align-items-center">
+              <div class="profile-icon bg-secondary"><span><i class="ri-bar-chart-grouped-fill"></i></span></div>
+              <div class="media-support-info ml-3">
+                <h6>Credit from ATL</h6>
+                <p class="mb-0 fontsize-sm">5 march, 18:33</p>
+              </div>
+              <div class="media-support-amount ml-3">
+                <h6 class="text-primary">+ $169</h6>
+              </div>
+            </li>
+            <li class="d-flex mb-4 align-items-center">
+              <div class="profile-icon bg-warning"><span><i class="ri-qr-scan-line"></i></span></div>
+              <div class="media-support-info ml-3">
+                <h6>Deposit from Paypal</h6>
+                <p class="mb-0 fontsize-sm">5 march, 18:33</p>
+              </div>
+              <div class="media-support-amount ml-3">
+                <h6 class="text-info">- $1,470</h6>
+              </div>
+            </li>
+            <li class="d-flex mb-0 align-items-center">
+              <div class="profile-icon bg-danger"><span><i class="ri-mail-send-fill"></i></span></div>
+              <div class="media-support-info ml-3">
+                <h6>Refund Amount</h6>
+                <p class="mb-0 fontsize-sm">5 march, 18:33</p>
+              </div>
+              <div class="media-support-amount ml-3">
+                <h6 class="text-primary">+ $9,480</h6>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-5">
+      <div class="iq-card iq-card-block iq-card-stretch iq-card-height" style="background: transparent;">
+        <div class="iq-card-body rounded p-0" style="background: url(<%= image_path("page-img/01.png") %>) no-repeat;    background-size: cover; height: 415px;">
+          <div class="iq-caption">
+            <h5><i class="ri-time-fill"></i> <%= Time.now.strftime("%d-%B-%Y & %I:%M%p") %></h5>
+            <p>Time</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <% investment_plan = InvestmentPlan.where(is_active: true) %>
+      <% trading_plan = TradingPlan.where(is_active: true) %>
+      <% staking_plan = Staking.where(is_active: true) %>
+
+
+    <div class="iq-card">
+      <div class="iq-card-header d-flex justify-content-between">
+        <div class="iq-header-title">
+          <h4 class="card-title">Plans</h4>
+        </div>
+      </div>
+
+
+
+      <div class="iq-card-body">
+        <ul class="nav nav-pills mb-3 nav-fill profile-feed-items" id="pills-tab-1" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab-fill" data-toggle="pill" href="#pills-home-fill" role="tab" aria-controls="pills-home" aria-selected="true">Investment Plan</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-profile-tab-fill" data-toggle="pill" href="#pills-profile-fill" role="tab" aria-controls="pills-profile" aria-selected="false">Trading Plan</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-contact-tab-fill" data-toggle="pill" href="#pills-contact-fill" role="tab" aria-controls="pills-contact" aria-selected="false">Staking</a>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent-1">
+          <!-- Investment Plan Tab -->
+          <div class="tab-pane fade show active" id="pills-home-fill" role="tabpanel" aria-labelledby="pills-home-tab-fill">
+            <div class="row">
+              <% investment_plan.each do |investment| %>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                  <div class="iq-card <%= plan_purchased?(investment) ? 'bg-primary text-white' : '' %>">
+                    <div class="iq-card-body border text-center rounded">
+                      <div class="plan-icon mb-3">
+                        <i class="ri-line-chart-line" style="font-size: 3rem;"></i>
+                      </div>
+                      <span class="font-size-16 text-uppercase"><%= investment.name %></span>
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(investment) ? 'text-white' : '' %>"><%= investment.price %>$</h1>
+                      <p class="text-center"><%= investment.description %></p>
+
+                      <% if plan_purchased?(investment) %>
+                        <!-- Cancel button that triggers the confirmation modal -->
+                        <%= link_to "Cancel", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(plan_id: investment.id, plan_type: 'InvestmentPlan')}')" %>
+                      <% elsif purchase_pending?(investment) %>
+                        <!-- Approval Pending Message -->
+                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                      <% else %>
+                        <!-- Buy button -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: investment.id, plan_type: 'InvestmentPlan'), class: 'btn btn-primary mt-5' %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Trading Plan Tab -->
+          <div class="tab-pane fade" id="pills-profile-fill" role="tabpanel" aria-labelledby="pills-profile-tab-fill">
+            <div class="row">
+              <% trading_plan.each do |trading| %>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                  <div class="iq-card <%= plan_purchased?(trading) ? 'bg-primary text-white' : '' %>">
+                    <div class="iq-card-body border text-center rounded">
+                      <div class="plan-icon mb-3">
+                        <i class="ri-bar-chart-horizontal-line" style="font-size: 3rem;"></i>
+                      </div>
+                      <span class="font-size-16 text-uppercase"><%= trading.name %></span>
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(trading) ? 'text-white' : '' %>"><%= trading.price %>$</h1>
+                      <p class="text-center"><%= trading.description %></p>
+
+                      <% if plan_purchased?(trading) %>
+                        <!-- Cancel button that triggers the confirmation modal -->
+                        <%= link_to "Cancel", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(plan_id: trading.id, plan_type: 'TradingPlan')}')" %>
+                      <% elsif purchase_pending?(trading) %>
+                        <!-- Approval Pending Message -->
+                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                      <% else %>
+                        <!-- Buy button -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: trading.id, plan_type: 'TradingPlan'), class: 'btn btn-primary mt-5' %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Staking Plan Tab -->
+          <div class="tab-pane fade" id="pills-contact-fill" role="tabpanel" aria-labelledby="pills-contact-tab-fill">
+            <div class="row">
+              <% staking_plan.each do |staking| %>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                  <div class="iq-card <%= plan_purchased?(staking) ? 'bg-primary text-white' : '' %>">
+                    <div class="iq-card-body border text-center rounded">
+                      <div class="plan-icon mb-3">
+                        <i class="ri-bubble-chart-line" style="font-size: 3rem;"></i>
+                      </div>
+                      <span class="font-size-16 text-uppercase"><%= staking.name %></span>
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(staking) ? 'text-white' : '' %>"><%= staking.price %>$</h1>
+                      <p class="text-center"><%= staking.description %></p>
+
+                      <% if plan_purchased?(staking) %>
+                        <!-- Cancel button that triggers the confirmation modal -->
+                        <%= link_to "Cancel", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(plan_id: staking.id, plan_type: 'Staking')}')" %>
+                      <% elsif purchase_pending?(staking) %>
+                        <!-- Approval Pending Message -->
+                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                      <% else %>
+                        <!-- Buy button -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: staking.id, plan_type: 'Staking'), class: 'btn btn-primary mt-5' %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Bootstrap Modal for Confirmation -->
+      <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirm Cancellation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to cancel this plan?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <a id="confirm-cancel" href="#" class="btn btn-danger">Confirm Cancel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+  </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="iq-card iq-card-block iq-card-stretch ">
+        <div class="iq-card-header d-flex justify-content-between">
+          <div class="iq-header-title">
+            <h4 class="card-title">Exchange Rates</h4>
+          </div>
+          <div class="iq-card-header-toolbar d-flex align-items-center">
+            <div class="dropdown">
+                                    <span class="dropdown-toggle" id="dropdownMenuButton-one" data-toggle="dropdown" >
+                                    <i class="ri-more-fill"></i>
+                                    </span>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-one" style="">
+                <a class="dropdown-item" href="#"><i class="ri-eye-fill mr-2"></i>View</a>
+                <a class="dropdown-item" href="#"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>
+                <a class="dropdown-item" href="#"><i class="ri-pencil-fill mr-2"></i>Edit</a>
+                <a class="dropdown-item" href="#"><i class="ri-printer-fill mr-2"></i>Print</a>
+                <a class="dropdown-item" href="#"><i class="ri-file-download-fill mr-2"></i>Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="iq-card-body">
+          <div id="home-chart-01"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+    function openCancelModal(cancelUrl) {
+        // Set the href of the confirmation button in the modal to the cancel URL
+        document.getElementById('confirm-cancel').setAttribute('href', cancelUrl);
+
+        // Show the Bootstrap modal
+        $('#cancelConfirmationModal').modal('show');
+    }
+
+</script>

@@ -1,0 +1,273 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <% if @can_create %>
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModalRole">
+            <i class="ri-add-fill"><span class="pl-1">Role</span></i></button>
+          <%= form_with url: new_role_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModalRole" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Role</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="RoleName">Role Name <span style="color: red">*</span></label>
+                          <input required type="text" class="form-control" id="RoleName" name="name" placeholder="Enter Role Name">
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-6 mt-5">
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" class="custom-control-input" name="is_active" id="Active" checked="checked">
+                            <label class="custom-control-label" for="Active">Inactive / active</label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <hr>
+                    <div class="row p-2">
+                      <div class="col-12">
+                        <h4 class="font-weight-bold text-dark mb-4">Permissions</h4>
+                      </div>
+                      <% Menu.where(:menu_type => "main_menu").uniq.compact.each do |menu| %>
+                        <input hidden type="text" name="menu_id[]" value="<%= menu.id %>">
+                        <div class="col-lg-12 col-xl-12">
+                          <div class="iq-accordion career-style faq-style">
+                            <div class="iq-card iq-accordion-block iq-bg-primary">
+                              <div class="active-faq clearfix">
+                                <div class="container">
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <a class="accordion-title" data-toggle="collapse" href="#collapse<%= menu.id %>" aria-expanded="false" aria-controls="collapse<%= menu.id %>">
+                                        <span><%= menu.name.upcase %></span>
+                                      </a>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="collapse<%= menu.id %>" class="accordion-details collapse" aria-labelledby="heading<%= menu.id %>" data-parent="#accordion<%= menu.id %>">
+                                <div class="card-body">
+                                  <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                      <thead>
+                                      <tr>
+                                        <th>Menu Name</th>
+                                        <th>Is Index?</th>
+                                        <th>Is Create?</th>
+                                        <th>Is View?</th>
+                                        <th>Is Edit?</th>
+                                        <th>Is Delete?</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      <% sub_menus = Menu.where(:main_menu_id => menu.id) %>
+                                      <tr>
+                                        <td><%= menu.name.capitalize %></td>
+                                        <td>
+                                          <select required class="form-control form-control-sm mb-3" name="is_index[]">
+                                            <option value="on">Yes</option>
+                                            <option value="off" selected>No</option>
+                                          </select>
+                                        </td>
+                                        <td>
+                                          <select required class="form-control form-control-sm mb-3" name="is_create[]">
+                                            <option value="off" selected>No</option>
+                                          </select>
+                                        </td>
+                                        <td>
+                                          <select required class="form-control form-control-sm mb-3" name="is_view[]">
+                                            <option value="off" selected>No</option>
+                                          </select>
+                                        </td>
+                                        <td>
+                                          <select required class="form-control form-control-sm mb-3" name="is_edit[]">
+                                            <option value="off" selected>No</option>
+                                          </select>
+                                        </td>
+                                        <td>
+                                          <select required class="form-control form-control-sm mb-3" name="is_delete[]">
+                                            <option value="off" selected>No</option>
+                                          </select>
+                                        </td>
+                                      </tr>
+                                      <% if sub_menus.present? %>
+                                        <% sub_menus.each do |sub_menu| %>
+                                          <input hidden type="text" name="menu_id[]" value="<%= sub_menu.id %>">
+                                          <tr>
+                                            <td><%= sub_menu.name.capitalize %></td>
+                                            <td>
+                                              <select required class="form-control form-control-sm mb-3" name="is_index[]">
+                                                <option value="on">Yes</option>
+                                                <option value="off" selected>No</option>
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select required class="form-control form-control-sm mb-3" name="is_create[]">
+                                                <option value="on">Yes</option>
+                                                <option value="off" selected>No</option>
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select required class="form-control form-control-sm mb-3" name="is_view[]">
+                                                <option value="on">Yes</option>
+                                                <option value="off" selected>No</option>
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select required class="form-control form-control-sm mb-32" name="is_edit[]">
+                                                <option value="on">Yes</option>
+                                                <option value="off" selected>No</option>
+                                              </select>
+                                            </td>
+                                            <td>
+                                              <select required class="form-control form-control-sm mb-3" name="is_delete[]">
+                                                <option value="on">Yes</option>
+                                                <option value="off" selected>No</option>
+                                              </select>
+                                            </td>
+                                          </tr>
+                                        <% end %>
+                                      <% end %>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        <% end %>
+        <div class="iq-header-title">
+          <h4 class="card-title"><%= @sub_module_name.upcase_first %></h4>
+        </div>
+
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table class="table mb-2 mt-2 table-borderless">
+            <thead>
+            <tr>
+              <th scope="col">Sr #</th>
+              <th scope="col" class="font-weight-bold">Role Name</th>
+              <th scope="col" class="font-weight-bold">Assign Count</th>
+              <th scope="col" class="font-weight-bold">Is Active?</th>
+              <th scope="col" class="font-weight-bold">Action</th>
+            </tr>
+            </thead>
+            <% if @roles.present? %>
+              <tbody>
+              <% @roles.order("id DESC").each_with_index do |role, index| %>
+                <tr>
+                  <td class="text-center">
+                    <p><%= index + 1 %></p>
+                  </td>
+                  <td>
+                    <h6><%= role.name.capitalize %></h6>
+                  </td>
+                  <td>
+                    <h6><%= role.users.size  %></h6>
+                  </td>
+                  <td>
+                <span class="badge rounded-pill <%= role.is_active ? 'badge-success' : 'badge-danger' %>">
+                  <%= role.is_active ? 'Active' : 'In Active' %>
+                  <span class="ri-<%= role.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+                </span>
+                  </td>
+                  <td>
+                    <% if @can_edit %>
+                      <a href="#" class="edit-role-button animate" data-role-id="<%= role.id %>">
+                        <i class="ri-ball-pen-fill text-primary pr-1 font-size-18"></i>
+                      </a>
+                    <% end %>
+                    <% if @can_delete %>
+                      <a data-toggle="modal" data-target="#modalBootstrapdelete<%= role.id %>" class="animate">
+                        <i class="ri-delete-bin-5-line text-danger font-size-18"></i>
+                      </a>
+                    <% end %>
+                    <%= render 'roles/delete_role_modal', role: role if @can_delete %>
+                  </td>
+                </tr>
+
+              <% end %>
+              </tbody>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<style>
+    .iq-accordion-block {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: rgba(130, 122, 243, 0.2);
+        color: var(--iq-primary) !important;
+        cursor: pointer;
+
+    }
+
+    .accordion-details {
+        background-color: #fff;
+        border-top: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 0 0 5px 5px;
+        padding: 15px;
+    }
+
+    .iq-accordion.career-style.faq-style .iq-accordion-block {
+        padding: 0px 5px;
+    !important;
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        $('.edit-role-button').on('click', function(e) {
+            e.preventDefault();
+            var roleId = $(this).data('role-id');
+            var url = '/roles/' + roleId + '/edit_modal';
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(data) {
+                    $('body').append(data);
+                    var modalId = '#editModalsRoles' + roleId;
+                    $(modalId).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading edit modal content:', error);
+                }
+            });
+        });
+    });
+
+</script>
