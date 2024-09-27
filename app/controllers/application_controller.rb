@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   add_flash_types :success, :danger, :info, :warning
   include RolesHelper
   before_action :set_permissions
+  before_action :clear_user_session_if_root_path
 
   private
 
@@ -37,7 +38,17 @@ class ApplicationController < ActionController::Base
     @current_user
   end
 
+  def clear_user_session_if_root_path
+    if current_user.present? && request.path == root_path
+      # Clear user session and cookies if on root path
+      session[:user_id] = nil
+      cookies[:auth_id] = nil
 
+      # Also clear these if they are set in the session
+      session[:plan_id] = nil
+      session[:plan_type] = nil
+    end
+  end
   def session_expired?
     session[:last_active_time].present? && (Time.now.to_i - session[:last_active_time].to_i) > 30.minutes
   end

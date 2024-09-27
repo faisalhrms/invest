@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+
   def create
     ip_address = request.remote_ip
     browser_name = request.user_agent
