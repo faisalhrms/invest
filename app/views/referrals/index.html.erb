@@ -14,6 +14,7 @@
               <th scope="col" class="font-weight-bold">Full Name</th>
               <th scope="col" class="font-weight-bold">Email</th>
               <th scope="col" class="font-weight-bold">Referred By</th>
+              <th scope="col" class="font-weight-bold">Referral Count</th>
               <th scope="col" class="font-weight-bold">Plan</th>
               <th scope="col" class="font-weight-bold">Deposit Amount</th>
               <th scope="col" class="font-weight-bold">Status</th>
@@ -32,6 +33,15 @@
                   <!-- Display referred_by user -->
                   <td>
                     <%= referral.referred_by_user.present? ? referral.referred_by_user.full_name : "Direct Signup" %>
+                  </td>
+
+                  <!-- Display referral count beside the "View" button -->
+                  <td>
+                    <!-- Referral Count -->
+                    <a href="#" class="btn btn-sm btn-info ml-2" data-toggle="modal" data-target="#referralDetailsModal" data-id="<%= referral.id %>">
+
+                      <i class="ri-eye-fill"></i>  <%= referral.referred_users.count %>
+                    </a>
                   </td>
 
                   <!-- Display plan details or show 'No Plan' if no purchase -->
@@ -55,7 +65,7 @@
                   <!-- Display status with badge -->
                   <td>
           <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
-            <%= referral.is_active ? 'Active' : 'In Active' %>
+            <%= referral.is_active ? 'Active' : 'Inactive' %>
             <span class="ri-<%= referral.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
           </span>
                   </td>
@@ -73,3 +83,50 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for Referral Details -->
+<!-- Modal for displaying referral details -->
+<div class="modal fade" id="referralDetailsModal" tabindex="-1" role="dialog" aria-labelledby="referralDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="referralDetailsModalLabel">Referral Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="referral-details-content">
+          <p>Loading referral details...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        // Use jQuery to dynamically load referral details when the modal is triggered
+        $('#referralDetailsModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);  // Button that triggered the modal
+            var userId = button.data('id');  // Extract the user ID from the data-* attribute
+
+            // AJAX request to fetch referral details
+            $.ajax({
+                url: '/referrals/' + userId + '/referral_details',
+                method: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    // Load response into the modal's content
+                    $('#referral-details-content').html(response);
+                },
+                error: function() {
+                    // Display error message in case of failure
+                    $('#referral-details-content').html('<p class="text-danger">Unable to load referral details.</p>');
+                }
+            });
+        });
+    });
+
+</script>

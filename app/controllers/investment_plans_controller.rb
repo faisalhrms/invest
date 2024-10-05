@@ -14,7 +14,10 @@ class InvestmentPlansController < ApplicationController
     render partial: 'investment_plans/edit_modal', locals: { investment_plan: @investment_plan}
   end
 
-
+  def investment
+    # Fetch all purchases for investment plans
+    @investment_purchases = Purchase.joins(:user).where.not(investment_plan_id: nil)
+  end
   def create
     investment_plan = InvestmentPlan.new(investment_plan_params)
     if investment_plan.save
@@ -55,7 +58,7 @@ class InvestmentPlansController < ApplicationController
 
   private
   def investment_plan_params
-    params.permit(:name, :description, :price, :is_active)
+    params.permit(:name, :description, :price, :duration_in_days, :profit_percentage, :is_active)
   end
   def set_module_name
     @module_name = "plans"

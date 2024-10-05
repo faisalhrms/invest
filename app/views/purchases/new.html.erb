@@ -1,3 +1,4 @@
+
 <div class="row">
   <div class="col-lg-8">
     <div class="iq-card">
@@ -8,14 +9,15 @@
       </div>
       <div class="iq-card-body">
 
-        <!-- Account Information Section -->
+        <% bank = BankAccount.find_by(is_active: true) %>
+
         <div class="bank-details mb-4">
           <h4 class="font-weight-bold">Admin Bank Details</h4>
           <ul class="list-unstyled">
-            <li><strong>Account Name:</strong> Admin Bank Account</li>
-            <li><strong>Account Number:</strong> 123456789</li>
-            <li><strong>Bank Name:</strong> XYZ Bank</li>
-            <li><strong>IBAN:</strong> PK00XYZ123456789000000</li>
+            <li><strong>Account Name:</strong> <%= bank.account_name %></li>
+            <li><strong>Account Number:</strong> <%= bank.account_number %></li>
+            <li><strong>Bank Name:</strong> <%= bank.bank_name %></li>
+            <li><strong>IBAN:</strong> <%= bank.iban %></li>
           </ul>
         </div>
 
@@ -24,14 +26,16 @@
           <span><%= Date.today.strftime("%d/%m/%Y") %></span>
         </div>
 
+
+
+
         <!-- Purchase form starts -->
         <%= form_for @purchase, url: purchases_path, html: { multipart: true } do |f| %>
           <input hidden value="<%= params[:plan_type] %>" name="plan_type">
           <input hidden value="<%= @plan.id %>" name="plan_id">
           <input hidden value="<%= @plan.price %>" name="deposit_amount">
-          <!-- Display plan details -->
 
-
+          <hr>
 
           <div class="d-flex justify-content-between">
             <span><strong>Plan Selected:</strong></span>
@@ -42,20 +46,45 @@
             <span class="font-weight-bolder font-size-18"><%= @plan.price %>$</span>
           </div>
 
+          <hr>
 
+          <% if params[:plan_type] == 'Staking' %>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Select Duration Period <span style="color: red">*</span></label>
+                <select required class="form-control sumoselect2" name="duration_in_days" placeholder="Select Duration Period">
+                  <option selected>Select Duration Period</option>
+                  <% PlanDuration.where(is_active: true, plan_type: "staking").each do |duration| %>
+                    <option value="<%= duration.duration_in_days %>"><%= duration.duration_in_days %> Days</option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+          <% end %>
 
           <hr>
 
+          <% if @sufficient_balance %>
 
-          <div class="form-group">
-            <label>Upload Payment Attachment</label>
-            <div class="dropzone" onclick="document.getElementById('attachment-upload').click()">
-              <i class="ri-upload-cloud-line"></i>
-              Click to upload
-              <span id="file-name" style="margin-left: 10px;"></span> <!-- This will show the file name -->
-              <%= f.file_field :attachment, id: "attachment-upload", class: "form-control", required: true, style: "display:none;" %>
+            <div class="alert alert-success">
+              You have sufficient balance in your withdrawable amount to make this purchase directly.
+            </div>.
+            <input hidden value="false" name="manual_payment">
+
+         <% else %>
+            <!-- Show the attachment upload only if the balance is insufficient -->
+            <div class="form-group">
+              <label>Upload Payment Attachment</label>
+              <div class="dropzone" onclick="document.getElementById('attachment-upload').click()">
+                <i class="ri-upload-cloud-line"></i>
+                Click to upload
+                <span id="file-name" style="margin-left: 10px;"></span>
+                <%= file_field_tag :attachment, id: "attachment-upload", class: "form-control", required: true, style: "display:none;" %>
+              </div>
             </div>
-          </div>
+            <input hidden value="true" name="manual_payment">
+
+         <% end %>
 
 
           <hr>
@@ -78,7 +107,11 @@
         <h4 class="mb-2">Price Details</h4>
         <div class="d-flex justify-content-between">
           <span>Plan Price</span>
-          <span><strong><%= @plan.price %>$</strong></span>
+          <span><strong><%= number_to_currency(@plan.price) %></strong></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Your Withdrawable Amount</span>
+          <span><strong><%= number_to_currency(current_user.total_deposits) %></strong></span>
         </div>
         <hr>
         <div class="d-flex justify-content-between">
@@ -138,11 +171,11 @@
     }
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const fileInput = document.getElementById('attachment-upload');
         const fileNameDisplay = document.getElementById('file-name');
 
-        fileInput.addEventListener('change', function() {
+        fileInput.addEventListener('change', function () {
             if (fileInput.files.length > 0) {
                 fileNameDisplay.textContent = fileInput.files[0].name;
             } else {

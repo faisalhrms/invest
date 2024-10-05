@@ -16,6 +16,7 @@
               <th scope="col" class="font-weight-bold">Plan</th>
               <th scope="col" class="font-weight-bold">Plan Type</th>
               <th scope="col" class="font-weight-bold">Deposit Amount</th>
+              <th scope="col" class="font-weight-bold">Deposit Type</th>
               <th scope="col" class="font-weight-bold">Attachment</th>
               <th scope="col" class="font-weight-bold">Action</th>
             </tr>
@@ -43,6 +44,11 @@
                   <% end %>
                 </td>
                 <td><%= number_to_currency(purchase.deposit_amount, unit: "$") %></td>
+                <% if purchase.manual_payment == true %>
+                  <td>Manual Transfer</td>
+                <% else %>
+                  <td>Withdraw Balance</td>
+                <% end %>
                 <td>
                   <% if purchase.attachment.present? %>
                     <%= link_to 'View Attachment', purchase.attachment.url, target: "_blank" %>

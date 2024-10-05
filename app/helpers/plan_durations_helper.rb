@@ -1,0 +1,2 @@
+module PlanDurationsHelper
+end

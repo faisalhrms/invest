@@ -156,7 +156,7 @@
             <%= image_tag(current_user.avatar.present? ? url_for(current_user.avatar) : "user/05.jpg" ,class: "img-fluid rounded mr-3") %>
             <div class="caption">
               <h6 class="mb-0 line-height text-white"><%= current_user.full_name %></h6>
-              <span class="text-white font-size-12"><%= current_user.rank %></span>
+              <span class="text-white font-size-12"><%= current_user.rank.present? ? current_user.rank.name : 'Unranked' %></span>
 
 
             </div>
@@ -166,7 +166,7 @@
               <div class="iq-card-body p-0 ">
                 <div class="bg-primary p-3">
                   <h5 class="mb-0 text-white line-height">Hello <%= current_user.full_name %></h5>
-                  <span class="text-white font-size-12"><%= current_user.rank %></span>
+                  <span class="text-white font-size-12"><%= current_user.rank.present? ? current_user.rank.name : 'Unranked' %></span>
                 </div>
                 <a href="<%= user_profile_path %>" class="iq-sub-card iq-bg-primary-hover">
                   <div class="media align-items-center">

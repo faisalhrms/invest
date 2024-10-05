@@ -1,0 +1,55 @@
+<%= form_with model: plan_duration, url: update_plan_duration_path, method: :post, multipart: true do |form| %>
+  <input hidden type="text" name="id" value="<%= plan_duration.id %>">
+  <div class="modal fade" id="editModal<%= plan_duration.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Investment plan_duration</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="iq-card-body">
+          <div class="row">
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Plan Type <span style="color: red">*</span></label>
+                <select required class="form-control sumoselect2" name="plan_type" placeholder="Select Plan Type">
+                  <option value="" <%= 'selected' if plan_duration.plan_type.blank? %>></option>
+                  <option value="investment_plan" <%= 'selected' if plan_duration.plan_type == 'investment_plan' %>>Investment Plan</option>
+                  <option value="trading_plan" <%= 'selected' if plan_duration.plan_type == 'trading_plan' %>>Trading Plan</option>
+                  <option value="staking" <%= 'selected' if plan_duration.plan_type == 'staking' %>>Staking</option>
+                </select>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="duration_in_days<%= plan_duration.id %>">Duration Period in (Days) <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="duration_in_days<%= plan_duration.id %>" value="<%= plan_duration.duration_in_days %>" name="duration_in_days" placeholder="Enter Duration Period in Days">
+              </div>
+            </div>
+
+            <div class="col-md-6 mt-2">
+              <div class="form-group">
+                <div class="custom-control custom-switch custom-control-inline">
+                  <input type="checkbox" class="custom-control-input" name="is_active" id="ActiveEdit<%= plan_duration.id %>" <%= 'checked' if plan_duration.is_active %>>
+                  <label class="custom-control-label" for="ActiveEdit<%= plan_duration.id %>">Inactive / active</label>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

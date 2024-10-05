@@ -19,13 +19,14 @@ class SessionsController < ApplicationController
                 flash[:notice] = "Logged in successfully."
                 ActivityStream.create_activity_stream("#{user.email} Logged-in To Dashboard", "User", @current_user.id, @current_user, "login")
                 # Check for plan_id and plan_type in session
-                if session[:plan_id].present? && session[:plan_type].present?
+                if session[:plan_id].present? && session[:plan_type].present? and not current_user.user_type == "administrator"
                   plan_id = session.delete(:plan_id)
                   plan_type = session.delete(:plan_type)
                   redirect_to new_purchase_path(plan_id: plan_id, plan_type: plan_type) and return
                 elsif current_user.user_type == "administrator"
                   redirect_to admin_path and return
                 else
+                  current_user.update_cumulative_profit!
                   redirect_to dashboard_path and return
                 end
               end
@@ -38,13 +39,14 @@ class SessionsController < ApplicationController
                 flash[:notice] = "Logged in successfully."
                 ActivityStream.create_activity_stream("#{user.email} Logged-in To Dashboard", "User", @current_user.id, @current_user, "login")
                 # Check for plan_id and plan_type in session
-                if session[:plan_id].present? && session[:plan_type].present?
+                if session[:plan_id].present? && session[:plan_type].present? and not current_user.user_type == "administrator"
                   plan_id = session.delete(:plan_id)
                   plan_type = session.delete(:plan_type)
                   redirect_to new_purchase_path(plan_id: plan_id, plan_type: plan_type) and return
                 elsif current_user.user_type == "administrator"
                   redirect_to admin_path and return
                 else
+                  current_user.update_cumulative_profit!
                   redirect_to dashboard_path and return
                 end
               end

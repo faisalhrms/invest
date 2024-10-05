@@ -1,0 +1,23 @@
+<%= form_with model: plan_duration, url: delete_plan_duration_path, method: :post, multipart: true do |form| %>
+  <div class="modal fade" id="modalBootstrapdelete<%= plan_duration.id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-danger">
+          <h6 class="modal-title">
+            <b>Are You Sure You Want To Delete <%= @sub_module_name.capitalize %></b>???<br>
+            <p class="text-white pt-3">All Data Will Be Removed From System</p></h6>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input hidden type="text" name="id" value="<%= plan_duration.id %>">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

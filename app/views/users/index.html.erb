@@ -109,6 +109,7 @@
               <th scope="col" class="font-weight-bold">Full Name</th>
               <th scope="col" class="font-weight-bold">User Name</th>
               <th scope="col" class="font-weight-bold">Email</th>
+              <th scope="col" class="font-weight-bold">Referrals</th>
               <th scope="col" class="font-weight-bold">Country</th>
               <th scope="col" class="font-weight-bold">Mobile</th>
               <th scope="col" class="font-weight-bold">Role/Permission</th>
@@ -133,6 +134,9 @@
                   </td>
                   <td>
                     <span><%= user.email || "-" %></span>
+                  </td>
+                  <td>
+                    <span><%= user.referred_users.count || "-" %></span>
                   </td>
                   <td>
                     <span><%= user.country || "-" %></span>

@@ -1,0 +1,50 @@
+<%= form_with model: rank, url: update_rank_path, method: :post, multipart: true do |form| %>
+  <input hidden type="text" name="id" value="<%= rank.id %>">
+  <div class="modal fade" id="editModal<%= rank.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Investment rank</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="iq-card-body">
+          <div class="row">
+
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="name<%= rank.id %>">Rank Name <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="name<%= rank.id %>" value="<%= rank.name %>" name="name" placeholder="Enter Rank Name">
+              </div>
+            </div>
+
+            <div class=" col-md-6">
+              <div class="form-group">
+                <label for="minimum_deposit<%= rank.id %>">Minimum Deposit <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="minimum_deposit<%= rank.id %>" value="<%= rank.minimum_deposit %>" name="minimum_deposit" placeholder="Enter Minimum Deposit">
+              </div>
+            </div>
+
+
+<!--            <div class="col-md-6">-->
+<!--              <div class="form-group">-->
+<!--                <label for="profit_percentage<%#= rank.id %>">Profit Percentage <span style="color: red">*</span></label>-->
+<!--                <input type="number" class="form-control" id="profit_percentage<%#= rank.id %>" value="<%#= rank.profit_percentage %>"  name="profit_percentage" placeholder="Enter Profit Percentage">-->
+<!--              </div>-->
+<!--            </div>-->
+
+
+
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

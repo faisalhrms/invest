@@ -25,6 +25,25 @@
               </div>
             </div>
 
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-form-label">Select Duration Period <span style="color: red">*</span></label>
+                <select required class="form-control" name="duration_in_days">
+                  <option value="" <%= 'selected' if plan.duration_in_days.blank? %>>Select Duration Period</option>
+                  <% PlanDuration.where(is_active: true, plan_type: "staking").each do |duration| %>
+                    <option value="<%= duration.duration_in_days %>" <%= 'selected' if duration.duration_in_days == plan.duration_in_days %>><%= duration.duration_in_days %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="profit_percentage<%= plan.id %>">Profit Percentage <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="profit_percentage<%= plan.id %>" value="<%= plan.profit_percentage %>" name="profit_percentage" placeholder="Enter Profit Percentage">
+              </div>
+            </div>
+
             <div class="col-md-12">
               <div class="form-group">
                 <label for="description<%= plan.id %>">Description <span style="color: red">*</span></label>

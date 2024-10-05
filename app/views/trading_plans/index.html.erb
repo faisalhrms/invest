@@ -33,6 +33,25 @@
                         </div>
                       </div>
 
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-form-label">Select Duration Period <span style="color: red">*</span></label>
+                          <select required class="form-control sumoselect2" name="duration_in_days" placeholder="Select Duration Period">
+                            <option selected>Select Duration Period</option>
+                            <% PlanDuration.where(is_active: true,plan_type: "trading_plan").each do |duration| %>
+                              <option value="<%= duration.duration_in_days %>"><%= duration.duration_in_days %></option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="profit_percentage">Profit Percentage <span style="color: red">*</span></label>
+                          <input type="number" class="form-control" id="profit_percentage" name="profit_percentage" placeholder="Enter Profit Percentage">
+                        </div>
+                      </div>
+
                       <div class="col-md-12">
                         <div class="form-group">
                           <label for="description">Description <span style="color: red">*</span></label>
@@ -62,6 +81,62 @@
 
           <% end %>
         <% end %>
+        <button class="btn btn-info" data-toggle="modal" data-target="#manualProfitLossModal">
+          <i class="ri-calculator-line"><span class="pl-1">Manual Profit/Loss</span></i>
+        </button>
+
+
+        <!-- Manual Profit/Loss Modal -->
+        <div class="modal fade" id="manualProfitLossModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Apply Manual Profit/Loss</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <%= form_with url: apply_manual_profit_loss_path, method: :post, id: "manualProfitLossForm" do |f| %>
+                  <!-- Multi-Select Dropdown for Trading Plan Users -->
+                  <div class="form-group">
+                    <label>Select Users for Trading Plan</label>
+                    <select name="user_ids[]" class="form-control" id="userSelect" multiple="multiple" required>
+                      <option></option>
+
+                      <% @trading_plan_users.each do |user| %>
+                        <option value="<%= user.id %>"><%= user.full_name %> - <%= user.email %></option>
+                      <% end %>
+                    </select>
+                  </div>
+
+                  <!-- Profit/Loss Percentage Input -->
+                  <div class="form-group">
+                    <label for="percentageInput">Enter Percentage (%)</label>
+                    <input type="number" name="percentage" id="percentageInput" class="form-control" placeholder="Enter % Profit/Loss" required>
+                  </div>
+
+                  <!-- Profit or Loss Toggle -->
+                  <div class="form-group">
+                    <label for="profitLossType">Select Type</label>
+                    <select name="profit_loss_type" id="profitLossType" class="form-control" required>
+                      <option selected disabled>Select Type</option>
+                      <option value="profit">Profit</option>
+                      <option value="loss">Loss</option>
+                    </select>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
         <div class="iq-header-title">
           <h4 class="card-title"><%= @sub_module_name.gsub('_', ' ').titleize %></h4>
@@ -75,6 +150,8 @@
             <tr>
               <th scope="col" class="font-weight-bold">Plan Name</th>
               <th scope="col" class="font-weight-bold">Price</th>
+              <th scope="col" class="font-weight-bold">Profit %</th>
+              <th scope="col" class="font-weight-bold">Duration</th>
               <th scope="col" class="font-weight-bold">Users</th>
               <th scope="col" class="font-weight-bold">Is Active?</th>
               <th scope="col" class="font-weight-bold">Action</th>
@@ -90,11 +167,14 @@
                   <td>
                     <h6><%= plan.price %></h6>
                   </td>
+                  <td><%= (plan.profit_percentage) %>%</td>
+                  <td><%= (plan.duration_in_days) %> Days</td>
                   <td>
-                    <% if plan.present? %>
-                      <span class="badge badge-success"><%= 0 %></span>
+                    <% user_count = plan.purchases.where(approved: true, status: 'active').count %>
+                    <% if user_count > 0 %>
+                      <span class="badge badge-success"><%= user_count %></span>
                     <% else %>
-                      <span class="badge badge-warning">-</span>
+                      <span class="badge badge-warning">0</span>
                     <% end %>
                   </td>
                   <td>
@@ -145,4 +225,12 @@
         var label = input.nextElementSibling;
         label.innerText = fileName;
     }
+</script>
+<script>
+    $(document).ready(function() {
+        $('#userSelect').select2({
+            placeholder: 'Select users for manual profit/loss',
+            width: '100%'
+        });
+    });
 </script>

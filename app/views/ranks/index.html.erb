@@ -1,0 +1,122 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <% if @can_create %>
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+            <i class="ri-add-fill"><span class="pl-1">Add New</span></i></button>
+          <%= form_with url: new_rank_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Rank</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="name">Rank Name <span style="color: red">*</span></label>
+                          <input type="text" class="form-control" id="name" name="name" placeholder="Enter Rank Name">
+                        </div>
+                      </div>
+
+                      <div class=" col-md-6">
+                          <div class="form-group">
+                            <label for="minimum_deposit">Minimum Deposit <span style="color: red">*</span></label>
+                            <input type="number" class="form-control" id="minimum_deposit" name="minimum_deposit" placeholder="Enter Minimum Deposit">
+                          </div>
+                        </div>
+
+
+<!--                      <div class="col-md-6">-->
+<!--                        <div class="form-group">-->
+<!--                          <label for="profit_percentage">Profit Percentage <span style="color: red">*</span></label>-->
+<!--                          <input type="number" class="form-control" id="profit_percentage" name="profit_percentage" placeholder="Enter Profit Percentage">-->
+<!--                        </div>-->
+<!--                      </div>-->
+
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+          <% end %>
+        <% end %>
+
+        <div class="iq-header-title">
+          <h4 class="card-title"><%= @sub_module_name.gsub('_', ' ').titleize %></h4>
+        </div>
+
+        </div>
+        <div class="iq-card-body">
+          <div class="table-responsive">
+            <table id="datatable" class="table mb-0 mt-2 table-borderless">
+              <thead>
+              <tr>
+                <th>Name</th>
+                <th>Minimum Deposit</th>
+<!--                <th>Profit Percentage</th>-->
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <% if @rank.present? %>
+                <tbody>
+                <% @rank.order(id: :desc).each do |rank| %>
+                  <tr>
+                    <td><%= rank.name %></td>
+                    <td><%= number_to_currency(rank.minimum_deposit, unit: "$") %></td>
+<!--                    <td><%#= rank.profit_percentage %>%</td>-->
+                    <td>
+                      <% if @can_edit %>
+                        <a data-toggle="modal" data-target="#editModal<%= rank.id %>" class="animate">
+                          <i class="ri-ball-pen-fill text-success pr-1 font-size-18"></i>
+                        </a>
+                      <% end %>
+                      <% if @can_delete %>
+                        <a data-toggle="modal" data-target="#modalBootstrapdelete<%= rank.id %>" class="animate">
+                          <i class="ri-delete-bin-5-line text-danger font-size-18"></i>
+                        </a>
+                      <% end %>
+                    </td>
+                    <%= render 'edit_modal', rank: rank if @can_edit %>
+                    <%= render 'delete_modal', rank: rank if @can_delete %>
+
+
+                  </tr>
+                <% end %>
+                </tbody>
+              <% end %>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <style>
+      .animate i {
+          transition: all 0.3s ease;
+      }
+
+      .animate:hover i {
+          font-size: 22px;
+      }
+  </style>
+  <script>
+      function updateFileName(input) {
+          var fileName = input.files[0].name;
+          var label = input.nextElementSibling;
+          label.innerText = fileName;
+      }
+  </script>

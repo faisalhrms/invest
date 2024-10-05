@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,28 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "bank_accounts", force: :cascade do |t|
+    t.string "account_name"
+    t.string "account_number"
+    t.string "bank_name"
+    t.string "iban"
+    t.boolean "is_active", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "deposits", force: :cascade do |t|
+    t.integer "user_id"
+    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.datetime "processed_at"
+    t.string "status"
+    t.integer "investment_plan_id"
+    t.integer "trading_plan_id"
+    t.integer "staking_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "investment_plans", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -64,6 +86,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.boolean "is_active", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "duration_in_days"
+    t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
   end
 
   create_table "login_histories", force: :cascade do |t|
@@ -112,6 +136,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.index ["menu_id"], name: "index_permissions_on_menu_id"
   end
 
+  create_table "plan_durations", force: :cascade do |t|
+    t.integer "plan_id"
+    t.string "plan_type"
+    t.integer "duration_in_days"
+    t.string "slug", default: ""
+    t.boolean "is_active", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "plan_transactions", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "package_id"
@@ -128,6 +162,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.index ["user_id"], name: "index_plan_transactions_on_user_id"
   end
 
+  create_table "profits", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "purchase_id", null: false
+    t.decimal "amount", precision: 15, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["purchase_id"], name: "index_profits_on_purchase_id"
+    t.index ["user_id"], name: "index_profits_on_user_id"
+  end
+
   create_table "purchases", force: :cascade do |t|
     t.float "deposit_amount"
     t.string "status"
@@ -142,10 +186,32 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.bigint "staking_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "manual_payment", default: false
+    t.float "duration_in_days"
     t.index ["investment_plan_id"], name: "index_purchases_on_investment_plan_id"
     t.index ["staking_id"], name: "index_purchases_on_staking_id"
     t.index ["trading_plan_id"], name: "index_purchases_on_trading_plan_id"
     t.index ["user_id"], name: "index_purchases_on_user_id"
+  end
+
+  create_table "ranks", force: :cascade do |t|
+    t.string "name", null: false
+    t.decimal "minimum_deposit", precision: 15, scale: 2, default: "0.0"
+    t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "referral_commissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "purchase_id"
+    t.decimal "amount", precision: 15, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "referral_user_id"
+    t.index ["purchase_id"], name: "index_referral_commissions_on_purchase_id"
+    t.index ["referral_user_id"], name: "index_referral_commissions_on_referral_user_id"
+    t.index ["user_id"], name: "index_referral_commissions_on_user_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -163,6 +229,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.boolean "is_active", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "duration_in_days"
+    t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
   end
 
   create_table "trading_plans", force: :cascade do |t|
@@ -173,6 +241,26 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.boolean "is_active", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "duration_in_days"
+    t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
+  end
+
+  create_table "transaction_histories", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.string "transaction_type", null: false
+    t.datetime "transaction_date", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "plan_type"
+    t.integer "plan_id"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "purchase_id"
+    t.integer "withdrawal_id"
+    t.integer "referral_commission_id"
+    t.integer "deposit_id"
+    t.index ["purchase_id"], name: "index_transaction_histories_on_purchase_id"
+    t.index ["user_id"], name: "index_transaction_histories_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -202,14 +290,41 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_26_174515) do
     t.string "mobile_with_country_code"
     t.string "country"
     t.string "rank", default: "NO RANK!"
+    t.bigint "rank_id"
+    t.decimal "total_profit", precision: 15, scale: 2, default: "0.0"
+    t.date "last_profit_calculation"
+    t.index ["rank_id"], name: "index_users_on_rank_id"
+  end
+
+  create_table "withdrawals", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.string "withdrawal_type", null: false
+    t.string "status", default: "pending"
+    t.datetime "processed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "investment_plan_id"
+    t.integer "trading_plan_id"
+    t.integer "staking_id"
+    t.index ["user_id"], name: "index_withdrawals_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "plan_transactions", "packages"
   add_foreign_key "plan_transactions", "users"
+  add_foreign_key "profits", "purchases"
+  add_foreign_key "profits", "users"
   add_foreign_key "purchases", "investment_plans"
   add_foreign_key "purchases", "stakings"
   add_foreign_key "purchases", "trading_plans"
   add_foreign_key "purchases", "users"
+  add_foreign_key "referral_commissions", "purchases"
+  add_foreign_key "referral_commissions", "users"
+  add_foreign_key "referral_commissions", "users", column: "referral_user_id"
+  add_foreign_key "transaction_histories", "purchases"
+  add_foreign_key "transaction_histories", "users"
+  add_foreign_key "users", "ranks"
+  add_foreign_key "withdrawals", "users"
 end

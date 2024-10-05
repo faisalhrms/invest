@@ -1,0 +1,2 @@
+module BankAccountDetailsHelper
+end

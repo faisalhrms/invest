@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
 
+
   def current_user
     return @current_user if defined?(@current_user)
 

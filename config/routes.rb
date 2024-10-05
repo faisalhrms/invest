@@ -25,8 +25,11 @@ Rails.application.routes.draw do
   get 'checkout_page' => 'home#checkout_page'
 
   ########## Referrals #########
-  get 'referrals' => 'referrals#index'
-
+  resources :referrals, only: [:index] do
+    member do
+      get :referral_details
+    end
+  end
   resources :purchases do
     get 'cancel', on: :collection
     collection do
@@ -35,6 +38,17 @@ Rails.application.routes.draw do
       post 'reject', to: 'purchases#reject' # Approve a purchase
     end
   end
+  resources :withdrawals, only: [:create,:index]
+  get 'withdrawals/pending_withdrawals', to: 'withdrawals#pending_withdrawals'
+  post 'withdrawals/:id/approve', to: 'withdrawals#approve', as: 'approve_withdrawal'
+  post 'withdrawals/:id/reject', to: 'withdrawals#reject', as: 'reject_withdrawal'
+
+  ##### Duration Plan #####
+  get 'plan_duration' => 'plan_durations#index'
+  post 'new_plan_duration' => 'plan_durations#create'
+  post 'update_plan_duration' => 'plan_durations#update'
+  post 'delete_plan_duration' => 'plan_durations#destroy'
+  get 'plan_duration/:id/edit_modal', to: 'plan_durations#edit_modal', as: 'edit_modal_plan_duration'
 
   ##### Investment Plan #####
   get 'investment_plan' => 'investment_plans#index'
@@ -42,6 +56,23 @@ Rails.application.routes.draw do
   post 'update_investment_plan' => 'investment_plans#update'
   post 'delete_investment_plan' => 'investment_plans#destroy'
   get 'investment_plan/:id/edit_modal', to: 'investment_plans#edit_modal', as: 'edit_modal_investment_plan'
+  get 'plans/investment', to: 'investment_plans#investment', as: 'investment_plans'
+
+
+  ##### Bank Account #####
+  get 'bank_account' => 'bank_account_details#index'
+  post 'new_bank_account' => 'bank_account_details#create'
+  post 'update_bank_account' => 'bank_account_details#update'
+  post 'delete_bank_account' => 'bank_account_details#destroy'
+  get 'bank_account/:id/edit_modal', to: 'bank_account_details#edit_modal', as: 'edit_modal_bank_account'
+
+
+  ##### Rank #####
+  get 'rank' => 'ranks#index'
+  post 'new_rank' => 'ranks#create'
+  post 'update_rank' => 'ranks#update'
+  post 'delete_rank' => 'ranks#destroy'
+  get 'rank/:id/edit_modal', to: 'ranks#edit_modal', as: 'edit_modal_rank'
 
   ##### Trading Plan #####
   get 'trading_plan' => 'trading_plans#index'
@@ -49,6 +80,8 @@ Rails.application.routes.draw do
   post 'update_trading_plan' => 'trading_plans#update'
   post 'delete_trading_plan' => 'trading_plans#destroy'
   get 'trading_plan/:id/edit_modal', to: 'trading_plans#edit_modal', as: 'edit_modal_trading_plan'
+  get 'plans/trading', to: 'trading_plans#trading', as: 'trading_plans'
+  post '/apply_manual_profit_loss', to: 'trading_plans#apply_manual_profit_loss'
 
   ##### staking Plan #####
   get 'staking_plan' => 'staking#index'
@@ -56,6 +89,8 @@ Rails.application.routes.draw do
   post 'update_staking_plan' => 'staking#update'
   post 'delete_staking_plan' => 'staking#destroy'
   get 'staking/:id/edit_modal', to: 'staking#edit_modal', as: 'edit_modal_staking_plan'
+  get 'staking/:id', to: 'staking#index', as: 'staking'
+  get 'plans/staking', to: 'staking#staking', as: 'staking_plans'
 
   ##### USERS #####
   get 'user' => 'users#index'

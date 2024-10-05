@@ -1,0 +1,42 @@
+<!-- _referral_details.html.erb -->
+<h4>Referral Details for <%= user.full_name %></h4>
+<div class="table-responsive">
+  <table class="table mb-2 mt-2 table-borderless">
+    <thead>
+    <tr>
+      <th scope="col" class="font-weight-bold">Full Name</th>
+      <th scope="col" class="font-weight-bold">Email</th>
+      <th scope="col" class="font-weight-bold">Referred By</th>
+      <th scope="col" class="font-weight-bold">Referral Count</th>
+      <th scope="col" class="font-weight-bold">Plan</th>
+      <th scope="col" class="font-weight-bold">Deposit Amount</th>
+      <th scope="col" class="font-weight-bold">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% referrals.each do |referral| %>
+      <tr>
+        <td><%= referral.full_name %></td>
+        <td><%= referral.email %></td>
+        <td><%= referral.referred_by_user.present? ? referral.referred_by_user.full_name : "Direct Signup" %></td>
+        <td><%= referral.referred_users.count %></td>
+        <td>
+          <% if referral.purchases.present? %>
+            <% plan = referral.purchases.first.investment_plan || referral.purchases.first.trading_plan || referral.purchases.first.staking %>
+            <%= plan.name %>
+          <% else %>
+            No Plan
+          <% end %>
+        </td>
+        <td><%= number_to_currency(referral.total_deposit_amount, unit: "$") %></td>
+        <td>
+            <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
+              <%= referral.is_active ? 'Active' : 'Inactive' %>
+              <span class="ri-<%= referral.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+            </span>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

@@ -6,6 +6,9 @@ class TradingPlansController < ApplicationController
 
   def index
     @trading_plan = TradingPlan.all
+    @trading_plan_users = User.joins(:purchases)
+                              .where(purchases: { trading_plan_id: @trading_plan.pluck(:id), status: 'active', approved: true })
+                              .distinct
     ActivityStream.create_activity_stream("View Trading Plans Index Page", "TradingPlans", 0, @current_user, "view")
   end
 
@@ -14,7 +17,27 @@ class TradingPlansController < ApplicationController
     render partial: 'trading_plans/edit_modal', locals: { trading_plan: @trading_plan}
   end
 
+  def trading
+    # Fetch all purchases for trading plans
+    @trading_purchases = Purchase.joins(:user).where.not(trading_plan_id: nil)
+  end
 
+  def apply_manual_profit_loss
+    user_ids = params[:user_ids]
+    percentage = params[:percentage].to_f
+    profit_loss_type = params[:profit_loss_type]
+    plan_type = params[:plan_type] || 'trading_plan'  # You can adjust this if you need to apply to other plans
+
+    if user_ids.present? && percentage.present?
+      User.where(id: user_ids).each do |user|
+        user.apply_manual_profit_or_loss(plan_type, percentage, profit_loss_type)
+      end
+
+      redirect_to trading_plans_path, notice: "Manual #{profit_loss_type.humanize} of #{percentage}% applied successfully!"
+    else
+      redirect_to trading_plans_path, alert: 'Please select users and enter a valid percentage.'
+    end
+  end
   def create
     trading_plan = TradingPlan.new(trading_plan_params)
     if trading_plan.save
@@ -33,6 +56,7 @@ class TradingPlansController < ApplicationController
     if params[:is_active].nil?
       params[:is_active] = false
     end
+
     trading_plan = TradingPlan.find(params[:id])
     if trading_plan.update(trading_plan_params)
       ActivityStream.create_activity_stream("Update #{trading_plan.name} Existing TradingPlans", "TradingPlans", trading_plan.id, @current_user, "edit")
@@ -55,7 +79,7 @@ class TradingPlansController < ApplicationController
 
   private
   def trading_plan_params
-    params.permit(:name, :description, :price, :is_active)
+    params.permit(:name, :description, :price,:duration_in_days, :profit_percentage, :is_active)
   end
   def set_module_name
     @module_name = "plans"

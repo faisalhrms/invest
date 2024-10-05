@@ -38,7 +38,7 @@
         <li class="<%= is_active('referrals') %>">
           <a href="<%= referrals_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
             <i class="ri-refund-line"></i>
-            <span>My Referrals</span>
+            <span>Teams</span>
           </a>
         </li>
       <% end %>
@@ -55,10 +55,34 @@
         </li>
       <% end %>
 
+      <% if permissions[:withdraw] %>
+        <li class="<%= is_active('withdrawals') %>">
+          <a href="<%= withdrawals_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
+            <i class="ri-currency-line"></i>
+            <span>Withdraw Request</span>
+            <% if set_pending_withdrawals_count > 0 %>
+        <span class="badge badge-danger" style="width: 15px">
+          <%= set_pending_withdrawals_count %>
+        </span>
+            <% end %>
+          </a>
+        </li>
+      <% end %>
+
+
+
+      <% if permissions[:purchases] %>
+        <li class="<%= is_active('ranks') %>">
+          <a href="<%= rank_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
+            <i class="ri-archive-line"></i>
+            <span>Ranks</span>
+          </a>
+        </li>
+      <% end %>
 
       <% if permissions[:plans] %>
         <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Menus</span></li>
-        <% controller_class = %w[investment_plans trading_plans staking].detect { |c| params[:controller] == c } %>
+        <% controller_class = %w[investment_plans plan_durations trading_plans staking].detect { |c| params[:controller] == c } %>
         <li class="<%= is_active(controller_class) %>">
           <a href="#plans" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false">
             <i class="ri-wallet-3-line"></i><span>Plans</span><i class="ri-arrow-right-s-line iq-arrow-right"></i>
@@ -82,6 +106,13 @@
                   Staking</a>
               </li>
             <% end %>
+
+            <% if permissions[:plan_durations] %>
+              <li class="<%= is_active('plan_durations') %>">
+                <a href="<%= plan_duration_path %>" target="<%= link_target_attribute %>"><i class="ri-timer-2-line"></i>
+                  Plan Durations</a>
+              </li>
+            <% end %>
           </ul>
         </li>
       <% end %>
@@ -99,6 +130,12 @@
               <li class="<%= is_active('users') %>">
                 <a href="<%= user_path %>" target="<%= link_target_attribute %>"><i class="ri-user-add-line"></i>User
                   Add</a>
+              </li>
+            <% end %>
+            <% if permissions[:bank_account] %>
+              <li class="<%= is_active('bank_account_details') %>">
+                <a href="<%= bank_account_path %>" target="<%= link_target_attribute %>"><i class="ri-bank-line"></i>Bank
+                  Account</a>
               </li>
             <% end %>
             <% if permissions[:menus] %>

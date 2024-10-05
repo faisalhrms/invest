@@ -1,0 +1,155 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <% if @can_create %>
+          <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+            <i class="ri-add-fill"><span class="pl-1">Add New</span></i></button>
+          <%= form_with url: new_bank_account_path, method: :post, multipart: true do |form| %>
+            <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add New Bank Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="iq-card-body">
+                    <div class="row">
+
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="account_name">Account Holder Name <span style="color: red">*</span></label>
+                          <input type="text" class="form-control" id="account_name" name="account_name" placeholder="Enter Account Holder Name">
+                        </div>
+                      </div>
+
+                      <div class=" col-md-6">
+                          <div class="form-group">
+                            <label for="account_number">Account Number <span style="color: red">*</span></label>
+                            <input type="number" class="form-control" id="account_number" name="account_number" placeholder="Enter Account Number">
+                          </div>
+                        </div>
+
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="bank_name">Bank Name <span style="color: red">*</span></label>
+                          <input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="Enter Bank Name">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="iban">IBAN <span style="color: red">*</span></label>
+                          <input type="text" class="form-control" id="iban" name="iban" placeholder="Enter IBAN PK00XYZ123456789000000">
+                        </div>
+                      </div>
+
+                        <div class="col-md-6 mt-2">
+                          <div class="form-group">
+                            <div class="custom-control custom-switch custom-control-inline">
+                              <input type="checkbox" class="custom-control-input" name="is_active" id="Active" checked="checked">
+                              <label class="custom-control-label" for="Active">Inactive / active</label>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+          <% end %>
+        <% end %>
+
+        <div class="iq-header-title">
+          <h4 class="card-title"><%= @sub_module_name.gsub('_', ' ').titleize %></h4>
+        </div>
+
+        </div>
+        <div class="iq-card-body">
+          <div class="table-responsive">
+            <table id="datatable" class="table mb-0 mt-2 table-borderless">
+              <thead>
+              <tr>
+                <th scope="col" class="font-weight-bold">Account Holder Name</th>
+                <th scope="col" class="font-weight-bold">Account Number</th>
+                <th scope="col" class="font-weight-bold">Bank Name</th>
+                <th scope="col" class="font-weight-bold">IBAN</th>
+                <th scope="col" class="font-weight-bold">Is Active?</th>
+                <th scope="col" class="font-weight-bold">Action</th>
+              </tr>
+              </thead>
+              <% if @bank_account.present? %>
+                <tbody>
+                <% @bank_account.order(id: :desc).each do |bank_account| %>
+                  <tr>
+                    <td>
+                      <h6><%= bank_account.account_name %></h6>
+                    </td>
+                    <td>
+                      <h6><%= bank_account.account_number %></h6>
+                    </td>
+                    <td>
+                      <h6><%= bank_account.bank_name %></h6>
+                    </td>
+                    <td>
+                      <h6><%= bank_account.iban %></h6>
+                    </td>
+                    <td>
+                    <span class="badge rounded-pill <%= bank_account.is_active ? 'badge-info' : 'badge-danger' %>">
+                      <%= bank_account.is_active ? 'Active' : 'In Active' %>
+                      <span class="ri-<%= bank_account.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+                    </span>
+                    </td>
+                    <td>
+                      <% if @can_edit %>
+                        <a data-toggle="modal" data-target="#editModal<%= bank_account.id %>" class="animate">
+                          <i class="ri-ball-pen-fill text-success pr-1 font-size-18"></i>
+                        </a>
+                      <% end %>
+                      <% if @can_delete %>
+                        <a data-toggle="modal" data-target="#modalBootstrapdelete<%= bank_account.id %>" class="animate">
+                          <i class="ri-delete-bin-5-line text-danger font-size-18"></i>
+                        </a>
+                      <% end %>
+                    </td>
+                    <%= render 'edit_modal', bank_account: bank_account if @can_edit %>
+                    <%= render 'delete_modal', bank_account: bank_account if @can_delete %>
+
+
+                  </tr>
+                <% end %>
+                </tbody>
+              <% end %>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <style>
+      .animate i {
+          transition: all 0.3s ease;
+      }
+
+      .animate:hover i {
+          font-size: 22px;
+      }
+  </style>
+  <script>
+      function updateFileName(input) {
+          var fileName = input.files[0].name;
+          var label = input.nextElementSibling;
+          label.innerText = fileName;
+      }
+  </script>

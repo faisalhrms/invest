@@ -31,11 +31,14 @@ module ApplicationHelper
   def fetch_permissions(current_user)
     return {} unless current_user
 
-    menus = Menu.where(slug: %w[plans referrals purchases trading_plans staking investment_plans settings dashboard users menus roles activity_streams])
+    menus = Menu.where(slug: %w[plans plan_durations withdraw bank_account referrals purchases trading_plans staking investment_plans settings dashboard users menus roles activity_streams])
     permissions = Permission.where(role_id: current_user.role_id, menu_id: menus.pluck(:id), is_index: true).pluck(:menu_id)
     permissions_by_menu_slug = menus.index_by(&:slug).slice(*permissions.map { |menu_id| menus.detect { |m| m.id == menu_id }.slug })
 
     {
+      plan_durations: permissions_by_menu_slug.key?("plan_durations"),
+      withdraw: permissions_by_menu_slug.key?("withdraw"),
+      bank_account: permissions_by_menu_slug.key?("bank_account"),
       referrals: permissions_by_menu_slug.key?("referrals"),
       purchases: permissions_by_menu_slug.key?("purchases"),
       plans: permissions_by_menu_slug.key?("plans"),
@@ -54,13 +57,13 @@ module ApplicationHelper
   def plan_purchased?(plan)
     case plan.class.name
     when 'InvestmentPlan'
-      current_user.purchases.exists?(investment_plan_id: plan.id, approved: true)
+      current_user.purchases.find_by(investment_plan_id: plan.id, approved: true, status: "active")
     when 'TradingPlan'
-      current_user.purchases.exists?(trading_plan_id: plan.id, approved: true)
+      current_user.purchases.find_by(trading_plan_id: plan.id, approved: true, status: "active")
     when 'Staking'
-      current_user.purchases.exists?(staking_id: plan.id, approved: true)
+      current_user.purchases.find_by(staking_id: plan.id, approved: true, status: "active")
     else
-      false
+      nil
     end
   end
 
@@ -79,5 +82,13 @@ module ApplicationHelper
   def pending_approval_count
     Purchase.where(approved: false, status: "pending").count
   end
+  def set_pending_withdrawals_count
+    @pending_withdrawals_count = Withdrawal.where(status: 'pending').count
+  end
 
+  def calculate_percentage(transaction_count, total_count = 100)
+    return 0 if total_count.zero?
+
+    (transaction_count.to_f / total_count) * 100
+  end
 end
