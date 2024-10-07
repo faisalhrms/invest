@@ -43,6 +43,15 @@
         </li>
       <% end %>
 
+      <% if permissions[:deposits] %>
+        <li class="<%= is_active('deposits') %>">
+          <a href="<%= deposit_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
+            <i class="ri-wallet-2-line"></i>
+            <span>Deposit Fund</span>
+          </a>
+        </li>
+      <% end %>
+
       <% if permissions[:purchases] %>
         <li class="<%= is_active('purchases') %>">
           <a href="<%= pending_approvals_purchases_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">

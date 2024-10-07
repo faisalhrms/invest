@@ -9,33 +9,102 @@ class UsersController < ApplicationController
     create_activity("View Users Index Page", "User", 0)
   end
 
+
+  def current_profit
+    filter = params[:filter] || 'total'
+    render json: { profit: current_user.displayed_profit(filter) }
+  end
   def create
     referring_user = User.find_by(referral_id: params[:referral_id])
-
     user = User.new(user_params)
 
     if params[:register]
-
-    role = Role.find_by_name("Member")
-    user.role_id = role.id
-    user.user_type = "member"
-    user.is_active = true
-    user.referral_id = generate_unique_referral_code
-    user.referred_by = referring_user.id if referring_user.present?
+      role = Role.find_by_name("Member")
+      user.role_id = role.id
+      user.user_type = "member"
+      user.is_active = true
+      user.referral_id = generate_unique_referral_code
+      user.referred_by = referring_user.id if referring_user.present?
     end
 
     if user.save
-      ActivityStream.create_activity_stream("Create #{User.last.email} New User", "User", User.last.id, user, "create")
-      flash[:notice] = "User Created Successfully"
-    else
-      if user.errors.full_messages.first == "Email has already been taken"
-        flash[:alert] = user.errors.full_messages.first
+      # Create an activity stream for the new user creation
+      ActivityStream.create_activity_stream("Create #{user.email} New User", "User", user.id, user, "create")
+
+      # Auto-login the newly created user
+      user.update(authentication_token: SecureRandom.urlsafe_base64)
+      cookies[:auth_id] = user.authentication_token
+      session[:user_id] = user.id
+
+      # Log the user's login history
+      ip_address = request.remote_ip
+      browser_name = request.user_agent
+      LoginHistory.create(user_id: user.id, ip_address: ip_address, browser_name: browser_name, is_active: true)
+
+      flash[:notice] = "User Created Successfully and Logged in."
+
+      # Redirect based on user type
+      if user.user_type == "administrator"
+        redirect_to admin_path
       else
-        flash[:alert] = "Something Went Wrong"
+        user.update_cumulative_profit!
+        redirect_to dashboard_path
       end
+    else
+      # Handle errors and show specific validation messages
+      if user.errors.any?
+        flash[:alert] = user.errors.full_messages.to_sentence
+      else
+        flash[:alert] = "Something went wrong. Please try again."
+      end
+      redirect_to signup_path
     end
-    redirect_to user_path
   end
+
+
+  def login
+    ip_address = request.remote_ip
+    browser_name = request.user_agent
+    user = User.find_by(email: params[:email].downcase)
+
+    if user && user.authenticate(params[:password])
+      if user.is_active
+        user.update(authentication_token: SecureRandom.urlsafe_base64)
+        cookies[:auth_id] = user.authentication_token
+        session[:user_id] = user.id
+
+        if user.role&.is_active
+          @current_user = user
+          LoginHistory.create(user_id: user.id, ip_address: ip_address, browser_name: browser_name, is_active: true)
+          ActivityStream.create_activity_stream("#{user.email} Logged-in To Dashboard", "User", user.id, user, "login")
+
+          flash[:notice] = "Logged in successfully."
+
+          # Check for plan_id and plan_type in session
+          if session[:plan_id].present? && session[:plan_type].present? && user.user_type != "administrator"
+            plan_id = session.delete(:plan_id)
+            plan_type = session.delete(:plan_type)
+            redirect_to new_purchase_path(plan_id: plan_id, plan_type: plan_type)
+          elsif user.user_type == "administrator"
+            redirect_to admin_path
+          else
+            user.update_cumulative_profit!
+            redirect_to dashboard_path
+          end
+        else
+          flash[:notice] = "Your Role/Permission Is Inactive, Contact Admin"
+          redirect_to login_path
+        end
+      else
+        flash[:notice] = "Account is currently inactive, Contact Admin"
+        redirect_to login_path
+      end
+    else
+      flash[:alert] = "Invalid Login Credentials."
+      redirect_to login_path
+    end
+  end
+
 
   def update
     if params[:is_active].nil?

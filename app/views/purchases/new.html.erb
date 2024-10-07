@@ -48,6 +48,11 @@
 
           <hr>
 
+          <div class="form-group">
+            <label for="wallet_address">Wallet Address <span style="color: red">*</span></label>
+            <input  name="wallet_address" placeholder="Enter Wallet Address" class="form-control" required>
+          </div>
+
           <% if params[:plan_type] == 'Staking' %>
             <div class="col-md-6">
               <div class="form-group">

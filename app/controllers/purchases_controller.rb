@@ -22,36 +22,59 @@ class PurchasesController < ApplicationController
 
     if purchase && purchase.user == current_user
       ActiveRecord::Base.transaction do
-        # Update the purchase status to "cancelled"
         purchase.update!(approved: false, status: "cancelled")
 
         if purchase.profit.present?
           purchase.profit.update!(amount: 0.0)
-          current_user.update(total_profit: nil,last_profit_calculation: nil)
+          current_user.update(total_profit: nil, last_profit_calculation: nil)
         end
 
+        # Calculate deduction fee for trading plan, if applicable
+        deduction_fee = 0
+        if purchase.trading_plan.present? && purchase.trading_plan.deduction_fee.present?
+          deduction_fee = purchase.trading_plan.deduction_fee.to_f
+        end
+
+        # Calculate the refund amount by subtracting the deduction fee
+        refund_amount = [purchase.deposit_amount - deduction_fee, 0].max
+
+        # Create a deposit entry for the refund with the adjusted amount
         Deposit.create!(
           user_id: purchase.user_id,
-          amount: purchase.deposit_amount,
+          amount: refund_amount,
           processed_at: Time.current,
           status: "refund",
           investment_plan_id: purchase.investment_plan_id,
           trading_plan_id: purchase.trading_plan_id,
           staking_id: purchase.staking_id
         )
+
+        # Log a separate transaction for the deduction fee if applicable
+        if deduction_fee > 0
+          Deposit.create!(
+            user_id: purchase.user_id,
+            amount: deduction_fee,
+            processed_at: Time.current,
+            status: "deduction_fee",
+            investment_plan_id: purchase.investment_plan_id,
+            trading_plan_id: purchase.trading_plan_id,
+            staking_id: purchase.staking_id
+          )
+        end
       end
 
-      # Log the cancellation in the transaction history
+      # Log the cancellation in the transaction history with the adjusted refund amount
       plan_id = determine_plan_id(purchase)
       TransactionHistory.create_transaction(current_user, purchase.deposit_amount, "cancel plan", nil, plan_id, "refund", purchase.id)
 
-      redirect_to dashboard_path, notice: 'Purchase canceled successfully and associated profit has been reset to zero.'
+      redirect_to dashboard_path, notice: "Purchase canceled successfully. A deduction fee of  was applied and the remaining amount has been refunded."
     else
       redirect_to dashboard_path, alert: 'Unable to find or cancel the purchase.'
     end
   rescue ActiveRecord::RecordInvalid => e
     redirect_to dashboard_path, alert: "Error canceling purchase: #{e.message}"
   end
+
 
 
   def reject
@@ -135,7 +158,7 @@ class PurchasesController < ApplicationController
     ActiveRecord::Base.transaction do
       existing_deposit = Deposit.where(
         user_id: purchase.user_id,
-        status: ['refund', 'referral_commission']
+        status: ['refund','manual_deposit' ,'referral_commission']
       ).where(
         'investment_plan_id IS NULL OR investment_plan_id = ? AND trading_plan_id IS NULL OR trading_plan_id = ? AND staking_id IS NULL OR staking_id = ?',
         purchase.investment_plan_id,
@@ -182,13 +205,13 @@ class PurchasesController < ApplicationController
     plan_type = params[:plan_type]
     plan_id = params[:plan_id]
 
-    existing_purchase = current_user.purchases.where(approved: true, status: "active")
-                                    .where("#{plan_type.foreign_key} IS NOT NULL").exists?
-
-    if existing_purchase
-      redirect_to dashboard_path, alert: 'You already have an active plan of this type. Please cancel the current plan before purchasing a new one.'
-      return
-    end
+    # existing_purchase = current_user.purchases.where(approved: true, status: "active")
+    #                                 .where("#{plan_type.foreign_key} IS NOT NULL").exists?
+    #
+    # if existing_purchase
+    #   redirect_to dashboard_path, alert: 'You already have an active plan of this type. Please cancel the current plan before purchasing a new one.'
+    #   return
+    # end
 
     @purchase = Purchase.new(purchase_params)
     @purchase.user = current_user
@@ -217,7 +240,7 @@ class PurchasesController < ApplicationController
   private
 
   def calculate_user_balance(user_id)
-    Deposit.where(user_id: user_id, status: ['refund', 'referral_commission']).where.not(status: ['used for purchase', 'used for withdrawal']).sum(:amount)
+    Deposit.where(user_id: user_id, status: ['refund','manual_deposit', 'referral_commission']).where.not(status: ['used for purchase', 'used for withdrawal']).sum(:amount)
   end
 
 
@@ -264,7 +287,7 @@ class PurchasesController < ApplicationController
   end
 
   def purchase_params
-    params.permit(:deposit_amount, :attachment)
+    params.permit(:deposit_amount, :attachment,:wallet_address)
   end
   def create_transaction_history(purchase, transaction_type)
     plan_id = determine_plan_id(purchase)

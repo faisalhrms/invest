@@ -1,7 +1,6 @@
-# app/models/user.rb
 class User < ApplicationRecord
   has_secure_password
-  validates :email, presence: true, uniqueness: true
+  validates :email, presence: { message: "Email is required" }, uniqueness: { message: "This email is already taken" }
   has_many :login_histories
   has_many :activity_streams
   has_many :purchases
@@ -16,8 +15,17 @@ class User < ApplicationRecord
   belongs_to :rank, optional: true
   has_many :transaction_histories
   after_create :calculate_initial_referral_commission
+  validates :mobile_with_country_code, presence: { message: "Mobile number is required" },
+            uniqueness: { message: "This mobile number is already registered" },
+            unless: -> { user_type == "administrator" }
 
-  # Method to generate OTP and set its expiry time
+  validates :user_name, presence: { message: "Username is required" },
+            uniqueness: { message: "This username is already taken" },
+            unless: -> { user_type == "administrator" }
+
+  before_save :downcase_email
+
+
   def generate_otp
     self.otp = rand.to_s[2..7]  # 6-digit OTP
     self.otp_expires_at = 15.minutes.from_now
@@ -153,8 +161,11 @@ class User < ApplicationRecord
     deposits.where.not(status: ['used for purchase','invalid']).sum(:amount)
   end
 
+  def total_withdrawable_profit
+    deposits.where(profit_eligible: true).sum(:calculated_profit)
+  end
   def total_withdrawable_amount
-    total_deposits + withdrawable_referral_commission
+    total_deposits + total_withdrawable_profit + withdrawable_referral_commission
   end
 
 
@@ -197,8 +208,24 @@ class User < ApplicationRecord
                     return 0
                   end
 
-    purchases.joins(:profit).where(approved: true, status: "active").where.not(plan_column => nil).sum("profits.amount")
+    # Apply 31-day logic only for trading and staking plans
+    if plan_type == 'trading_plan' || plan_type == 'staking'
+      purchases
+        .joins(:profit)
+        .where(approved: true, status: "active")
+        .where.not(plan_column => nil)
+        .where("#{plan_column} IS NOT NULL AND DATE_PART('day', NOW() - purchases.created_at) >= 31")
+        .sum("profits.amount")
+    else
+      # For investment plans, calculate the profit without 31-day restriction
+      purchases
+        .joins(:profit)
+        .where(approved: true, status: "active")
+        .where.not(plan_column => nil)
+        .sum("profits.amount")
+    end
   end
+
 
   def create_transaction_history(purchase, transaction_type, amount, profit_loss_type)
     plan_id = determine_plan_id(purchase)
@@ -224,6 +251,7 @@ class User < ApplicationRecord
 
       adjustment_amount = (purchase.deposit_amount * percentage) / 100.0
       adjustment_amount *= -1 if profit_loss_type == 'loss'
+
       if current_profit.persisted?
         current_profit.update(amount: current_profit.amount + adjustment_amount)
       else
@@ -245,5 +273,60 @@ class User < ApplicationRecord
     end
   end
 
+  def total_referral_profit_sum
+    referred_users.sum(:total_profit)
+  end
 
+  def adjusted_total_profit
+    # For Trading and Staking plans: Show profit only if purchase is older than 31 days
+    trading_and_staking_profit = purchases
+                                   .where(approved: true, status: 'active')
+                                   .where.not(trading_plan_id: nil).or(purchases.where.not(staking_id: nil))
+                                   .select { |purchase| (Date.today - purchase.created_at.to_date).to_i >= 31 }
+                                   .sum { |purchase| purchase.profit.try(:amount).to_f }
+
+    # For Investment plans: Show daily profit without date restriction
+    investment_profit = purchases
+                          .where(approved: true, status: 'active', investment_plan_id: investment_plan_ids)
+                          .sum { |purchase| purchase.profit.try(:amount).to_f }
+
+    # Combine the profits from both types
+    trading_and_staking_profit + investment_profit
+  end
+
+  def displayed_profit(filter = 'total')
+    case filter
+    when 'total'
+      adjusted_total_profit
+    when 'this_month'
+      this_month_profit
+    when 'last_month'
+      last_month_profit
+    else
+      adjusted_total_profit
+    end
+  end
+
+  def this_month_profit
+    purchases.joins(:profit)
+             .where(approved: true, status: 'active')
+             .where('profits.created_at >= ? AND profits.created_at <= ?', Time.current.beginning_of_month, Time.current.end_of_month)
+             .sum('profits.amount')
+  end
+
+  # Calculate the total profit for last month
+  def last_month_profit
+    purchases.joins(:profit)
+             .where(approved: true, status: 'active')
+             .where('profits.created_at >= ? AND profits.created_at <= ?', Time.current.last_month.beginning_of_month, Time.current.last_month.end_of_month)
+             .sum('profits.amount')
+  end
+
+  private
+  def downcase_email
+    self.email = email.downcase
+  end
+  def investment_plan_ids
+    purchases.where.not(investment_plan_id: nil).pluck(:investment_plan_id).uniq
+  end
 end

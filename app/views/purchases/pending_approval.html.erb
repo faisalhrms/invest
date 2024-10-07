@@ -17,6 +17,7 @@
               <th scope="col" class="font-weight-bold">Plan Type</th>
               <th scope="col" class="font-weight-bold">Deposit Amount</th>
               <th scope="col" class="font-weight-bold">Deposit Type</th>
+              <th scope="col" class="font-weight-bold">Wallet Address</th>
               <th scope="col" class="font-weight-bold">Attachment</th>
               <th scope="col" class="font-weight-bold">Action</th>
             </tr>
@@ -49,6 +50,9 @@
                 <% else %>
                   <td>Withdraw Balance</td>
                 <% end %>
+
+                <td><%= purchase.wallet_address %></td>
+
                 <td>
                   <% if purchase.attachment.present? %>
                     <%= link_to 'View Attachment', purchase.attachment.url, target: "_blank" %>
@@ -56,6 +60,7 @@
                     No attachment
                   <% end %>
                 </td>
+
                 <td class="d-flex">
                   <%= form_with url: approve_purchases_path(id: purchase.id), method: :post do %>
                     <%= submit_tag "Approve", class: "btn btn-success" %>

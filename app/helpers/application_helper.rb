@@ -31,11 +31,12 @@ module ApplicationHelper
   def fetch_permissions(current_user)
     return {} unless current_user
 
-    menus = Menu.where(slug: %w[plans plan_durations withdraw bank_account referrals purchases trading_plans staking investment_plans settings dashboard users menus roles activity_streams])
+    menus = Menu.where(slug: %w[plans deposits plan_durations withdraw bank_account referrals purchases trading_plans staking investment_plans settings dashboard users menus roles activity_streams])
     permissions = Permission.where(role_id: current_user.role_id, menu_id: menus.pluck(:id), is_index: true).pluck(:menu_id)
     permissions_by_menu_slug = menus.index_by(&:slug).slice(*permissions.map { |menu_id| menus.detect { |m| m.id == menu_id }.slug })
 
     {
+      deposits: permissions_by_menu_slug.key?("deposits"),
       plan_durations: permissions_by_menu_slug.key?("plan_durations"),
       withdraw: permissions_by_menu_slug.key?("withdraw"),
       bank_account: permissions_by_menu_slug.key?("bank_account"),

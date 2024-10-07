@@ -50,6 +50,13 @@ Rails.application.routes.draw do
   post 'delete_plan_duration' => 'plan_durations#destroy'
   get 'plan_duration/:id/edit_modal', to: 'plan_durations#edit_modal', as: 'edit_modal_plan_duration'
 
+
+  ##### deposit Plan #####
+  get 'deposit' => 'deposits#index'
+  post 'new_deposit' => 'deposits#create'
+  post 'approve_deposit/:id' => 'deposits#approve_deposit', as: 'approve_deposit'
+  post 'reject_deposit/:id' => 'deposits#reject_deposit', as: 'reject_deposit'
+
   ##### Investment Plan #####
   get 'investment_plan' => 'investment_plans#index'
   post 'new_investment_plan' => 'investment_plans#create'
@@ -101,6 +108,7 @@ Rails.application.routes.draw do
   get 'user_profile' => 'users#user_profile'
   post '/update_preference', to: 'users#update_preference'
   get 'users/:id/referral_data', to: 'users#referral_data'
+  get 'users/current_profit', to: 'users#current_profit'
 
   ##### MENUS #####
   get 'menu' => 'menus#index'

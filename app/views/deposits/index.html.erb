@@ -1,0 +1,112 @@
+<div class="container-fluid">
+  <div class="col-lg-12">
+    <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+      <div class="iq-card-header d-flex justify-content-between">
+        <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
+          <i class="ri-add-fill"><span class="pl-1">Add New</span></i>
+        </button>
+
+        <%= form_with url: new_deposit_path, method: :post, html: { multipart: true } do |form| %>
+          <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Add Manual Deposit</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+
+                    <!-- Wallet Address Input -->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="wallet_address">Wallet Address <span style="color: red">*</span></label>
+                        <%= form.text_field :wallet_address, class: "form-control", placeholder: "Enter Wallet Address", required: true %>
+                      </div>
+                    </div>
+
+                    <!-- Deposit Amount Input -->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="amount">Deposit Amount <span style="color: red">*</span></label>
+                        <%= form.number_field :amount, class: "form-control", step: 0.01, min: 1, placeholder: "Enter Deposit Amount", required: true %>
+                      </div>
+                    </div>
+
+                    <!-- Attachment Upload -->
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="attachment">Upload Payment Proof</label>
+                        <div class="custom-file">
+                          <%= form.file_field :attachment, class: "custom-file-input", id: "customFile" %>
+                          <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="iq-header-title">
+          <h4 class="card-title">Manual Deposits</h4>
+        </div>
+      </div>
+      <div class="iq-card-body">
+        <div class="table-responsive">
+          <table class="table mb-2 mt-2 table-borderless">
+            <thead>
+            <tr>
+              <th scope="col" class="font-weight-bold">User</th>
+              <th scope="col" class="font-weight-bold">Amount</th>
+              <th scope="col" class="font-weight-bold">Wallet Address</th>
+              <th scope="col" class="font-weight-bold">Requested At</th>
+              <th scope="col" class="font-weight-bold">Attachment</th>
+            <th scope="col" class="font-weight-bold">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @deposits.each do |deposit| %>
+              <tr>
+                <td><%= deposit.user.email %></td>
+                <td><%= number_to_currency(deposit.amount) %></td>
+                <td><%= deposit.wallet_address %></td>
+                <td><%= deposit.created_at.strftime("%d %B, %Y") %></td>
+                <td>
+                  <% if deposit.attachment.exists? %>
+                    <%= link_to "View", deposit.attachment.url, target: "_blank", class: "btn btn-sm btn-info" %>
+                  <% else %>
+                    No Attachment
+                  <% end %>
+                </td>
+                <td>
+                  <% if deposit.status == 'pending' && current_user.user_type == 'administrator' %>
+                    <%= button_to "Approve", approve_deposit_path(deposit), method: :post, class: "btn btn-sm btn-success", data: { confirm: "Are you sure you want to approve this deposit?" } %>
+                    <%= button_to "Reject", reject_deposit_path(deposit), method: :post, class: "btn btn-sm btn-danger", data: { confirm: "Are you sure you want to reject this deposit?" } %>
+                  <% elsif deposit.status == 'manual_deposit' %>
+                    <span class="badge badge-success">Approved</span>
+                  <% elsif deposit.status == 'rejected' %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% else %>
+                    <span class="badge badge-warning">Pending</span>
+                  <% end %>
+                </td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

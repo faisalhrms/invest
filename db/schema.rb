@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_07_154949) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,6 +76,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
     t.integer "staking_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "attachment_file_name"
+    t.string "attachment_content_type"
+    t.integer "attachment_file_size"
+    t.datetime "attachment_updated_at"
+    t.string "wallet_address"
+    t.decimal "calculated_profit", precision: 15, scale: 2, default: "0.0"
+    t.boolean "profit_eligible", default: false
   end
 
   create_table "investment_plans", force: :cascade do |t|
@@ -188,6 +195,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
     t.datetime "updated_at", null: false
     t.boolean "manual_payment", default: false
     t.float "duration_in_days"
+    t.string "wallet_address"
     t.index ["investment_plan_id"], name: "index_purchases_on_investment_plan_id"
     t.index ["staking_id"], name: "index_purchases_on_staking_id"
     t.index ["trading_plan_id"], name: "index_purchases_on_trading_plan_id"
@@ -243,6 +251,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
     t.datetime "updated_at", null: false
     t.integer "duration_in_days"
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
+    t.integer "deduction_fee"
   end
 
   create_table "transaction_histories", force: :cascade do |t|
@@ -307,6 +316,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_054512) do
     t.integer "investment_plan_id"
     t.integer "trading_plan_id"
     t.integer "staking_id"
+    t.string "wallet_address"
     t.index ["user_id"], name: "index_withdrawals_on_user_id"
   end
 

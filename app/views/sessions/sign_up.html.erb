@@ -4,7 +4,7 @@
       <div class="col-sm-6 align-self-center">
         <div class="sign-in-from">
           <h1 class="mb-0">Sign Up</h1>
-          <%= form_with(model: @user, url: new_user_path, local: true) do |f| %>
+          <%= form_with(model: @user, url: new_user_path, local: true, id: "registration-form") do |f| %>
             <input name="register" hidden="hidden">
             <div class="form-group">
               <label for="full_name">Your Full Name <span style="color: red">*</span></label>
@@ -16,21 +16,42 @@
             </div>
             <div class="form-group">
               <label for="email">Email address <span style="color: red">*</span></label>
-              <%= f.email_field :email, class: "form-control mb-0", placeholder: "Enter email", required: true %>
+              <%= f.email_field :email, class: "form-control mb-0", placeholder: "Enter email", required: true, pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", oninput: "this.value = this.value.toLowerCase()" %>
+              <small class="form-text text-muted">Only lowercase letters allowed.</small>
             </div>
             <div class="form-group">
               <label for="country">Country <span style="color: red">*</span></label>
               <select class="form-control mb-0" name="country" id="country-selector" required>
-                <!-- Populate with JavaScript or static list of countries -->
+                <option value="">Select Country</option>
               </select>
             </div>
             <div class="form-group">
               <label for="mobile">Mobile <span style="color: red">*</span></label>
               <input type="tel" class="form-control mb-0" id="mobile" name="mobile_with_country_code" placeholder="Enter Mobile" required>
+              <small class="text-muted" id="mobile-help">Format: </small>
             </div>
             <div class="form-group">
               <label for="password">Password <span style="color: red">*</span></label>
-              <%= f.password_field :password, class: "form-control mb-0", placeholder: "Password", required: true %>
+              <div class="input-group">
+                <%= f.password_field :password, class: "form-control mb-0", placeholder: "Password", required: true, id: "password" %>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-eye toggle-password" toggle="#password" style="cursor: pointer;"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Confirm Password <span style="color: red">*</span></label>
+              <div class="input-group">
+                <%= f.password_field :password_confirmation, class: "form-control mb-0", placeholder: "Confirm Password", required: true, id: "confirm_password" %>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-eye toggle-password" toggle="#confirm_password" style="cursor: pointer;"></i>
+                  </span>
+                </div>
+              </div>
+              <small id="password-match-message" class="text-danger d-none">Passwords do not match!</small>
             </div>
             <div class="form-group">
               <label for="referral_id">Referral ID</label>
@@ -45,86 +66,95 @@
               <button type="submit" class="btn btn-primary float-right">Sign Up</button>
             </div>
           <% end %>
-            <div class="sign-info">
-              <span class="dark-color d-inline-block line-height-2">Already Have Account ? <a href="<%= login_path %>">Log In</a></span>
-            </div>
-          </form>
+          <div class="sign-info">
+            <span class="dark-color d-inline-block line-height-2">Already Have Account? <a href="<%= login_path %>">Log In</a></span>
+          </div>
         </div>
       </div>
       <div class="col-sm-6 text-center">
         <div class="sign-in-detail text-white">
           <a class="sign-in-logo mb-5" href="#"></a>
-          <div class="slick-slider11">
-            <div class="item">
-              <h4 class="mb-1 text-white">Manage your orders</h4>
-              <p>It is a long established fact that a reader will be distracted by the readable content.</p>
-            </div>
-            <div class="item">
-              <h4 class="mb-1 text-white">Manage your orders</h4>
-              <p>It is a long established fact that a reader will be distracted by the readable content.</p>
-            </div>
-            <div class="item">
-              <h4 class="mb-1 text-white">Manage your orders</h4>
-              <p>It is a long established fact that a reader will be distracted by the readable content.</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- Font Awesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const countrySelector = document.getElementById('country-selector');
+        const mobileInput = document.querySelector("#mobile");
+        const mobileHelp = document.getElementById("mobile-help");
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirm_password');
+        const passwordMatchMessage = document.getElementById('password-match-message');
+        let iti = null;
 
-        // Fetch the list of countries from the REST Countries API
-        fetch('https://restcountries.com/v3.1/all')
-            .then(response => response.json())
-            .then(data => {
-                // Sort countries alphabetically by name
-                data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-
-                // Add each country as an option to the dropdown
-                data.forEach(country => {
-                    const option = document.createElement('option');
-                    option.value = country.name.common;
-                    option.textContent = country.name.common;
-                    countrySelector.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching country data:', error));
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        // Initialize the intl-tel-input plugin for the mobile input
-        var input = document.querySelector("#mobile");
-        var iti = window.intlTelInput(input, {
+        // Initialize intl-tel-input for the mobile input
+        iti = window.intlTelInput(mobileInput, {
             initialCountry: "auto",
             geoIpLookup: function (success, failure) {
                 fetch('https://ipinfo.io', {headers: {'Accept': 'application/json'}})
-                    .then(function (resp) { return resp.json(); })
-                    .then(function (resp) { success(resp.country); })
-                    .catch(function () { success('us'); });
+                    .then(resp => resp.json())
+                    .then(resp => success(resp.country))
+                    .catch(() => success('us'));
             },
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
         });
 
-        // When the form is submitted, append the full number with country code to the input value
-        document.querySelector("form").addEventListener("submit", function () {
-            var phoneNumber = iti.getNumber();
-            input.value = phoneNumber;
+        // Fetch and populate the country dropdown
+        fetch('https://restcountries.com/v3.1/all')
+            .then(response => response.json())
+            .then(data => {
+                data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+                data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.cca2.toLowerCase();
+                    option.textContent = country.name.common;
+                    countrySelector.appendChild(option);
+                });
+            });
+
+        // Update intl-tel-input country when dropdown changes
+        countrySelector.addEventListener("change", function () {
+            iti.setCountry(this.value.toLowerCase());
+            updateMobileField();
         });
-    });
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get the current URL and extract the 'ref' parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const referralId = urlParams.get('ref');
 
-        // If the 'ref' parameter exists, set it as the value of the referral ID input
-        if (referralId) {
-            document.getElementById('referral-id').value = referralId;
+        // Toggle password visibility
+        document.querySelectorAll(".toggle-password").forEach(toggleIcon => {
+            toggleIcon.addEventListener("click", function () {
+                const input = document.querySelector(this.getAttribute("toggle"));
+                input.type = input.type === "password" ? "text" : "password";
+                this.classList.toggle("fa-eye-slash");
+            });
+        });
+
+        // Update maxLength and format for mobile input
+        function updateMobileField() {
+            const placeholder = iti.getNumberPlaceholder();
+            const maxLength = placeholder.replace(/\D/g, '').length;
+            mobileInput.maxLength = maxLength;
+            mobileHelp.textContent = `Format: ${placeholder} (Max: ${maxLength} digits)`;
         }
-    });
 
+        // Check if passwords match and show message
+        function validatePasswords() {
+            const match = passwordField.value && confirmPasswordField.value && passwordField.value !== confirmPasswordField.value;
+            passwordMatchMessage.classList.toggle('d-none', !match);
+        }
+
+        // Add event listeners for validation
+        passwordField.addEventListener('input', validatePasswords);
+        confirmPasswordField.addEventListener('input', validatePasswords);
+
+        mobileInput.addEventListener('countrychange', updateMobileField);
+        updateMobileField();
+    });
 </script>

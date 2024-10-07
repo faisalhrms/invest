@@ -13,7 +13,8 @@
             <tr>
               <th scope="col" class="font-weight-bold">User</th>
               <th scope="col" class="font-weight-bold">Amount</th>
-              <th scope="col" class="font-weight-bold">Withdrawal Type</th>
+              <th scope="col" class="font-weight-bold">Wallet Address</th>
+              <th scope="col" class="font-weight-bold">Withdraw Type</th>
               <th scope="col" class="font-weight-bold">Requested At</th>
               <th scope="col" class="font-weight-bold">Action</th>
             </tr>
@@ -23,7 +24,8 @@
               <tr>
                 <td><%= withdrawal.user.full_name %></td>
                 <td><%= number_to_currency(withdrawal.amount, unit: "$") %></td>
-                <td><%= withdrawal.withdrawal_type.capitalize %></td>
+                <td><%= withdrawal.wallet_address %></td>
+                <td><%= withdrawal.withdrawal_type %></td>
                 <td><%= withdrawal.created_at.strftime("%d-%m-%Y %I:%M %p") %></td>
                 <td class="d-flex">
                   <!-- Approve Button -->

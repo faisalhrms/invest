@@ -19,39 +19,82 @@
     </div>
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
-        <div class="iq-card-body relative-background">
-          <div class="d-flex align-items-center">
-            <div class="rounded-circle iq-card-icon iq-bg-info mr-3"> <i class="ri-numbers-line"></i></div>
-            <div class="text-left">
-              <h4 class=""><%= current_user.total_profit || '0.00' %></h4>
-              <h5 class="">Profit</h5>
+        <div class="ml-auto">
+          <div class="dropdown">
+            <button class="btn btn-light" type="button" id="profitFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="ri-filter-3-line"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profitFilterDropdown">
+              <a class="dropdown-item" href="#" onclick="updateProfitDisplay('total')">Total Profit</a>
+              <a class="dropdown-item" href="#" onclick="updateProfitDisplay('this_month')">This Month</a>
+              <a class="dropdown-item" href="#" onclick="updateProfitDisplay('last_month')">Last Month</a>
             </div>
           </div>
-          <p class=" mb-0 mt-3">Daily Profit.</p>
-          <div class="background-image">
-            <img src="<%= asset_path "page-img/39.png" %>" class="img-fluid" alt="img-39">
+        </div>
+        <div class="iq-card-body relative-background">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle iq-card-icon iq-bg-info mr-3">
+              <i class="ri-numbers-line"></i>
+            </div>
+            <div class="text-left">
+              <!-- Profit Display Section -->
+              <h4 id="profit-display" class=""><%= number_to_currency(current_user.displayed_profit(@selected_filter) || '0.00') %></h4>
+              <h5 class="">Profit</h5>
+            </div>
+
+            <!-- Filter Icon with Dropdown -->
+
           </div>
+
         </div>
       </div>
     </div>
+
+
+    <script>
+        function updateProfitDisplay(filter) {
+            // Make an AJAX request to get the updated profit based on the selected filter
+            let displayUrl = `/users/current_profit?filter=${filter}`;
+
+            // Perform the AJAX call to dynamically update the displayed profit
+            $.ajax({
+                url: displayUrl,
+                method: 'GET',
+                success: function(data) {
+                    // Update the display element with the new profit value
+                    $('#profit-display').text(`$${data.profit.toFixed(2)}`);
+                },
+                error: function(error) {
+                    console.error("Error fetching profit:", error);
+                }
+            });
+        }
+
+    </script>
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
         <div class="iq-card-body relative-background">
           <div class="d-flex align-items-center">
             <div class="text-left">
-              <h5 class=""><%= current_user.total_referrals %></h5>
-              <h6 class="">Total Referrals</h6>
+              <h6 class=""><%= current_user.total_referrals %></h6>
+              <span class="font-size-12">Team</span>
             </div>
             <div class="text-left ml-5">
-              <h5 class=""> <%= number_to_currency(current_user.refer_deposit_amount) %></h5>
-              <h6 class="">Referrals Deposit</h6>
+              <h6 class=""> <%= number_to_currency(current_user.refer_deposit_amount) %></h6>
+              <span class="font-size-12">Team Deposit</span>
             </div>
+            <div class="text-left ml-5">
+              <h6 class=""> <%= number_to_currency(current_user.total_referral_profit_sum) %></h6>
+              <span class="font-size-12">Downline Commission</span>
+            </div>
+
           </div>
           <p class=" mb-0 mt-3">Copy Referral Link.</p>
           <button class="btn btn-primary" type="button" onclick="copyReferralUrl()">
             <i class="ri-file-copy-line"></i>
           </button>
-          <input type="hidden" id="referral-url" value="<%= "http://localhost:3000/signup?ref=#{current_user.referral_id}" %>">
+          <% host = request.base_url %>
+          <input type="hidden" id="referral-url" value="<%= "#{host}/signup?ref=#{current_user.referral_id}" %>">
 
           <div class="background-image">
             <div class="rounded-circle iq-card-icon iq-bg-danger mr-3"> <i class="ri-refund-line"></i></div>
@@ -65,8 +108,8 @@
       <div class="iq-card iq-card-block iq-card-stretch">
         <div class="iq-card-body">
           <h2 class="mb-1">
-            <!-- Display the total withdrawable amount (Total Deposits) -->
-            <%= number_to_currency(current_user.total_deposits) %>
+            <!-- Display the total withdrawable amount (Total Deposits + Profits) -->
+            <%= number_to_currency(current_user.total_withdrawable_amount) %>
           </h2>
           <p class="mb-2">Withdrawable Amount</p>
 
@@ -85,11 +128,32 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p id="withdraw-message">You are about to withdraw <strong id="withdraw-amount">$0.00</strong> from your account.</p>
+                <p id="withdraw-message">You are about to withdraw funds from your account.</p>
                 <form id="withdrawal-form" action="<%= withdrawals_path %>" method="POST">
                   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
                   <input type="hidden" name="withdrawal_type" id="withdrawal-type" value="deposit">
-                  <input type="hidden" name="amount" id="withdraw-amount-input">
+
+                  <!-- Withdrawal Type Selection -->
+                  <div class="form-group">
+                    <label for="withdrawal-type-selection">Select Withdrawal Type</label>
+                    <select id="withdrawal-type-selection" class="form-control" onchange="updateWithdrawalType()">
+                      <option value="deposit">Deposit</option>
+                      <option value="profit">Profit</option>
+                      <option value="referral_commission">Referral Commission</option>
+                    </select>
+                  </div>
+
+                  <!-- Withdrawal Amount Input -->
+                  <div class="form-group">
+                    <label for="withdraw-amount-input">Enter Withdrawal Amount</label>
+                    <input type="number" name="amount" id="withdraw-amount-input" class="form-control" placeholder="Enter amount to withdraw" min="1" required>
+                  </div>
+
+                  <!-- Wallet Address Input -->
+                  <div class="form-group">
+                    <label for="wallet-address-input">Enter Wallet Address</label>
+                    <input type="text" name="wallet_address" id="wallet-address-input" class="form-control" placeholder="Enter wallet address" required>
+                  </div>
                 </form>
               </div>
               <div class="modal-footer">
@@ -102,21 +166,55 @@
 
         <script>
             function prepareWithdrawalModal() {
-                // Get the total deposit amount as the withdrawable amount
-                let totalDeposits = parseFloat("<%= current_user.total_deposits %>");
-
-                // Set the withdrawal type to "deposit"
-                let withdrawalType = "deposit";
-                let withdrawableAmount = totalDeposits;
-
-                // Set the values in the modal
-                document.getElementById("withdrawal-type").value = withdrawalType;
-                document.getElementById("withdraw-amount").innerText = "$" + withdrawableAmount.toFixed(2);
-                document.getElementById("withdraw-amount-input").value = withdrawableAmount;
+                // Reset the modal fields and set default values
+                document.getElementById("withdrawal-type-selection").value = "deposit";  // Default to Deposit
+                document.getElementById("withdraw-amount-input").value = "";  // Clear previous amount
+                document.getElementById("wallet-address-input").value = "";   // Clear previous wallet address
+                updateWithdrawalType();  // Update withdrawal type to set max value
             }
 
-            // Submit the withdrawal form
+            // Update the withdrawal amount based on the selected type
+            function updateWithdrawalType() {
+                let withdrawalType = document.getElementById("withdrawal-type-selection").value;
+                let amountInput = document.getElementById("withdraw-amount-input");
+                let maxAmount = 0;
+
+                // Determine the max amount based on the withdrawal type
+                switch (withdrawalType) {
+                    case "profit":
+                        maxAmount = parseFloat("<%= current_user.total_withdrawable_profit %>");
+                        document.getElementById("withdrawal-type").value = "profit";
+                        break;
+                    case "referral_commission":
+                        maxAmount = parseFloat("<%= current_user.withdrawable_referral_commission %>");
+                        document.getElementById("withdrawal-type").value = "referral_commission";
+                        break;
+                    default:
+                        maxAmount = parseFloat("<%= current_user.total_deposits %>");
+                        document.getElementById("withdrawal-type").value = "deposit";
+                }
+
+                // Set the max amount in the input field and update the placeholder
+                amountInput.max = maxAmount;
+                amountInput.placeholder = `Enter amount (Max: $${maxAmount.toFixed(2)})`;
+            }
+
+            // Submit the withdrawal form after validation
             function submitWithdrawal() {
+                let amountInput = document.getElementById("withdraw-amount-input");
+                let walletAddressInput = document.getElementById("wallet-address-input");
+                let maxAmount = parseFloat(amountInput.max);
+
+                if (amountInput.value <= 0 || amountInput.value > maxAmount) {
+                    alert(`Please enter a valid withdrawal amount (Max: $${maxAmount.toFixed(2)}).`);
+                    return;
+                }
+
+                if (walletAddressInput.value.trim() === "") {
+                    alert("Please enter a valid wallet address.");
+                    return;
+                }
+
                 document.getElementById("withdrawal-form").submit();
             }
         </script>
@@ -219,9 +317,10 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.total_profit_by_plan_type('trading_plan') %> </b>
+                  <b><span>$</span> <%= number_to_currency(current_user.total_profit_by_plan_type('trading_plan') || 0.00) %> </b>
                 </div>
               </div>
+
               <span class=""><%= current_user.withdrawal_count_by_plan_type('trading_plan') %> Transactions</span>
               <div class="iq-progress-bar-linear d-inline-block w-100">
                 <div class="iq-progress-bar">
@@ -355,7 +454,8 @@
 
                       <% if purchased_plan %>
                         <!-- Cancel button that triggers the confirmation modal -->
-                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'TradingPlan')}')" %>
+                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5",
+                                    onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'TradingPlan')}', #{purchased_plan.trading_plan.deduction_fee})" %>
                       <% elsif purchase_pending?(trading) %>
                         <!-- Approval Pending Message -->
                         <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
@@ -416,10 +516,9 @@
               </button>
             </div>
             <div class="modal-body">
-              <p>Are you sure you want to cancel this plan?</p>
-              <p class="text-danger"><strong>Note:</strong> Canceling this plan will result in the loss of any accumulated profits.</p>
+              <p id="cancel-message">Are you sure you want to cancel this plan?</p>
+              <p id="deduction-fee" class="text-danger"><strong>Note:</strong> Canceling this plan will result in the loss of any accumulated profits and a deduction fee of <span id="fee-amount">$0.00</span> will be applied.</p>
             </div>
-
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <a id="confirm-cancel" href="#" class="btn btn-danger">Confirm Cancel</a>
@@ -429,7 +528,8 @@
       </div>
 
 
-  </div>
+
+    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -539,15 +639,30 @@
 
 </div>
 <script>
-    function openCancelModal(cancelUrl) {
-        // Set the href of the confirmation button in the modal to the cancel URL
+    function openCancelModal(cancelUrl, deductionFee) {
+        // Set the confirmation URL
         document.getElementById('confirm-cancel').setAttribute('href', cancelUrl);
 
-        // Show the Bootstrap modal
+        // Update the modal with the deduction fee
+        let feeAmountElement = document.getElementById('fee-amount');
+        let cancelMessageElement = document.getElementById('cancel-message');
+
+        if (deductionFee && deductionFee > 0) {
+            // Show the deduction fee note
+            feeAmountElement.innerText = `$${deductionFee.toFixed(2)}`;
+            document.getElementById('deduction-fee').style.display = 'block';
+
+            // Update the cancellation message
+            cancelMessageElement.innerHTML = `Are you sure you want to cancel this plan? This action will deduct a fee of <strong>$${deductionFee.toFixed(2)}</strong> from your initial deposit.`;
+        } else {
+            // Hide the deduction fee note if no fee is applicable
+            document.getElementById('deduction-fee').style.display = 'none';
+
+            // Set a default message
+            cancelMessageElement.innerText = "Are you sure you want to cancel this plan?";
+        }
+
+        // Show the modal
         $('#cancelConfirmationModal').modal('show');
     }
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-
 </script>
