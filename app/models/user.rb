@@ -146,7 +146,7 @@ class User < ApplicationRecord
     referral_commissions.sum(:amount)
   end
   def withdrawable_referral_commission
-    total_referral_commission
+    deposits.where(status: ['referral_commission']).sum(:amount)
   end
   # Track total profit withdrawn
   def total_profit_withdrawn

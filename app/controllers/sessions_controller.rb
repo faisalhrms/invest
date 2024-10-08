@@ -38,7 +38,6 @@ class SessionsController < ApplicationController
                 LoginHistory.create(user_id: @current_user.id, ip_address: ip_address, browser_name: browser_name, is_active: true)
                 flash[:notice] = "Logged in successfully."
                 ActivityStream.create_activity_stream("#{user.email} Logged-in To Dashboard", "User", @current_user.id, @current_user, "login")
-                # Check for plan_id and plan_type in session
                 if session[:plan_id].present? && session[:plan_type].present? and not current_user.user_type == "administrator"
                   plan_id = session.delete(:plan_id)
                   plan_type = session.delete(:plan_type)

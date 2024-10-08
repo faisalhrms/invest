@@ -22,20 +22,25 @@ class PurchasesController < ApplicationController
 
     if purchase && purchase.user == current_user
       ActiveRecord::Base.transaction do
+        # Set purchase status to "cancelled"
         purchase.update!(approved: false, status: "cancelled")
 
+        # Reset profit amount to zero, if present
         if purchase.profit.present?
           purchase.profit.update!(amount: 0.0)
           current_user.update(total_profit: nil, last_profit_calculation: nil)
         end
 
+        # Calculate the deduction fee for trading plans
         deduction_fee = 0
         if purchase.trading_plan.present? && purchase.trading_plan.deduction_fee.present?
           deduction_fee = purchase.trading_plan.deduction_fee.to_f
         end
 
+        # Calculate the final refund amount after applying the deduction fee
         refund_amount = [purchase.deposit_amount - deduction_fee, 0].max
 
+        # Create a single deposit entry for the refund (remaining amount after deduction)
         Deposit.create!(
           user_id: purchase.user_id,
           amount: refund_amount,
@@ -46,28 +51,14 @@ class PurchasesController < ApplicationController
           staking_id: purchase.staking_id,
           calculated_profit: 0.0,
           profit_eligible: false
-          )
-
-        if deduction_fee > 0
-          Deposit.create!(
-            user_id: purchase.user_id,
-            amount: deduction_fee,
-            processed_at: Time.current,
-            status: "deduction_fee",
-            investment_plan_id: purchase.investment_plan_id,
-            trading_plan_id: purchase.trading_plan_id,
-            staking_id: purchase.staking_id,
-            calculated_profit: 0.0,
-            profit_eligible: false
-          )
-        end
+        )
       end
 
       # Log the cancellation in the transaction history with the adjusted refund amount
       plan_id = determine_plan_id(purchase)
       TransactionHistory.create_transaction(current_user, purchase.deposit_amount, "cancel plan", nil, plan_id, "refund", purchase.id)
 
-      redirect_to dashboard_path, notice: "Purchase canceled successfully. A deduction fee of  was applied and the remaining amount has been refunded."
+      redirect_to dashboard_path, notice: "Purchase canceled successfully. A deduction fee was applied and the remaining amount has been refunded."
     else
       redirect_to dashboard_path, alert: 'Unable to find or cancel the purchase.'
     end
@@ -93,10 +84,8 @@ class PurchasesController < ApplicationController
     if purchase && current_user.user_type == "administrator"
       if purchase.manual_payment
         ActiveRecord::Base.transaction do
-          # Approve the purchase
           purchase.update!(approved: true, status: "active", approve_at: Time.current)
 
-          # Create transaction history for manual payment approval
           create_transaction_history(purchase, "Plan Purchased")
         end
         redirect_to pending_approvals_purchases_path, notice: 'Purchase approved based on manual payment verification.'
@@ -107,8 +96,6 @@ class PurchasesController < ApplicationController
           # Case 1: Sufficient deposit balance
           approve_with_sufficient_balance(purchase)
         else
-          # Case 2: Partial deposit + manual payment required
-          shortfall_amount = purchase.deposit_amount - user_deposit_balance
 
           ActiveRecord::Base.transaction do
             # Deduct from the existing deposit balance
@@ -130,16 +117,6 @@ class PurchasesController < ApplicationController
               end
             end
 
-            Deposit.create!(
-              user_id: purchase.user_id,
-              amount: shortfall_amount,
-              processed_at: Time.current,
-              status: "active",
-              investment_plan_id: purchase.investment_plan_id,
-              trading_plan_id: purchase.trading_plan_id,
-              staking_id: purchase.staking_id
-            )
-
             purchase.update!(approved: true, status: "active", approve_at: Time.current)
 
             create_transaction_history(purchase, "Plan Purchased")
@@ -156,7 +133,7 @@ class PurchasesController < ApplicationController
 
   def approve_with_sufficient_balance(purchase)
     ActiveRecord::Base.transaction do
-      # Find all relevant deposits for the user and plan type
+      # Fetch all relevant deposits for the user and plan type
       deposits = Deposit.where(
         user_id: purchase.user_id,
         status: ['refund', 'manual_deposit', 'referral_commission']
@@ -167,66 +144,39 @@ class PurchasesController < ApplicationController
         purchase.staking_id
       ).where.not(status: ['used for purchase', 'used for withdrawal'])
 
-      # Find the deposit with the amount closest to the purchase price and is greater than or equal to purchase amount
-      closest_deposit = deposits.where('amount >= ?', purchase.deposit_amount).order('amount ASC').first
+      remaining_amount = purchase.deposit_amount
+      deposits = deposits.order(amount: :desc) # Order deposits by amount in descending order
 
-      if closest_deposit.present?
-        # If a single deposit is greater than or equal to the purchase amount, deduct from it
-        closest_deposit.update!(
-          amount: closest_deposit.amount - purchase.deposit_amount,
+      deposits.each do |deposit|
+        break if remaining_amount <= 0
+
+        deduction_amount = [remaining_amount, deposit.amount].min
+        deposit.update!(
+          amount: deposit.amount - deduction_amount,
           processed_at: Time.current,
-          status: closest_deposit.amount == purchase.deposit_amount ? 'used for purchase' : 'active'
+          status: (deposit.amount == deduction_amount) ? 'used for purchase' : deposit.status
         )
 
+        remaining_amount -= deduction_amount
+
+        # Create a transaction history for each deduction
         plan_id = determine_plan_id(purchase)
         TransactionHistory.create_transaction(
           current_user,
-          purchase.deposit_amount,
+          deduction_amount,
           "Plan Purchased",
           nil,
           plan_id,
-          "active",
+          "approved",
           purchase.id
         )
+      end
 
+      if remaining_amount.zero?
         purchase.update!(approved: true, status: "active", approve_at: Time.current)
-        redirect_to pending_approvals_purchases_path, notice: 'Purchase approved, and the amount was deducted from the closest matching deposit.'
+        redirect_to pending_approvals_purchases_path, notice: 'Purchase approved, and the amount was deducted proportionally from all available deposits.'
       else
-        # If no single deposit can cover the entire purchase amount, deduct proportionally from all deposits
-        remaining_amount = purchase.deposit_amount
-        deposits = deposits.order(amount: :desc) # Order the deposits in descending order of amount
-
-        deposits.each do |deposit|
-          break if remaining_amount <= 0
-
-          deduction_amount = [remaining_amount, deposit.amount].min
-          deposit.update!(
-            amount: deposit.amount - deduction_amount,
-            processed_at: Time.current,
-            status: (deposit.amount == deduction_amount) ? 'used for purchase' : 'active'
-          )
-
-          remaining_amount -= deduction_amount
-
-          # Create a transaction history for each deduction
-          plan_id = determine_plan_id(purchase)
-          TransactionHistory.create_transaction(
-            current_user,
-            deduction_amount,
-            "Plan Purchased",
-            nil,
-            plan_id,
-            "active",
-            purchase.id
-          )
-        end
-
-        if remaining_amount.zero?
-          purchase.update!(approved: true, status: "active", approve_at: Time.current)
-          redirect_to pending_approvals_purchases_path, notice: 'Purchase approved, and the amount was deducted proportionally from all available deposits.'
-        else
-          redirect_to pending_approvals_purchases_path, alert: 'Insufficient balance to approve the purchase.'
-        end
+        redirect_to pending_approvals_purchases_path, alert: 'Insufficient balance to approve the purchase.'
       end
     end
   rescue ActiveRecord::RecordInvalid => e
