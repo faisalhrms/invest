@@ -90,7 +90,7 @@
                 </td>
                 <td>
                   <% if deposit.status == 'pending' && current_user.user_type == 'administrator' %>
-                    <%= button_to "Approve", approve_deposit_path(deposit), method: :post, class: "btn btn-sm btn-success", data: { confirm: "Are you sure you want to approve this deposit?" } %>
+                    <%= button_to "Approve", approve_deposit_path(deposit), method: :post, class: "btn btn-sm btn-success mb-2", data: { confirm: "Are you sure you want to approve this deposit?" } %>
                     <%= button_to "Reject", reject_deposit_path(deposit), method: :post, class: "btn btn-sm btn-danger", data: { confirm: "Are you sure you want to reject this deposit?" } %>
                   <% elsif deposit.status == 'manual_deposit' %>
                     <span class="badge badge-success">Approved</span>

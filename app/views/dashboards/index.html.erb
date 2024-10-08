@@ -84,7 +84,7 @@
               <span class="font-size-12">Team Deposit</span>
             </div>
             <div class="text-left ml-5">
-              <h6 class=""> <%= number_to_currency(current_user.total_referral_profit_sum) %></h6>
+              <h6 class=""> <%= number_to_currency(current_user.total_referral_commissions) %></h6>
               <span class="font-size-12">Downline Commission</span>
             </div>
 
@@ -275,7 +275,7 @@
 
           <!-- Investment Plan Section -->
           <div class="d-flex align-items-center">
-            <div class="icon iq-icon-box rounded dark-icon-light iq-bg-primary mr-3">
+             <div class="icon iq-icon-box rounded dark-icon-light iq-bg-primary mr-3">
               <i class="ri-home-8-line"></i>
             </div>
             <div class="iq-details col-sm-9 p-0">
@@ -288,7 +288,7 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.total_profit_by_plan_type('investment_plan') %> </b>
+                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('investment_plan') %> </b>
                 </div>
               </div>
               <span class=""><%= current_user.withdrawal_count_by_plan_type('investment_plan') %> Transactions</span>
@@ -317,7 +317,7 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= number_to_currency(current_user.total_profit_by_plan_type('trading_plan') || 0.00) %> </b>
+                  <b><span>$</span> <%= number_to_currency(current_user.daily_profit_by_plan_type('trading_plan') || 0.00) %> </b>
                 </div>
               </div>
 
@@ -347,13 +347,19 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.total_profit_by_plan_type('staking') %> </b>
+                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('staking') %> </b>
                 </div>
               </div>
               <span class=""><%= current_user.withdrawal_count_by_plan_type('staking') %> Transactions</span>
               <div class="iq-progress-bar-linear d-inline-block w-100">
                 <div class="iq-progress-bar">
                   <span class="bg-info" data-percent="<%= current_user.withdrawal_count_by_plan_type('staking') %>"></span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="title text-dark">Referral Link</span>
+                <div class="text-primary">
+                  <span><%= "#{host}/signup?ref=#{current_user.referral_id}" %></span>
                 </div>
               </div>
             </div>
@@ -557,12 +563,12 @@
           <div class="achievements-horizontal d-flex align-items-center justify-content-center">
             <% # Loop through all ranks for display as achievements %>
             <% Rank.all.each do |rank| %>
-              <div class="achievement-item text-center position-relative">
+              <div class="achievement-item text-center position-relative <%= 'selected-rank' if rank == current_user.rank %>">
                 <div class="achievement-icon mb-2">
                   <% # Show different icons and colors based on rank name %>
                   <% case rank.name.downcase %>
                   <% when 'bronze' %>
-                    <i class="ri-medal-fill" style="font-size: 3rem; color: #cd7f32;"></i>
+                    <i class="ri-medal-fill" style="font-size: 3rem; color: #32cdcd;"></i>
                   <% when 'silver' %>
                     <i class="ri-medal-2-fill" style="font-size: 3rem; color: silver;"></i>
                   <% when 'gold' %>
@@ -584,12 +590,42 @@
             <% end %>
           </div>
         </div>
+
+
+      </div>
       </div>
     </div>
   </div>
 
   <!-- Custom CSS -->
   <style>
+      .achievement-item {
+          opacity: 0.5; /* Set lower opacity for non-selected items */
+          transition: all 0.3s ease-in-out;
+      }
+
+      .selected-rank {
+          opacity: 1; /* Full opacity for selected item */
+          background-color: #f0f8ff; /* Light background color */
+          border: 2px solid #8c91b6; /* Blue border */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+          transform: scale(1.05); /* Slightly increase size */
+          z-index: 1; /* Bring the selected item to the front */
+      }
+
+      .achievement-item:hover {
+          opacity: 0.8; /* Increase opacity on hover */
+          transform: scale(1.03); /* Slightly increase size */
+      }
+
+      .selected-rank .achievement-icon {
+          color: #007bff; /* Change icon color for the selected rank */
+      }
+
+      .selected-rank h5 {
+          color: #007bff; /* Change title color for selected rank */
+      }
+
       .achievements-horizontal {
           overflow-x: auto;
           padding: 20px 0;

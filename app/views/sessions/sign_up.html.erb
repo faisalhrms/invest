@@ -157,4 +157,10 @@
         mobileInput.addEventListener('countrychange', updateMobileField);
         updateMobileField();
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const referralCode = urlParams.get('ref');
+    if (referralCode) {
+        document.getElementById('referral-id').value = referralCode;
+    }
 </script>

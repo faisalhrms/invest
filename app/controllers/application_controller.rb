@@ -30,8 +30,8 @@ class ApplicationController < ActionController::Base
       user = User.find_by(id: session[:user_id])
 
       # Check if both `user.authentication_token` and `cookies["auth_id"]` are present
-      if user && user.authentication_token.present? && cookies["auth_id"].present? &&
-        ActiveSupport::SecurityUtils.secure_compare(user.authentication_token, cookies["auth_id"])
+      if user && user.authentication_token.present? && session["auth_id"].present? &&
+        ActiveSupport::SecurityUtils.secure_compare(user.authentication_token, session["auth_id"])
         @current_user = user
       end
     end

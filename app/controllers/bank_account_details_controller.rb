@@ -35,7 +35,7 @@ class BankAccountDetailsController < ApplicationController
     end
     bank_account = BankAccount.find(params[:id])
     if bank_account.update(bank_account_params)
-      ActivityStream.create_activity_stream("Update #{bank_account.name} Existing BankAccount", "BankAccount", bank_account.id, @current_user, "edit")
+      ActivityStream.create_activity_stream("Update #{bank_account.account_name} Existing BankAccount", "BankAccount", bank_account.id, @current_user, "edit")
       flash[:notice] = "BankAccount Updated Successfully"
     else
       flash[:alert] = "Something Went Wrong"
@@ -46,8 +46,8 @@ class BankAccountDetailsController < ApplicationController
   def destroy
     bank_account = BankAccount.find(params[:id])
     if  bank_account.present?
-      ActivityStream.create_activity_stream("Delete #{bank_account.name} From BankAccount", "BankAccount", bank_account.id, @current_user, "delete")
-      menu.delete
+      ActivityStream.create_activity_stream("Delete #{bank_account.account_name} From BankAccount", "BankAccount", bank_account.id, @current_user, "delete")
+      bank_account.delete
       flash[:notice] = "BankAccount Deleted"
     end
     redirect_to bank_account_path

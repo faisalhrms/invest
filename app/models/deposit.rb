@@ -9,7 +9,7 @@ class Deposit < ApplicationRecord
   private
 
   def calculate_profit
-    # Identify the associated plan (investment, trading, or staking)
+    return if status == "refund" || status == "deduction_fee"
     plan = investment_plan || trading_plan || staking
     return unless plan.present?
 

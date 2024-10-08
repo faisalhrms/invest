@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Investment bank_account</h5>
+          <h5 class="modal-title">Edit Account</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -15,30 +15,30 @@
 
             <div class="col-md-6">
               <div class="form-group">
-                <label for="account_name<%= bank_account.id %>">Account Holder Name <span style="color: red">*</span></label>
-                <input type="text" class="form-control" id="account_name<%= bank_account.id %>" value="<%= bank_account.account_name %>" name="account_name" placeholder="Enter Account Holder Name">
+                <label for="account_name<%= bank_account.id %>">Account Name <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="account_name<%= bank_account.id %>" value="<%= bank_account.account_name %>" name="account_name" placeholder="Enter Account Name">
               </div>
             </div>
 
             <div class=" col-md-6">
               <div class="form-group">
-                <label for="account_number<%= bank_account.id %>">Account Number <span style="color: red">*</span></label>
-                <input type="number" class="form-control" id="account_number<%= bank_account.id %>" value="<%= bank_account.account_number %>" name="account_number" placeholder="Enter Account Number">
+                <label for="account_number<%= bank_account.id %>">NETWORK <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="account_number<%= bank_account.id %>" value="<%= bank_account.account_number %>" name="account_number" placeholder="Enter NETWORK">
               </div>
             </div>
 
 
             <div class="col-md-6">
               <div class="form-group">
-                <label for="bank_name<%= bank_account.id %>">Bank Name <span style="color: red">*</span></label>
-                <input type="text" class="form-control" id="bank_name<%= bank_account.id %>" <%= bank_account.bank_name %> name="bank_name" placeholder="Enter Bank Name">
+                <label for="bank_name<%= bank_account.id %>">WALLET ADDRESS <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="bank_name<%= bank_account.id %>" <%= bank_account.bank_name %> name="bank_name" placeholder="Enter WALLET ADDRESS">
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="form-group">
-                <label for="iban<%= bank_account.id %>">IBAN <span style="color: red">*</span></label>
-                <input type="text" class="form-control" id="iban<%= bank_account.id %>" <%= bank_account.iban %> name="iban" placeholder="Enter IBAN PK00XYZ123456789000000">
+                <label for="iban<%= bank_account.id %>">IMPORTANT NOTE <span style="color: red">*</span></label>
+                <input type="text" class="form-control" id="iban<%= bank_account.id %>" <%= bank_account.iban %> name="iban" placeholder="Enter IMPORTANT NOTE">
               </div>
             </div>
 

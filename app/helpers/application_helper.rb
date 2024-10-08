@@ -83,6 +83,10 @@ module ApplicationHelper
   def pending_approval_count
     Purchase.where(approved: false, status: "pending").count
   end
+
+  def pending_deposit_request
+    Deposit.where(status: "pending").count
+  end
   def set_pending_withdrawals_count
     @pending_withdrawals_count = Withdrawal.where(status: 'pending').count
   end

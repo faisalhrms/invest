@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_07_154949) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -196,6 +196,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_07_154949) do
     t.boolean "manual_payment", default: false
     t.float "duration_in_days"
     t.string "wallet_address"
+    t.datetime "approve_at"
     t.index ["investment_plan_id"], name: "index_purchases_on_investment_plan_id"
     t.index ["staking_id"], name: "index_purchases_on_staking_id"
     t.index ["trading_plan_id"], name: "index_purchases_on_trading_plan_id"

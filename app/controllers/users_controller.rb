@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 
       # Auto-login the newly created user
       user.update(authentication_token: SecureRandom.urlsafe_base64)
-      cookies[:auth_id] = user.authentication_token
+      session[:auth_id] = user.authentication_token
       session[:user_id] = user.id
 
       # Log the user's login history
@@ -70,7 +70,7 @@ class UsersController < ApplicationController
     if user && user.authenticate(params[:password])
       if user.is_active
         user.update(authentication_token: SecureRandom.urlsafe_base64)
-        cookies[:auth_id] = user.authentication_token
+        session[:auth_id] = user.authentication_token
         session[:user_id] = user.id
 
         if user.role&.is_active

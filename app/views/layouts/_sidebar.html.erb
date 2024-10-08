@@ -47,7 +47,11 @@
         <li class="<%= is_active('deposits') %>">
           <a href="<%= deposit_path %>" class="iq-waves-effect" target="<%= link_target_attribute %>">
             <i class="ri-wallet-2-line"></i>
+
             <span>Deposit Fund</span>
+            <% if pending_deposit_request > 0 %>
+              <span class="badge badge-danger" style="width: 15px"><%= pending_deposit_request %></span>
+            <% end %>
           </a>
         </li>
       <% end %>

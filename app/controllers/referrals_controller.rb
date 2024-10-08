@@ -4,11 +4,16 @@ class ReferralsController < ApplicationController
 
   def index
     if current_user.user_type == "administrator"
-      @referrals = User.left_joins(:purchases).where.not(referred_by: nil).distinct
+      @referrals = User.left_joins(:purchases)
+                       .where.not(referred_by: nil)
+                       .select { |user| user.referred_users.count > 0 }
     else
-      @referrals = User.left_joins(:purchases).where(referred_by: current_user.id).distinct
+      @referrals = User.left_joins(:purchases)
+                       .where(referred_by: current_user.id)
+                       .select { |user| user.referred_users.count > 0 }
     end
   end
+
 
   # Action to handle AJAX request and show referral details in the modal
   def referral_details

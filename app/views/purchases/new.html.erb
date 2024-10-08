@@ -12,12 +12,12 @@
         <% bank = BankAccount.find_by(is_active: true) %>
 
         <div class="bank-details mb-4">
-          <h4 class="font-weight-bold">Admin Bank Details</h4>
+          <h4 class="font-weight-bold">DEPOSIT ADDRESS</h4>
           <ul class="list-unstyled">
             <li><strong>Account Name:</strong> <%= bank.account_name %></li>
-            <li><strong>Account Number:</strong> <%= bank.account_number %></li>
-            <li><strong>Bank Name:</strong> <%= bank.bank_name %></li>
-            <li><strong>IBAN:</strong> <%= bank.iban %></li>
+            <li><strong>NETWORK:</strong> <%= bank.account_number %></li>
+            <li><strong>WALLET ADDRESS:</strong> <%= bank.bank_name %></li>
+            <li><strong>IMPORTANT NOTE:</strong> <%= bank.iban %></li>
           </ul>
         </div>
 
@@ -49,8 +49,8 @@
           <hr>
 
           <div class="form-group">
-            <label for="wallet_address">Wallet Address <span style="color: red">*</span></label>
-            <input  name="wallet_address" placeholder="Enter Wallet Address" class="form-control" required>
+            <label for="wallet_address">YOUR Wallet Address <span style="color: red">*</span></label>
+            <input  name="wallet_address" placeholder="PLEASE ENTER YOUR USDT TRC-20 ADDRESS FOR WITHDRAW" class="form-control" required>
           </div>
 
           <% if params[:plan_type] == 'Staking' %>
