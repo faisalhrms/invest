@@ -79,7 +79,7 @@ class TradingPlansController < ApplicationController
 
   private
   def trading_plan_params
-    params.permit(:name, :description, :price,:duration_in_days, :profit_percentage, :is_active,:deduction_fee)
+    params.permit(:name, :description, :price,:duration_in_days, :profit_percentage,:deduction_fee,:commission_rate,:is_active)
   end
   def set_module_name
     @module_name = "plans"

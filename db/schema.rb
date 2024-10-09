@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_09_083945) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,6 +95,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
     t.datetime "updated_at", null: false
     t.integer "duration_in_days"
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
+    t.float "commission_rate"
   end
 
   create_table "login_histories", force: :cascade do |t|
@@ -240,6 +241,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
     t.datetime "updated_at", null: false
     t.integer "duration_in_days"
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
+    t.float "commission_rate"
   end
 
   create_table "trading_plans", force: :cascade do |t|
@@ -253,6 +255,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
     t.integer "duration_in_days"
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
     t.integer "deduction_fee"
+    t.float "commission_rate"
   end
 
   create_table "transaction_histories", force: :cascade do |t|
@@ -303,6 +306,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_051529) do
     t.bigint "rank_id"
     t.decimal "total_profit", precision: 15, scale: 2, default: "0.0"
     t.date "last_profit_calculation"
+    t.boolean "new_rank_assigned"
     t.index ["rank_id"], name: "index_users_on_rank_id"
   end
 

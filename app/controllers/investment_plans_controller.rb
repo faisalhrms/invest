@@ -58,7 +58,7 @@ class InvestmentPlansController < ApplicationController
 
   private
   def investment_plan_params
-    params.permit(:name, :description, :price, :duration_in_days, :profit_percentage, :is_active)
+    params.permit(:name, :description, :price, :profit_percentage, :duration_in_days,:commission_rate,:is_active)
   end
   def set_module_name
     @module_name = "plans"

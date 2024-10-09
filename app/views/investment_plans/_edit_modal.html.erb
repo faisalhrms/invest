@@ -28,7 +28,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label class="col-form-label">Select Duration Period <span style="color: red">*</span></label>
-                <select required class="form-control sumoselect2" name="duration_in_days" placeholder="Select Duration Period">
+                <select required class="form-control" name="duration_in_days" placeholder="Select Duration Period">
                   <option value="" <%= 'selected' if plan.duration_in_days.blank? %>>Select Duration Period</option>
                   <% PlanDuration.where(is_active: true, plan_type: "investment_plan").each do |duration| %>
                     <option value="<%= duration.duration_in_days %>" <%= 'selected' if plan.duration_in_days == duration.duration_in_days %>><%= duration.duration_in_days %>Days</option>
@@ -44,6 +44,14 @@
                 <input type="number" class="form-control" id="profit_percentage<%= plan.id %>" value="<%= plan.profit_percentage %>" name="profit_percentage" placeholder="Enter Profit Percentage">
               </div>
             </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="commission_rate<%= plan.id %>">Referral Commission <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="commission_rate<%= plan.id %>" value="<%= plan.commission_rate %>" name="commission_rate" placeholder="Enter Referral Commission">
+              </div>
+            </div>
+
             <div class="col-md-12">
               <div class="form-group">
                 <label for="description<%= plan.id %>">Description <span style="color: red">*</span></label>

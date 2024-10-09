@@ -85,7 +85,6 @@ class PurchasesController < ApplicationController
       if purchase.manual_payment
         ActiveRecord::Base.transaction do
           purchase.update!(approved: true, status: "active", approve_at: Time.current)
-
           create_transaction_history(purchase, "Plan Purchased")
         end
         redirect_to pending_approvals_purchases_path, notice: 'Purchase approved based on manual payment verification.'
@@ -162,7 +161,7 @@ class PurchasesController < ApplicationController
         # Create a transaction history for each deduction
         plan_id = determine_plan_id(purchase)
         TransactionHistory.create_transaction(
-          current_user,
+          purchase.user,
           deduction_amount,
           "Plan Purchased",
           nil,

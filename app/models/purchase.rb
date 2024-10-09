@@ -10,11 +10,10 @@ class Purchase < ApplicationRecord
   validates_attachment_content_type :attachment, content_type: ['image/jpeg', 'image/png', 'application/pdf']
 
   validates :deposit_amount, presence: true
+  after_update :check_rank_assignment, if: :approved_and_active?
 
-  # Callbacks to update rank and record commission when approved
-  after_save :update_user_rank
-  after_save :calculate_and_record_commission, if: :approved?
   after_save :calculate_profit, if: :approved?
+  after_update :create_referral_commission, if: :approved?
 
   # Calculate and store profit only when the purchase is approved
   def calculate_profit
@@ -22,21 +21,32 @@ class Purchase < ApplicationRecord
 
     plan = investment_plan || trading_plan || staking
     return unless plan.present?
+
+    # Get the profit percentage from the plan
     profit_percentage = plan.profit_percentage || 0.0
-    plan_duration = if investment_plan.present? || trading_plan.present?
+
+    # Calculate the duration based on the plan type
+    plan_duration = if staking.present?
+                      duration_in_days
+                    elsif investment_plan.present? || trading_plan.present?
                       plan.duration_in_days
                     else
-                      duration_in_days
+                      0
                     end
-    return unless plan_duration.present? && plan_duration > 0
-    total_profit = (deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
 
+    return unless plan_duration.present? && plan_duration > 0
+
+    # Calculate total profit based on the duration and deposit amount
+    total_profit = (deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
     daily_profit = total_profit / plan_duration
 
+    # Calculate days since the plan was approved
     days_since_approval = (Date.today - approve_at.to_date).to_i
 
+    # Calculate the accumulated profit based on the number of days elapsed since approval
     calculated_profit = [days_since_approval, plan_duration].min * daily_profit
 
+    # Update or create the profit record
     if profit.present?
       profit.update(amount: calculated_profit)
     else
@@ -46,27 +56,18 @@ class Purchase < ApplicationRecord
 
 
 
-  # Calculate and record commission for the referring user
-  def calculate_and_record_commission
-    referring_user = user.referred_by_user
-    return unless referring_user.present?
 
-    # Calculate the commission amount based on the purchase
-    commission_amount = referring_user.calculate_referral_commission(deposit_amount)
-
-    # Create a new ReferralCommission record
-    ReferralCommission.create!(
-      user: referring_user,
-      referral_user_id: user.id,  # Store the referred user's ID
-      purchase: self,
-      amount: commission_amount
-    )
+  private
+  def create_referral_commission
+    if user.referred_by_user.present?
+      user.create_referral_commission_for_purchase(self)
+    end
   end
 
-  def update_user_rank
+  def approved_and_active?
+    saved_change_to_approved? && approved && status == "active"
+  end
+  def check_rank_assignment
     user.assign_rank
   end
-
-  # Custom validation to check if the deposit amount matches the plan price
-
 end

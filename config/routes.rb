@@ -109,6 +109,7 @@ Rails.application.routes.draw do
   post '/update_preference', to: 'users#update_preference'
   get 'users/:id/referral_data', to: 'users#referral_data'
   get 'users/current_profit', to: 'users#current_profit'
+  post 'users/reset_rank_flag', to: 'users#reset_rank_flag', as: 'reset_rank_flag_users'
 
   ##### MENUS #####
   get 'menu' => 'menus#index'

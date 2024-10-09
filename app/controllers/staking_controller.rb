@@ -59,7 +59,7 @@ class StakingController < ApplicationController
 
   private
   def staking_params
-    params.permit(:name, :description, :price,:duration_in_days, :profit_percentage,:is_active)
+    params.permit(:name, :description, :price,:duration_in_days, :profit_percentage,:is_active,:commission_rate)
   end
   def set_module_name
     @module_name = "plans"

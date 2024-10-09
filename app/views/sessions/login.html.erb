@@ -1,20 +1,23 @@
-
 <section class="sign-in-page">
   <div class="container bg-white mt-5 p-0">
     <div class="row no-gutters">
       <div class="col-sm-6 align-self-center">
         <div class="sign-in-from">
           <h1 class="mb-0 dark-signin">Sign in</h1>
-          <p>Enter your email address and password to access admin panel.</p>
+          <p>Enter your email address and password to access the admin panel.</p>
           <%= form_with(scope: :session, url: create_path, id: 'myForm') do |f| %>
             <div class="form-group">
               <label for="exampleInputEmail1">Email address</label>
               <input type="email" class="form-control mb-0" name="email" id="exampleInputEmail1" placeholder="Enter email">
             </div>
-            <div class="form-group">
+            <div class="form-group position-relative">
               <label for="exampleInputPassword1">Password</label>
               <a href="<%=recover_path %>" class="float-right">Forgot password?</a>
               <input type="password" class="form-control mb-0" name="password" id="exampleInputPassword1" placeholder="Password">
+              <!-- View/Hide Password Icon -->
+              <span id="togglePassword" class="position-absolute" style="top: 40px; right: 15px; cursor: pointer;">
+                <i class="ri-eye-off-fill" id="togglePasswordIcon" style="font-size: 20px;"></i>
+              </span>
             </div>
             <div class="d-inline-block w-100">
               <div class="custom-control custom-checkbox d-inline-block mt-2 pt-1">
@@ -34,17 +37,14 @@
           <a class="sign-in-logo mb-5" href="#"></a>
           <div class="slick-slider11" data-autoplay="true" data-loop="true" data-nav="false" data-dots="true" data-items="1" data-items-laptop="1" data-items-tab="1" data-items-mobile="1" data-items-mobile-sm="1" data-margin="0">
             <div class="item">
-<!--              <img src="<%#= asset_path 'login/Investment App_crm.png' %>" class="img-fluid mb-4" alt="logo">-->
               <h4 class="mb-1 text-white">Automate Your Services</h4>
               <p>It is a long established fact that a reader will be distracted by the readable content.</p>
             </div>
             <div class="item">
-              <!--              <img src="<%#= asset_path 'login/Investment App_crm.png' %>" class="img-fluid mb-4" alt="logo">-->
               <h4 class="mb-1 text-white">Automate Your Services</h4>
               <p>It is a long established fact that a reader will be distracted by the readable content.</p>
             </div>
             <div class="item">
-              <!--              <img src="<%#= asset_path 'login/Investment App_crm.png' %>" class="img-fluid mb-4" alt="logo">-->
               <h4 class="mb-1 text-white">Automate Your Services</h4>
               <p>It is a long established fact that a reader will be distracted by the readable content.</p>
             </div>
@@ -54,3 +54,27 @@
     </div>
   </div>
 </section>
+
+<!-- JavaScript to Toggle Password Visibility -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordField = document.querySelector('#exampleInputPassword1');
+        const togglePasswordIcon = document.querySelector('#togglePasswordIcon');
+
+        togglePassword.addEventListener('click', function () {
+            // Toggle the type attribute
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+
+            // Toggle the icon
+            if (type === 'text') {
+                togglePasswordIcon.classList.remove('ri-eye-off-fill');
+                togglePasswordIcon.classList.add('ri-eye-fill');
+            } else {
+                togglePasswordIcon.classList.remove('ri-eye-fill');
+                togglePasswordIcon.classList.add('ri-eye-off-fill');
+            }
+        });
+    });
+</script>

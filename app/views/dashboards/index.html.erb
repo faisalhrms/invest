@@ -1,4 +1,25 @@
 <div class="container-fluid">
+  <!-- Congratulatory Modal for New Rank -->
+  <div class="modal fade" id="congratulationModal" tabindex="-1" role="dialog" aria-labelledby="congratulationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content text-center">
+        <div class="modal-header">
+          <h5 class="modal-title" id="congratulationModalLabel">Congratulations!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h2>🎉 You've achieved a new rank! 🎉</h2>
+          <p class="lead">Your new rank is: <strong id="new-rank-name"></strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Awesome!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
@@ -228,23 +249,9 @@
           <div class="iq-header-title">
             <h4 class="card-title">Payment History</h4>
           </div>
-          <div class="iq-card-header-toolbar d-flex align-items-center">
-            <div class="dropdown">
-          <span class="dropdown-toggle" id="dropdownMenuButton-four" data-toggle="dropdown">
-            <i class="ri-more-fill"></i>
-          </span>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-four">
-                <a class="dropdown-item" href="#"><i class="ri-eye-fill mr-2"></i>View</a>
-                <a class="dropdown-item" href="#"><i class="ri-delete-bin-6-fill mr-2"></i>Delete</a>
-                <a class="dropdown-item" href="#"><i class="ri-pencil-fill mr-2"></i>Edit</a>
-                <a class="dropdown-item" href="#"><i class="ri-printer-fill mr-2"></i>Print</a>
-                <a class="dropdown-item" href="#"><i class="ri-file-download-fill mr-2"></i>Download</a>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div class="iq-card-body">
+        <div class="iq-card-body" style="height: 350px; overflow-y: auto;">
           <ul class="suggestions-lists m-0 p-0">
             <% @transaction_histories.each do |transaction| %>
               <li class="d-flex mb-4 align-items-center">
@@ -417,24 +424,36 @@
             <div class="row">
               <% investment_plan.each do |investment| %>
                 <div class="col-lg-3 col-md-6 col-sm-12">
-                  <div class="iq-card <%= plan_purchased?(investment) ? 'bg-primary text-white' : '' %>">
-                    <div class="iq-card-body border text-center rounded">
+                  <div class="iq-card plan-card <%= plan_purchased?(investment) ? 'bg-gradient-primary text-white shadow-lg' : 'bg-white shadow-sm' %>" style="position: relative;">
+                    <!-- Background Vector Image -->
+                    <div class="vector-bg" style="<%= plan_purchased?(investment) ? 'opacity: 0.3;' : 'opacity: 0.1;' %>"></div>
+
+                    <div class="iq-card-body border text-center rounded p-4 position-relative d-flex flex-column justify-content-between" style="min-height: 350px;">
+                      <!-- Plan Icon -->
                       <div class="plan-icon mb-3">
-                        <i class="ri-line-chart-line" style="font-size: 3rem;"></i>
+                        <i class="ri-line-chart-line" style="font-size: 3.5rem; color: <%= plan_purchased?(investment) ? '#ffffff' : '#007bff' %>;"></i>
                       </div>
-                      <span class="font-size-16 text-uppercase"><%= investment.name %></span>
-                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(investment) ? 'text-white' : '' %>"><%= investment.price %>$</h1>
-                      <p class="text-center"><%= investment.description %></p>
+
+                      <!-- Plan Name -->
+                      <span class="font-size-16 text-uppercase d-block mb-3" style="<%= plan_purchased?(investment) ? 'color: #ffffff;' : 'color: #333;' %>"><%= investment.name %></span>
+
+                      <!-- Plan Price -->
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(investment) ? 'text-white' : 'text-primary' %>"><%= investment.price %>$</h1>
+
+                      <!-- Plan Description -->
+                      <p class="mb-4" style="<%= plan_purchased?(investment) ? 'color: #e0e0e0;' : 'color: #666;' %>"><%= investment.description %></p>
+
+                      <!-- Conditional Button Rendering -->
                       <% purchased_plan = plan_purchased?(investment) %>
                       <% if purchased_plan %>
-                        <!-- Cancel button that triggers the confirmation modal -->
-                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'InvestmentPlan')}')" %>
+                        <!-- Cancel Button -->
+                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", title: "Cancel this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'InvestmentPlan')}')" %>
                       <% elsif purchase_pending?(investment) %>
                         <!-- Approval Pending Message -->
-                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                        <button class="btn btn-warning mt-5" style="border-radius: 25px; padding: 10px 30px; font-size: 1rem;" disabled>Approval Pending</button>
                       <% else %>
-                        <!-- Buy button -->
-                        <%= link_to "Buy", new_purchase_path(plan_id: investment.id, plan_type: 'InvestmentPlan'), class: 'btn btn-primary mt-5' %>
+                        <!-- Buy Button -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: investment.id, plan_type: 'InvestmentPlan'), class: 'btn btn-success mt-5', title: "Buy this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;" %>
                       <% end %>
                     </div>
                   </div>
@@ -448,26 +467,36 @@
             <div class="row">
               <% trading_plan.each do |trading| %>
                 <div class="col-lg-3 col-md-6 col-sm-12">
-                  <div class="iq-card <%= plan_purchased?(trading) ? 'bg-primary text-white' : '' %>">
-                    <div class="iq-card-body border text-center rounded">
-                      <div class="plan-icon mb-3">
-                        <i class="ri-bar-chart-horizontal-line" style="font-size: 3rem;"></i>
-                      </div>
-                      <span class="font-size-16 text-uppercase"><%= trading.name %></span>
-                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(trading) ? 'text-white' : '' %>"><%= trading.price %>$</h1>
-                      <p class="text-center"><%= trading.description %></p>
-                      <% purchased_plan = plan_purchased?(trading) %>
+                  <div class="iq-card plan-card <%= plan_purchased?(trading) ? 'bg-gradient-primary text-white shadow-lg' : 'bg-white shadow-sm' %>" style="position: relative;">
+                    <!-- Background Vector Image -->
+                    <div class="vector-bg" style="<%= plan_purchased?(trading) ? 'opacity: 0.2;' : 'opacity: 0.1;' %>"></div>
 
+                    <div class="iq-card-body border text-center rounded p-4 position-relative d-flex flex-column justify-content-between" style="min-height: 350px;">
+                      <!-- Plan Icon -->
+                      <div class="plan-icon mb-3">
+                        <i class="ri-bar-chart-horizontal-line" style="font-size: 3.5rem; color: <%= plan_purchased?(trading) ? '#ffffff' : '#007bff' %>;"></i>
+                      </div>
+
+                      <!-- Plan Name -->
+                      <span class="font-size-16 text-uppercase d-block mb-3" style="<%= plan_purchased?(trading) ? 'color: #ffffff;' : 'color: #333;' %>"><%= trading.name %></span>
+
+                      <!-- Plan Price -->
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(trading) ? 'text-white' : 'text-primary' %>"><%= trading.price %>$</h1>
+
+                      <!-- Plan Description -->
+                      <p class="mb-4" style="<%= plan_purchased?(trading) ? 'color: #f0f0f0;' : 'color: #666;' %>"><%= trading.description %></p>
+
+                      <!-- Conditional Button Rendering -->
+                      <% purchased_plan = plan_purchased?(trading) %>
                       <% if purchased_plan %>
-                        <!-- Cancel button that triggers the confirmation modal -->
-                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5",
-                                    onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'TradingPlan')}', #{purchased_plan.trading_plan.deduction_fee})" %>
+                        <!-- Cancel Button with a Tooltip -->
+                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", title: "Cancel this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'TradingPlan')}', #{purchased_plan.trading_plan.deduction_fee})" %>
                       <% elsif purchase_pending?(trading) %>
                         <!-- Approval Pending Message -->
-                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                        <button class="btn btn-warning mt-5" style="border-radius: 25px; padding: 10px 30px; font-size: 1rem;" disabled>Approval Pending</button>
                       <% else %>
-                        <!-- Buy button -->
-                        <%= link_to "Buy", new_purchase_path(plan_id: trading.id, plan_type: 'TradingPlan'), class: 'btn btn-primary mt-5' %>
+                        <!-- Buy Button with a Tooltip -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: trading.id, plan_type: 'TradingPlan'), class: 'btn btn-success mt-5', title: "Buy this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;" %>
                       <% end %>
                     </div>
                   </div>
@@ -481,31 +510,43 @@
             <div class="row">
               <% staking_plan.each do |staking| %>
                 <div class="col-lg-3 col-md-6 col-sm-12">
-                  <div class="iq-card <%= plan_purchased?(staking) ? 'bg-primary text-white' : '' %>">
-                    <div class="iq-card-body border text-center rounded">
-                      <div class="plan-icon mb-3">
-                        <i class="ri-bubble-chart-line" style="font-size: 3rem;"></i>
-                      </div>
-                      <span class="font-size-16 text-uppercase"><%= staking.name %></span>
-                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(staking) ? 'text-white' : '' %>"><%= staking.price %>$</h1>
-                      <p class="text-center"><%= staking.description %></p>
-                      <% purchased_plan = plan_purchased?(staking) %>
+                  <div class="iq-card plan-card <%= plan_purchased?(staking) ? 'bg-gradient-primary text-white shadow-lg' : 'bg-white shadow-sm' %>" style="position: relative;">
+                    <!-- Background Vector Image -->
+                    <div class="vector-bg" style="<%= plan_purchased?(staking) ? 'opacity: 0.2;' : 'opacity: 0.1;' %>"></div>
 
+                    <div class="iq-card-body border text-center rounded p-4 position-relative d-flex flex-column justify-content-between" style="min-height: 350px;">
+                      <!-- Plan Icon -->
+                      <div class="plan-icon mb-3">
+                        <i class="ri-bubble-chart-line" style="font-size: 3.5rem; color: <%= plan_purchased?(staking) ? '#ffffff' : '#007bff' %>;"></i>
+                      </div>
+
+                      <!-- Plan Name -->
+                      <span class="font-size-16 text-uppercase d-block mb-3" style="<%= plan_purchased?(staking) ? 'color: #ffffff;' : 'color: #333;' %>"><%= staking.name %></span>
+
+                      <!-- Plan Price -->
+                      <h1 class="mb-4 font-weight-bolder <%= plan_purchased?(staking) ? 'text-white' : 'text-primary' %>"><%= staking.price %>$</h1>
+
+                      <!-- Plan Description -->
+                      <p class="mb-4" style="<%= plan_purchased?(staking) ? 'color: #f0f0f0;' : 'color: #666;' %>"><%= staking.description %></p>
+
+                      <!-- Conditional Button Rendering -->
+                      <% purchased_plan = plan_purchased?(staking) %>
                       <% if purchased_plan %>
-                        <!-- Cancel button that triggers the confirmation modal -->
-                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'Staking')}')" %>
+                        <!-- Cancel Button with a Tooltip -->
+                        <%= link_to "Inactive", "#", class: "btn btn-danger mt-5", title: "Cancel this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;", onclick: "openCancelModal('#{cancel_purchases_path(id: purchased_plan.id, plan_type: 'Staking')}')" %>
                       <% elsif purchase_pending?(staking) %>
                         <!-- Approval Pending Message -->
-                        <button class="btn btn-warning mt-5" disabled>Approval Pending</button>
+                        <button class="btn btn-warning mt-5" style="border-radius: 25px; padding: 10px 30px; font-size: 1rem;" disabled>Approval Pending</button>
                       <% else %>
-                        <!-- Buy button -->
-                        <%= link_to "Buy", new_purchase_path(plan_id: staking.id, plan_type: 'Staking'), class: 'btn btn-primary mt-5' %>
+                        <!-- Buy Button with a Tooltip -->
+                        <%= link_to "Buy", new_purchase_path(plan_id: staking.id, plan_type: 'Staking'), class: 'btn btn-success mt-5', title: "Buy this plan", style: "border-radius: 25px; padding: 10px 30px; font-size: 1rem;" %>
                       <% end %>
                     </div>
                   </div>
                 </div>
               <% end %>
             </div>
+
           </div>
         </div>
       </div>
@@ -702,3 +743,110 @@
         $('#cancelConfirmationModal').modal('show');
     }
 </script>
+<style>
+    .plan-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border-radius: 15px;
+        overflow: hidden; /* To ensure vector background doesn't overflow */
+        position: relative;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, rgba(75, 111, 150, 0.75), #8265b6);
+    }
+
+    .shadow-lg {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .shadow-sm {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .vector-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 150%;
+        height: 150%;
+        transform: translate(-50%, -50%);
+        background: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+        z-index: -1; /* Place behind the card content */
+    }
+
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check if the user has a newly assigned rank
+        var isNewRankAssigned = "<%= current_user.new_rank_assigned %>";
+        var newRankName = "<%= current_user.rank.name if current_user.new_rank_assigned %>";
+
+        // If a new rank is assigned, show the modal
+        if (isNewRankAssigned === "true") {
+            // Set the new rank name in the modal
+            document.getElementById('new-rank-name').innerText = newRankName;
+
+            // Show the congratulatory modal
+            $('#congratulationModal').modal('show');
+        }
+    });
+</script>
+<style>
+    #congratulationModal .modal-body {
+        background: linear-gradient(45deg, #6dd5ed, #2193b0);
+        color: white;
+        padding: 40px;
+        border-radius: 10px;
+    }
+
+    #congratulationModal .modal-content {
+        border: none;
+        border-radius: 15px;
+    }
+
+    #congratulationModal h2 {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var isNewRankAssigned = "<%= current_user.new_rank_assigned %>" === "true";
+        var newRankName = "<%= current_user.rank.name if current_user.new_rank_assigned %>";
+
+        if (isNewRankAssigned) {
+            document.getElementById('new-rank-name').innerText = newRankName;
+            $('#congratulationModal').modal('show');
+
+            // Fetch the CSRF token from the meta tag
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Send the AJAX request to reset the rank flag
+            $.ajax({
+                url: "<%= reset_rank_flag_users_path %>",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': csrfToken // Include the CSRF token
+                },
+                success: function() {
+                    console.log("Rank flag reset successfully.");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Failed to reset rank flag:", status, error);
+                }
+            });
+        }
+    });
+</script>
+
+
+
+

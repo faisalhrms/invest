@@ -14,7 +14,6 @@ class User < ApplicationRecord
   belongs_to :referred_by_user, class_name: 'User', foreign_key: 'referred_by', optional: true
   belongs_to :rank, optional: true
   has_many :transaction_histories
-  after_create :calculate_initial_referral_commission
   validates :mobile_with_country_code, presence: { message: "Mobile number is required" },
             uniqueness: { message: "This mobile number is already registered" },
             unless: -> { user_type == "administrator" }
@@ -34,9 +33,20 @@ class User < ApplicationRecord
 
   # Assign rank based on the user's total deposit amount
   def assign_rank
-    self.rank = Rank.where('minimum_deposit <= ?', total_deposit_amount).order(minimum_deposit: :desc).first
+    current_rank = rank
+    total_approved_amount = purchases.where(approved: true, status: "active").sum(:deposit_amount)
+    self.rank = Rank.where('minimum_deposit <= ?', total_approved_amount).order(minimum_deposit: :desc).first
+    if self.rank != current_rank
+      self.new_rank_assigned = true
+    else
+      self.new_rank_assigned = false
+    end
     save!
   end
+
+
+
+
 
   # Calculate daily profit based on the user's rank and total deposit
   def daily_profit
@@ -54,7 +64,6 @@ class User < ApplicationRecord
     referred_users.joins(:purchases).where(purchases: { approved: true, status: "active" }).sum(:deposit_amount)
   end
 
-  # Calculate total referrals
   def total_referrals
     referred_users.count
   end
@@ -71,18 +80,24 @@ class User < ApplicationRecord
     self.last_profit_calculation = Date.today
     save!
   end
-  def calculate_initial_referral_commission
-
-
+  def create_referral_commission_for_purchase(purchase)
     return unless referred_by_user.present?
 
-    referral_commission_amount = 100.0
+    # Get the commission rate from the associated plan
+    commission_rate = find_commission_rate_for_purchase(purchase)
+
+    if commission_rate.nil? || commission_rate <= 0
+      raise "Commission rate is not defined or is zero for the associated plan. Please set a valid commission rate."
+    end
+    # Calculate the referral commission amount based on the plan's commission rate
+    referral_commission_amount = (purchase.deposit_amount * commission_rate) / 100.0
 
     # Create the referral commission record
     referral_commission = ReferralCommission.create!(
       user: referred_by_user,
       referral_user_id: id,
       amount: referral_commission_amount,
+      purchase_id: purchase.id  # Link commission to the specific purchase
     )
 
     # Create a deposit entry for the referring user
@@ -90,7 +105,7 @@ class User < ApplicationRecord
       user_id: referred_by_user.id,
       amount: referral_commission_amount,
       status: 'referral_commission',
-      processed_at: Time.current,
+      processed_at: Time.current
     )
 
     # Add transaction history for the referral commission
@@ -119,12 +134,8 @@ class User < ApplicationRecord
   end
 
 
-  def commission_rate
-    5.0  # Default to 5% commission
-  end
-  def calculate_referral_commission(purchase_amount)
-    (purchase_amount * commission_rate) / 100.0
-  end
+
+
   def total_referral_commissions
     referral_commissions.sum(:amount)
   end
@@ -386,4 +397,17 @@ class User < ApplicationRecord
   def investment_plan_ids
     purchases.where.not(investment_plan_id: nil).pluck(:investment_plan_id).uniq
   end
+
+  def find_commission_rate_for_purchase(purchase)
+    if purchase.investment_plan.present?
+      purchase.investment_plan.commission_rate
+    elsif purchase.trading_plan.present?
+      purchase.trading_plan.commission_rate
+    elsif purchase.staking.present?
+      purchase.staking.commission_rate
+    else
+      nil  # Return nil if no valid plan is associated
+    end
+  end
+
 end

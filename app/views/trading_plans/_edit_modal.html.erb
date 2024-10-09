@@ -51,6 +51,13 @@
               </div>
             </div>
 
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="commission_rate<%= plan.id %>">Referral Commission <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="commission_rate<%= plan.id %>" value="<%= plan.commission_rate %>" name="commission_rate" placeholder="Enter Referral Commission">
+              </div>
+            </div>
+
             <div class="col-md-12">
               <div class="form-group">
                 <label for="description<%= plan.id %>">Description <span style="color: red">*</span></label>

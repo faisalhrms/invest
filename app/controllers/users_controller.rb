@@ -9,7 +9,13 @@ class UsersController < ApplicationController
     create_activity("View Users Index Page", "User", 0)
   end
 
-
+  def reset_rank_flag
+    if current_user.update(new_rank_assigned: false)
+      render json: { success: true }, status: :ok
+    else
+      render json: { error: 'Failed to reset rank flag' }, status: :unprocessable_entity
+    end
+  end
   def current_profit
     filter = params[:filter] || 'total'
     render json: { profit: current_user.displayed_profit(filter) }

@@ -14,12 +14,39 @@
         <div class="bank-details mb-4">
           <h4 class="font-weight-bold">DEPOSIT ADDRESS</h4>
           <ul class="list-unstyled">
-            <li><strong>Account Name:</strong> <%= bank.account_name %></li>
+            <li><%= bank.account_name %></li>
             <li><strong>NETWORK:</strong> <%= bank.account_number %></li>
-            <li><strong>WALLET ADDRESS:</strong> <%= bank.bank_name %></li>
-            <li><strong>IMPORTANT NOTE:</strong> <%= bank.iban %></li>
+            <li>
+              <strong>WALLET ADDRESS:</strong>
+              <%= bank.bank_name %>
+              <button onclick="copyToClipboardFallback('<%= bank.bank_name %>')" class="btn btn-link p-0" title="Copy Bank Name" style="color: #007bff;">
+                <i class="fas fa-copy"></i>
+              </button>
+            </li>
+            <li style="background-color: #ffcccc; color: #6c757d; padding: 5px; font-weight: bold;">
+              <strong style="color: #6c757d;">IMPORTANT NOTE:</strong> <%= bank.iban %>
+            </li>
           </ul>
         </div>
+
+        <script>
+            // Fallback function to copy text using a temporary text area
+            function copyToClipboardFallback(text) {
+                var tempInput = document.createElement("textarea");
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                tempInput.setSelectionRange(0, 99999); // For mobile devices
+                try {
+                    document.execCommand("copy");
+                    alert("Copied to clipboard!");
+                } catch (err) {
+                    alert("Failed to copy text: " + err);
+                }
+                document.body.removeChild(tempInput);
+            }
+        </script>
+
 
         <!-- Date Display -->
         <div class="d-flex justify-content-between align-items-center">
@@ -54,6 +81,7 @@
           </div>
 
           <% if params[:plan_type] == 'Staking' %>
+
             <div class="col-md-6">
               <div class="form-group">
                 <label class="col-form-label">Select Duration Period <span style="color: red">*</span></label>
@@ -116,7 +144,7 @@
         </div>
         <div class="d-flex justify-content-between">
           <span>Your Withdrawable Amount</span>
-          <span><strong><%= number_to_currency(current_user.total_deposits) %></strong></span>
+          <span><strong><%= number_to_currency(current_user.total_withdrawable_amount) %></strong></span>
         </div>
         <hr>
         <div class="d-flex justify-content-between">
