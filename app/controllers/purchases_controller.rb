@@ -132,33 +132,35 @@ class PurchasesController < ApplicationController
 
   def approve_with_sufficient_balance(purchase)
     ActiveRecord::Base.transaction do
-      # Fetch all relevant deposits for the user and plan type
+      # Fetch all deposits that can be used to fund the purchase
       deposits = Deposit.where(
         user_id: purchase.user_id,
         status: ['refund', 'manual_deposit', 'referral_commission']
-      ).where(
-        'investment_plan_id IS NULL OR investment_plan_id = ? AND trading_plan_id IS NULL OR trading_plan_id = ? AND staking_id IS NULL OR staking_id = ?',
-        purchase.investment_plan_id,
-        purchase.trading_plan_id,
-        purchase.staking_id
       ).where.not(status: ['used for purchase', 'used for withdrawal'])
 
-      remaining_amount = purchase.deposit_amount
-      deposits = deposits.order(amount: :desc) # Order deposits by amount in descending order
+      # Order the deposits to prioritize using up smaller balances first
+      deposits = deposits.order(amount: :asc)
 
+      remaining_amount = purchase.deposit_amount
+
+      # Deduct the amount proportionally from each deposit
       deposits.each do |deposit|
         break if remaining_amount <= 0
 
+        # Determine how much to deduct from this deposit
         deduction_amount = [remaining_amount, deposit.amount].min
+
+        # Update the deposit to reflect the deduction
         deposit.update!(
           amount: deposit.amount - deduction_amount,
           processed_at: Time.current,
-          status: (deposit.amount == deduction_amount) ? 'used for purchase' : deposit.status
+          status: (deposit.amount - deduction_amount).zero? ? 'used for purchase' : deposit.status
         )
 
+        # Decrease the remaining amount by the deducted amount
         remaining_amount -= deduction_amount
 
-        # Create a transaction history for each deduction
+        # Record the transaction history for each deduction
         plan_id = determine_plan_id(purchase)
         TransactionHistory.create_transaction(
           purchase.user,
@@ -171,6 +173,7 @@ class PurchasesController < ApplicationController
         )
       end
 
+      # Check if we were able to cover the entire purchase amount
       if remaining_amount.zero?
         purchase.update!(approved: true, status: "active", approve_at: Time.current)
         redirect_to pending_approvals_purchases_path, notice: 'Purchase approved, and the amount was deducted proportionally from all available deposits.'
@@ -181,6 +184,8 @@ class PurchasesController < ApplicationController
   rescue ActiveRecord::RecordInvalid => e
     redirect_to pending_approvals_purchases_path, alert: "Error approving purchase: #{e.message}"
   end
+
+
 
 
 

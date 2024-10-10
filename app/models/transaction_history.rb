@@ -1,8 +1,7 @@
 class TransactionHistory < ApplicationRecord
   belongs_to :purchase, optional: true
-  belongs_to :withdrawal, optional: true  # Make the withdrawal association optional
+  belongs_to :withdrawal, optional: true
   belongs_to :referral_commission, optional: true
-
   belongs_to :user
 
   def affects_withdrawable_balance?

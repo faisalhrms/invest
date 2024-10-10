@@ -293,7 +293,7 @@
                 </div>
               </div>
               <div class="d-flex align-items-center justify-content-between">
-                <span class="title text-dark">Profit</span>
+                <span class="title text-dark">Daily Profit</span>
                 <div class="text-primary">
                   <b><span>$</span> <%= current_user.daily_profit_by_plan_type('investment_plan') %> </b>
                 </div>
@@ -324,8 +324,12 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= number_to_currency(current_user.daily_profit_by_plan_type('trading_plan') || 0.00) %> </b>
+                  <b>
+                    <% profit_value = current_user.daily_profit_by_plan_type('trading_plan') || 0.00 %>
+                    <%= profit_value > 0 ? "+#{number_to_currency(profit_value)}" : "#{number_to_currency(profit_value)}" %>
+                  </b>
                 </div>
+
               </div>
 
               <span class=""><%= current_user.withdrawal_count_by_plan_type('trading_plan') %> Transactions</span>

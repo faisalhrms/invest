@@ -226,25 +226,28 @@ class User < ApplicationRecord
 
     # Calculate daily profit based on the active purchases for the specified plan type
     purchases
+      .joins(:profit)  # Ensure that we join with the Profit model to access profit attributes
       .where(approved: true, status: 'active')
       .where.not(plan_column => nil)
       .sum do |purchase|
-      # Calculate the daily profit for each purchase
-      plan = purchase.investment_plan || purchase.trading_plan || purchase.staking
-      next 0 unless plan.present?
+      # Access the associated profit for each purchase
+      profit = purchase.profit
+      next 0 unless profit.present?
 
-      profit_percentage = plan.profit_percentage || 0.0
-      plan_duration = plan.duration_in_days
-
-      # Calculate total profit for the entire duration and derive daily profit
-      total_profit = (purchase.deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 30.0)
-      daily_profit = total_profit / plan_duration
-
-      # Only consider the daily profit if the purchase is eligible based on approve_at date
-      days_since_approval = (Date.today - purchase.approve_at.to_date).to_i
-      days_since_approval.positive? ? daily_profit : 0
+      # Check the type of profit based on the profit_loss_type column
+      if profit.profit_loss_type == 'loss'
+        # Show the loss as a negative amount
+        -profit.amount.abs
+      elsif profit.profit_loss_type == 'profit'
+        # Show the profit as a positive amount
+        profit.amount
+      else
+        0
+      end
     end
   end
+
+
 
 
 
@@ -268,7 +271,7 @@ class User < ApplicationRecord
     purchases_to_update = purchases.where(approved: true, status: 'active').where("#{plan_type}_id IS NOT NULL")
 
     purchases_to_update.each do |purchase|
-      current_profit = purchase.profit || Profit.new(user: self, purchase: purchase)
+      current_profit = purchase.profit || Profit.new(user: self, purchase: purchase, profit_loss_type: profit_loss_type)
 
       plan_price = case plan_type
                    when 'trading_plan'
@@ -279,24 +282,16 @@ class User < ApplicationRecord
                      0
                    end
 
-      plan_price = plan_price.to_f
-
       adjustment_amount = (purchase.deposit_amount * percentage) / 100.0
       adjustment_amount *= -1 if profit_loss_type == 'loss'  # Make it negative if it's a loss
 
       if profit_loss_type == 'loss' && (current_profit.amount.nil? || current_profit.amount.zero?)
         adjusted_deposit_amount = purchase.deposit_amount.to_f + adjustment_amount
 
-        adjusted_deposit_amount = adjusted_deposit_amount.to_f
-        plan_price = plan_price.to_f
-
         if adjusted_deposit_amount < plan_price
           purchase.update!(approved: false, status: 'inactive', deposit_amount: adjusted_deposit_amount)
-
           create_transaction_history(purchase, "Deactivated due to insufficient funds (#{adjustment_amount})", adjustment_amount, profit_loss_type)
-
           refund_amount = adjusted_deposit_amount
-
           Deposit.create!(
             user_id: purchase.user_id,
             amount: refund_amount,
@@ -314,18 +309,19 @@ class User < ApplicationRecord
         end
       else
         if current_profit.persisted?
-          current_profit.update(amount: current_profit.amount + adjustment_amount)
+          current_profit.update(amount: current_profit.amount + adjustment_amount, profit_loss_type: profit_loss_type)
         else
           current_profit.amount = adjustment_amount
+          current_profit.profit_loss_type = profit_loss_type
           current_profit.save!
         end
-
         create_transaction_history(purchase, "#{profit_loss_type}_adjustment", adjustment_amount, profit_loss_type)
       end
     end
   rescue ArgumentError => e
     puts "Error: #{e.message}"
   end
+
 
 
 

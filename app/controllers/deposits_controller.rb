@@ -29,7 +29,14 @@ class DepositsController < ApplicationController
   def approve_deposit
     deposit = Deposit.find(params[:id])
 
-    if deposit.update(status: 'manual_deposit')  # Update the status to manual_deposit
+    if deposit.update(status: 'manual_deposit')
+      TransactionHistory.create!(
+        user: deposit.user,
+        amount: deposit.amount,
+        transaction_type: "Manual Deposit",
+        status: 'approved',
+        deposit_id: deposit.id
+      )
       ActivityStream.create_activity_stream("Approved Deposit for #{deposit.user.email}", "Deposit", deposit.user.id, current_user, "approve")
       flash[:notice] = "Deposit Approved Successfully"
     else
