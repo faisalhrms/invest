@@ -40,6 +40,7 @@
     </div>
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+
         <div class="ml-auto">
           <div class="dropdown">
             <button class="btn btn-light" type="button" id="profitFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -54,18 +55,25 @@
         </div>
         <div class="iq-card-body relative-background">
           <div class="d-flex align-items-center">
-            <div class="rounded-circle iq-card-icon iq-bg-info mr-3">
-              <i class="ri-numbers-line"></i>
-            </div>
-            <div class="text-left">
-              <!-- Profit Display Section -->
-              <h4 id="profit-display" class=""><%= number_to_currency(current_user.displayed_profit(@selected_filter) || '0.00') %></h4>
-              <h5 class="">Profit</h5>
-            </div>
 
-            <!-- Filter Icon with Dropdown -->
 
+            <div class="d-flex align-items-center">
+              <div class="text-left">
+                <h6 id="investment-profit-display" class=""><%= number_to_currency(current_user.displayed_profit('investment_plan', @selected_filter) || '0.00') %></h6>
+                <span class="font-size-12">Investment Plan</span>
+              </div>
+              <div class="text-left ml-5">
+                <h6 id="trading-profit-display" class=""><%= number_to_currency(current_user.displayed_profit('trading_plan', @selected_filter) || '0.00') %></h6>
+                <span class="font-size-12">Trading Plan</span>
+              </div>
+              <div class="text-left ml-5">
+                <h6 id="staking-profit-display" class=""><%= number_to_currency(current_user.displayed_profit('staking', @selected_filter) || '0.00') %></h6>
+                <span class="font-size-12">Staking Plan</span>
+              </div>
+
+            </div>
           </div>
+          <h5 class="text-center mt-3">Profit</h5>
 
         </div>
       </div>
@@ -74,24 +82,26 @@
 
     <script>
         function updateProfitDisplay(filter) {
-            // Make an AJAX request to get the updated profit based on the selected filter
+            // Make an AJAX request to get the updated profits based on the selected filter for each plan
             let displayUrl = `/users/current_profit?filter=${filter}`;
 
-            // Perform the AJAX call to dynamically update the displayed profit
+            // Perform the AJAX call to dynamically update the displayed profits
             $.ajax({
                 url: displayUrl,
                 method: 'GET',
                 success: function(data) {
-                    // Update the display element with the new profit value
-                    $('#profit-display').text(`$${data.profit.toFixed(2)}`);
+                    // Update the display elements with the new profit values for each plan
+                    $('#investment-profit-display').text(`$${data.investment_profit.toFixed(2)}`);
+                    $('#trading-profit-display').text(`$${data.trading_profit.toFixed(2)}`);
+                    $('#staking-profit-display').text(`$${data.staking_profit.toFixed(2)}`);
                 },
                 error: function(error) {
                     console.error("Error fetching profit:", error);
                 }
             });
         }
-
     </script>
+
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
         <div class="iq-card-body relative-background">
@@ -295,7 +305,7 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Daily Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('investment_plan') %> </b>
+                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('investment_plan').round(2) %> </b>
                 </div>
               </div>
               <span class=""><%= current_user.withdrawal_count_by_plan_type('investment_plan') %> Transactions</span>
@@ -304,6 +314,49 @@
                   <span class="bg-primary" data-percent="<%= current_user.withdrawal_count_by_plan_type('investment_plan') %>"></span>
                 </div>
               </div>
+              <button class="btn btn-primary mt-3" onclick="viewTransactions('growth_plan')">Transactions</button>
+
+
+              <!-- Modal to Show Transactions -->
+              <div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-labelledby="transactionModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="transactionModalLabel">Transaction History</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div id="transaction-history">
+                        <!-- Transaction history will be loaded here via AJAX -->
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                  function viewTransactions(planType) {
+                      // Make an AJAX request to fetch the transaction data based on the plan type
+                      $.ajax({
+                          url: `/users/transaction_history?plan_type=${planType}`,
+                          method: 'GET',
+                          success: function(data) {
+                              // Update the modal with the transaction data
+                              $('#transaction-history').html(data.transactionsHtml);
+                              $('#transactionModal').modal('show');  // Show the modal
+                          },
+                          error: function(error) {
+                              console.error("Error fetching transactions:", error);
+                          }
+                      });
+                  }
+              </script>
+
             </div>
           </div>
 
@@ -338,6 +391,8 @@
                   <span class="bg-success" data-percent="<%= current_user.withdrawal_count_by_plan_type('trading_plan') %>"></span>
                 </div>
               </div>
+              <button class="btn btn-primary mt-3" onclick="viewTransactions('trading_plan')">Transactions</button>
+
             </div>
           </div>
 

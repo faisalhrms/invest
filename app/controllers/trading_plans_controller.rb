@@ -26,7 +26,7 @@ class TradingPlansController < ApplicationController
     user_ids = params[:user_ids]
     percentage = params[:percentage].to_f
     profit_loss_type = params[:profit_loss_type]
-    plan_type = params[:plan_type] || 'trading_plan'  # You can adjust this if you need to apply to other plans
+    plan_type = params[:plan_type] || 'trading_plan'
 
     if user_ids.present? && percentage.present?
       User.where(id: user_ids).each do |user|

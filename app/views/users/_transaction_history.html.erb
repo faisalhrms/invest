@@ -1,0 +1,66 @@
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th>Date</th>
+    <th>Amount</th>
+    <th>Type</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% transactions.each do |entry| %>
+    <tr>
+      <td><%= entry[:profit].created_at.strftime("%d %B, %H:%M") %></td>
+      <% if entry[:profit].profit_loss_type == 'loss' %>
+        <!-- Display loss in red -->
+        <td class="text-danger">-$<%= entry[:amount].abs %></td>
+        <td class="text-danger">Loss</td>
+      <% elsif entry[:profit].profit_loss_type == 'profit' %>
+        <!-- Display profit in green -->
+        <td class="text-success">$<%= entry[:amount] %></td>
+        <td class="text-success">Profit</td>
+      <% else %>
+        <!-- Display automatic profit -->
+        <td class="text-success">$<%= entry[:amount] %></td>
+        <td class="text-success">Profit</td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+
+
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th, .table td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    .text-success {
+        color: green;
+    }
+
+    .text-danger {
+        color: red;
+    }
+
+    .table thead {
+        background-color: #f8f9fa;
+    }
+
+    .table th {
+        font-weight: bold;
+    }
+
+    .table td {
+        font-size: 14px;
+    }
+
+</style>

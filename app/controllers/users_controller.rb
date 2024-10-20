@@ -9,6 +9,87 @@ class UsersController < ApplicationController
     create_activity("View Users Index Page", "User", 0)
   end
 
+
+  def transaction_history
+    plan_type = params[:plan_type]
+
+    case plan_type
+    when 'growth_plan'
+      purchases = current_user.purchases.where(approved: true, status: 'active', investment_plan_id: current_user.investment_plan_ids)
+    when 'trading_plan'
+      purchases = current_user.purchases.where(approved: true, status: 'active', trading_plan_id: current_user.trading_plan_ids)
+    when 'staking'
+      purchases = current_user.purchases.where(approved: true, status: 'active', staking_id: current_user.staking_ids)
+    else
+      purchases = []
+    end
+
+    if purchases.any?
+      profits_with_cumulative = []
+      cumulative_profit = 0.0
+
+      purchases.each do |purchase|
+        # Calculate daily profit dynamically for the trading plan
+        days_since_approval = (Date.today - purchase.approve_at.to_date).to_i
+        next unless days_since_approval > 0
+
+        # Loop through each day and calculate or fetch profit
+        (1..days_since_approval).each do |day_offset|
+          date_for_profit = purchase.approve_at.to_date + day_offset.days
+
+          # Check if there's a manual profit/loss record for the day
+          existing_profit = Profit.where(purchase_id: purchase.id)
+                                  .where('DATE(created_at) = ?', date_for_profit)
+                                  .or(Profit.where(purchase_id: purchase.id).where('DATE(updated_at) = ?', date_for_profit))
+                                  .order('updated_at DESC')  # Fetch the most recent record
+                                  .first
+
+          if existing_profit.present?
+            # Use manual profit or loss if it exists for this day
+            profit_loss_type = existing_profit.profit_loss_type
+            amount = existing_profit.amount
+          else
+            # Calculate daily profit automatically if no manual profit exists
+            plan = purchase.investment_plan || purchase.trading_plan || purchase.staking
+            profit_percentage = plan.profit_percentage || 0.0
+            plan_duration = plan.duration_in_days
+
+            total_profit = (purchase.deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
+            daily_profit = total_profit / plan_duration
+            amount = daily_profit
+            profit_loss_type = 'profit'
+          end
+
+          # Adjust cumulative profit
+          if profit_loss_type == 'loss'
+            cumulative_profit -= amount.abs
+          else
+            cumulative_profit += amount
+          end
+
+          # Append result only once per day
+          profits_with_cumulative << {
+            profit: existing_profit || OpenStruct.new(created_at: date_for_profit, profit_loss_type: profit_loss_type),
+            amount: amount,
+            cumulative_profit: cumulative_profit
+          } unless profits_with_cumulative.any? { |p| p[:profit].created_at.to_date == date_for_profit }
+        end
+      end
+    else
+      profits_with_cumulative = []
+    end
+
+    if profits_with_cumulative.empty?
+      transactions_html = "<p>No transactions found. Please purchase a plan to view transactions.</p>"
+    else
+      transactions_html = render_to_string partial: 'transaction_history', locals: { transactions: profits_with_cumulative }
+    end
+
+    render json: { transactionsHtml: transactions_html }
+  end
+
+
+
   def reset_rank_flag
     if current_user.update(new_rank_assigned: false)
       render json: { success: true }, status: :ok
@@ -18,8 +99,18 @@ class UsersController < ApplicationController
   end
   def current_profit
     filter = params[:filter] || 'total'
-    render json: { profit: current_user.displayed_profit(filter) }
+
+    investment_profit = current_user.displayed_profit('investment_plan', filter)
+    trading_profit = current_user.displayed_profit('trading_plan', filter)
+    staking_profit = current_user.displayed_profit('staking', filter)
+
+    render json: {
+      investment_profit: investment_profit,
+      trading_profit: trading_profit,
+      staking_profit: staking_profit
+    }
   end
+
   def create
     referring_user = User.find_by(referral_id: params[:referral_id])
     user = User.new(user_params)

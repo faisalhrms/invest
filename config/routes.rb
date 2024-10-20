@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get 'cart' => 'home#cart'
   post 'checkout' => 'home#checkout'
   get 'checkout_page' => 'home#checkout_page'
+  get 'users/transaction_history', to: 'users#transaction_history'
 
   ########## Referrals #########
   resources :referrals, only: [:index] do

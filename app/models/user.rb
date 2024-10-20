@@ -71,15 +71,19 @@ class User < ApplicationRecord
   def update_cumulative_profit!
     return if last_profit_calculation == Date.today
 
-    purchases.where(approved: true, status: "active").each do |purchase|
-      purchase.calculate_profit
+    ActiveRecord::Base.transaction do
+      purchases.where(approved: true, status: "active").find_each do |purchase|
+        purchase.calculate_profit
+      end
+
+      self.total_profit = purchases.joins(:profit).sum("profits.amount")
+      self.last_profit_calculation = Date.today
+      save!
     end
-
-    self.total_profit = purchases.joins(:profit).sum("profits.amount")
-
-    self.last_profit_calculation = Date.today
-    save!
   end
+
+
+
   def create_referral_commission_for_purchase(purchase)
     return unless referred_by_user.present?
 
@@ -212,6 +216,7 @@ class User < ApplicationRecord
 
     purchases.where(approved: true, status: "active").where.not(plan_column => nil).sum(:deposit_amount)
   end
+
   def daily_profit_by_plan_type(plan_type)
     plan_column = case plan_type
                   when 'investment_plan'
@@ -226,26 +231,59 @@ class User < ApplicationRecord
 
     # Calculate daily profit based on the active purchases for the specified plan type
     purchases
-      .joins(:profit)  # Ensure that we join with the Profit model to access profit attributes
       .where(approved: true, status: 'active')
       .where.not(plan_column => nil)
       .sum do |purchase|
-      # Access the associated profit for each purchase
-      profit = purchase.profit
-      next 0 unless profit.present?
+      plan = case plan_type
+             when 'investment_plan'
+               purchase.investment_plan
+             when 'trading_plan'
+               purchase.trading_plan
+             when 'staking'
+               purchase.staking
+             else
+               nil
+             end
+      next 0 unless plan.present?
 
-      # Check the type of profit based on the profit_loss_type column
-      if profit.profit_loss_type == 'loss'
-        # Show the loss as a negative amount
-        -profit.amount.abs
-      elsif profit.profit_loss_type == 'profit'
-        # Show the profit as a positive amount
-        profit.amount
+      # Get the profit percentage from the plan
+      profit_percentage = plan.profit_percentage || 0.0
+
+      # Calculate the duration of the plan, handling staking duration differently
+      plan_duration = if plan_type == 'staking'
+                        purchase.duration_in_days  # Get duration from purchase for staking
+                      else
+                        plan.duration_in_days  # Use plan's duration for investment/trading
+                      end
+      next 0 unless plan_duration.present? && plan_duration > 0
+
+      # Calculate total and daily profit
+      total_profit = (purchase.deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
+      daily_profit = total_profit / plan_duration
+
+      # Calculate days since the plan was approved
+      days_since_approval = (Date.today - purchase.approve_at.to_date).to_i
+      next 0 if days_since_approval <= 0
+
+      # Calculate the accumulated profit based on the number of days passed
+      accumulated_profit = [days_since_approval, plan_duration].min * daily_profit
+
+      # If no profit record exists, return the calculated profit
+      if purchase.profit.nil?
+        accumulated_profit
       else
-        0
+        # If profit exists, check its type
+        if purchase.profit.profit_loss_type == 'loss'
+          -purchase.profit.amount.abs  # Show the loss as a negative amount
+        elsif purchase.profit.profit_loss_type == 'profit'
+          purchase.profit.amount  # Show the profit as a positive amount
+        else
+          accumulated_profit  # Default to calculated profit if no valid profit/loss type
+        end
       end
     end
   end
+
 
 
 
@@ -282,7 +320,7 @@ class User < ApplicationRecord
                      0
                    end
 
-      adjustment_amount = (purchase.deposit_amount * percentage) / 100.0
+      adjustment_amount = (purchase.deposit_amount + current_profit.amount * percentage) / 100.0
       adjustment_amount *= -1 if profit_loss_type == 'loss'  # Make it negative if it's a loss
 
       if profit_loss_type == 'loss' && (current_profit.amount.nil? || current_profit.amount.zero?)
@@ -358,18 +396,53 @@ class User < ApplicationRecord
     trading_and_staking_profit + investment_profit
   end
 
-  def displayed_profit(filter = 'total')
-    case filter
+  def monthly_profit_by_plan_type(plan_type)
+    plan_column = case plan_type
+                  when 'investment_plan'
+                    :investment_plan_id
+                  when 'trading_plan'
+                    :trading_plan_id
+                  when 'staking'
+                    :staking_id
+                  else
+                    return 0
+                  end
+
+    # Apply 31-day restriction for all plan types, including investment_plan
+    purchases
+      .joins(:profit)
+      .where(approved: true, status: 'active')
+      .where.not(plan_column => nil)
+      .where('DATE_PART(\'day\', NOW() - purchases.created_at) >= 31') # Apply 31-day restriction to all plans
+      .sum('profits.amount')
+  end
+
+  def displayed_profit(plan_type = 'total', filter = 'total')
+    case plan_type
+    when 'investment_plan'
+      monthly_profit_by_plan_type('investment_plan')
+    when 'trading_plan'
+      monthly_profit_by_plan_type('trading_plan')
+    when 'staking'
+      monthly_profit_by_plan_type('staking')
     when 'total'
-      adjusted_total_profit
+      # Sum up profits from all plans
+      monthly_profit_by_plan_type('investment_plan') +
+        monthly_profit_by_plan_type('trading_plan') +
+        monthly_profit_by_plan_type('staking')
     when 'this_month'
       this_month_profit
     when 'last_month'
       last_month_profit
     else
-      adjusted_total_profit
+      # Return total if no specific plan type is requested
+      monthly_profit_by_plan_type('investment_plan') +
+        monthly_profit_by_plan_type('trading_plan') +
+        monthly_profit_by_plan_type('staking')
     end
   end
+
+
 
   def this_month_profit
     purchases.joins(:profit)
@@ -385,13 +458,19 @@ class User < ApplicationRecord
              .where('profits.created_at >= ? AND profits.created_at <= ?', Time.current.last_month.beginning_of_month, Time.current.last_month.end_of_month)
              .sum('profits.amount')
   end
+  def investment_plan_ids
+    purchases.where.not(investment_plan_id: nil).pluck(:investment_plan_id).uniq
+  end
+  def trading_plan_ids
+    purchases.where.not(trading_plan_id: nil).pluck(:trading_plan_id).uniq
+  end
 
+  def staking_ids
+    purchases.where.not(staking_id: nil).pluck(:staking_id).uniq
+  end
   private
   def downcase_email
     self.email = email.downcase
-  end
-  def investment_plan_ids
-    purchases.where.not(investment_plan_id: nil).pluck(:investment_plan_id).uniq
   end
 
   def find_commission_rate_for_purchase(purchase)
@@ -405,5 +484,48 @@ class User < ApplicationRecord
       nil  # Return nil if no valid plan is associated
     end
   end
+
+
+  def daily_profits_by_plan_type(plan_type)
+    plan_column = case plan_type
+                  when 'investment_plan'
+                    :investment_plan_id
+                  when 'trading_plan'
+                    :trading_plan_id
+                  when 'staking'
+                    :staking_id
+                  else
+                    return []
+                  end
+
+    profits = purchases
+                .where(approved: true, status: 'active')
+                .where.not(plan_column => nil)
+                .joins(:profit)
+                .select('profits.*, purchases.id as purchase_id')
+                .order('profits.created_at ASC')
+
+    if plan_type == 'investment_plan'
+      # Calculate cumulative profit per day
+      daily_profits = profits.group_by { |p| p.created_at.to_date }.map do |date, profits_on_date|
+        total = profits_on_date.sum(&:amount)
+        { date: date, amount: total }
+      end
+    else
+      # For trading and staking plans, include profit or loss type
+      daily_profits = profits.map do |profit|
+        {
+          date: profit.created_at.to_date,
+          amount: profit.amount,
+          profit_loss_type: profit.profit_loss_type,
+          purchase_id: profit.purchase_id
+        }
+      end
+    end
+
+    daily_profits
+  end
+
+
 
 end
