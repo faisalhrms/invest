@@ -72,6 +72,8 @@ class PurchasesController < ApplicationController
     purchase = Purchase.find(params[:id])
 
     if purchase.update(status: "rejected", approved: false)
+      refund_deposit(purchase)
+      TransactionHistory.create_transaction( purchase.user, purchase.deposit_amount, "Purchase rejected and amount refunded", nil, plan_id, "reject", purchase.id)
       redirect_to pending_approvals_purchases_path, notice: 'Purchase rejected and amount refunded successfully.'
     else
       redirect_to pending_approvals_purchases_path, alert: 'Error rejecting purchase.'
@@ -82,52 +84,63 @@ class PurchasesController < ApplicationController
     purchase = Purchase.find_by(id: params[:id])
 
     if purchase && current_user.user_type == "administrator"
-      if purchase.manual_payment
-        ActiveRecord::Base.transaction do
-          purchase.update!(approved: true, status: "active", approve_at: Time.current)
-          create_transaction_history(purchase, "Plan Purchased")
-        end
-        redirect_to pending_approvals_purchases_path, notice: 'Purchase approved based on manual payment verification.'
-      else
-        user_deposit_balance = calculate_user_balance(purchase.user_id)
-
-        if user_deposit_balance >= purchase.deposit_amount
-          # Case 1: Sufficient deposit balance
-          approve_with_sufficient_balance(purchase)
-        else
-
-          ActiveRecord::Base.transaction do
-            # Deduct from the existing deposit balance
-            if user_deposit_balance > 0
-              existing_deposit = Deposit.where(
-                user_id: purchase.user_id,
-                status: ['refund', 'referral_commission'],
-                investment_plan_id: purchase.investment_plan_id,
-                trading_plan_id: purchase.trading_plan_id,
-                staking_id: purchase.staking_id
-              ).first
-
-              if existing_deposit.present?
-                existing_deposit.update!(
-                  amount: existing_deposit.amount - user_deposit_balance,
-                  processed_at: Time.current,
-                  status: 'used for purchase'
-                )
-              end
-            end
-
-            purchase.update!(approved: true, status: "active", approve_at: Time.current)
-
-            create_transaction_history(purchase, "Plan Purchased")
-          end
-
-          redirect_to pending_approvals_purchases_path, notice: 'Purchase approved with partial deposit and manual payment.'
-        end
+      ActiveRecord::Base.transaction do
+        purchase.update!(approved: true, status: "active", approve_at: Time.current)
+        create_transaction_history(purchase, "Plan Approved")
       end
+      redirect_to pending_approvals_purchases_path, notice: 'Purchase approved successfully.'
     else
       redirect_to pending_approvals_purchases_path, alert: 'You are not authorized to approve purchases or purchase not found.'
     end
   end
+
+
+
+
+
+
+
+  def pending_approvals
+    @pending_purchases = Purchase.where(approved: false, status: "pending")
+    render 'purchases/pending_approval'
+  end
+
+  def create
+    plan_type = params[:plan_type]
+    plan_id = params[:plan_id]
+
+    @purchase = Purchase.new(purchase_params)
+    @purchase.user = current_user
+
+    case plan_type
+    when 'InvestmentPlan'
+      @purchase.investment_plan_id = plan_id
+    when 'TradingPlan'
+      @purchase.trading_plan_id = plan_id
+    when 'Staking'
+      @purchase.staking_id = plan_id
+      @purchase.duration_in_days = params[:duration_in_days]
+    end
+
+    @purchase.deposit_amount = params[:deposit_amount].to_f
+    @purchase.manual_payment = params[:manual_payment]
+    @purchase.status = "pending"
+
+    if @purchase.save
+      begin
+        approve_with_sufficient_balance(@purchase)
+        redirect_to dashboard_path, notice: 'Purchase successful! Please wait for admin approval.'
+      rescue StandardError => e
+        redirect_to dashboard_path, alert: "Error processing purchase: #{e.message}"
+      end
+    else
+      render :new
+    end
+  end
+
+
+
+  private
 
 
   def approve_with_sufficient_balance(purchase)
@@ -173,64 +186,11 @@ class PurchasesController < ApplicationController
         )
       end
 
-      # Check if we were able to cover the entire purchase amount
-      if remaining_amount.zero?
-        purchase.update!(approved: true, status: "active", approve_at: Time.current)
-        redirect_to pending_approvals_purchases_path, notice: 'Purchase approved, and the amount was deducted proportionally from all available deposits.'
-      else
-        redirect_to pending_approvals_purchases_path, alert: 'Insufficient balance to approve the purchase.'
+      if not remaining_amount.zero?
+        raise "Insufficient balance to approve the purchase."
       end
     end
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to pending_approvals_purchases_path, alert: "Error approving purchase: #{e.message}"
   end
-
-
-
-
-
-  def pending_approvals
-    @pending_purchases = Purchase.where(approved: false, status: "pending")
-    render 'purchases/pending_approval'
-  end
-
-  def create
-    plan_type = params[:plan_type]
-    plan_id = params[:plan_id]
-
-    # existing_purchase = current_user.purchases.where(approved: true, status: "active")
-    #                                 .where("#{plan_type.foreign_key} IS NOT NULL").exists?
-    #
-    # if existing_purchase
-    #   redirect_to dashboard_path, alert: 'You already have an active plan of this type. Please cancel the current plan before purchasing a new one.'
-    #   return
-    # end
-
-    @purchase = Purchase.new(purchase_params)
-    @purchase.user = current_user
-
-    case plan_type
-    when 'InvestmentPlan'
-      @purchase.investment_plan_id = plan_id
-    when 'TradingPlan'
-      @purchase.trading_plan_id = plan_id
-    when 'Staking'
-      @purchase.staking_id = plan_id
-      @purchase.duration_in_days = params[:duration_in_days]
-    end
-
-    @purchase.deposit_amount = params[:deposit_amount].to_f
-    @purchase.manual_payment = params[:manual_payment]
-    @purchase.status = "pending"
-
-    if @purchase.save
-      redirect_to dashboard_path, notice: 'Purchase successful! Please wait for admin approval.'
-    else
-      render :new
-    end
-  end
-
-  private
 
   def calculate_user_balance(user_id)
     Deposit.where(user_id: user_id, status: ['refund','manual_deposit', 'referral_commission']).where.not(status: ['used for purchase', 'used for withdrawal']).sum(:amount)
@@ -260,7 +220,19 @@ class PurchasesController < ApplicationController
   end
 
 
-
+  def refund_deposit(purchase)
+    Deposit.create!(
+      user_id: purchase.user_id,
+      amount: purchase.deposit_amount,
+      processed_at: Time.current,
+      status: "refund",
+      investment_plan_id: purchase.investment_plan_id,
+      trading_plan_id: purchase.trading_plan_id,
+      staking_id: purchase.staking_id,
+      calculated_profit: 0.0,
+      profit_eligible: false
+    )
+  end
   def find_plan(plan_id = params[:plan_id], plan_type = params[:plan_type])
     case plan_type
     when 'InvestmentPlan'

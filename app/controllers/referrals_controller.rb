@@ -4,15 +4,40 @@ class ReferralsController < ApplicationController
 
   def index
     if current_user.user_type == "administrator"
-      @referrals = User.left_joins(:purchases)
-                       .where.not(referred_by: nil)
-                       .select { |user| user.referred_users.count > 0 }
+      params[:filter] ||= 'all'
+
+      @referrals = User.includes(:purchases, :referred_by_user)
+
+
+      # Apply filters
+      case params[:filter]
+      when 'bought_packages'
+        @referrals = @referrals.joins(:purchases).distinct
+      when 'via_referrals'
+        # Base query already includes users referred by someone and who have referrals
+        @referrals = @referrals
+      when 'no_plan'
+        @referrals = @referrals.left_joins(:purchases)
+                               .where(purchases: { id: nil })
+      else
+        @referrals = User.joins(:referred_users)
+                         .where.not(referred_by: nil)
+                         .distinct
+                         .includes(:purchases, :referred_by_user)
+      end
+
     else
-      @referrals = User.left_joins(:purchases)
+      # For non-admin users, set @referrals as specified and hide filters
+      @referrals = User.joins(:referred_users)
                        .where(referred_by: current_user.id)
-                       .select { |user| user.referred_users.count > 0 }
+                       .distinct
+                       .includes(:purchases, :referred_by_user)
+      # No filters to apply for non-admins
     end
   end
+
+
+
 
 
   # Action to handle AJAX request and show referral details in the modal

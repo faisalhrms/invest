@@ -59,6 +59,10 @@ class User < ApplicationRecord
     purchases.where(approved: true, status: "active").sum(:deposit_amount)
   end
 
+  def current_deposit
+    return 0 unless deposits.present?
+    deposits.last.amount
+  end
   # Calculate the total deposit amount for all referred users
   def refer_deposit_amount
     referred_users.joins(:purchases).where(purchases: { approved: true, status: "active" }).sum(:deposit_amount)
@@ -84,6 +88,8 @@ class User < ApplicationRecord
 
 
 
+  # app/models/user.rb
+
   def create_referral_commission_for_purchase(purchase)
     return unless referred_by_user.present?
 
@@ -93,35 +99,55 @@ class User < ApplicationRecord
     if commission_rate.nil? || commission_rate <= 0
       raise "Commission rate is not defined or is zero for the associated plan. Please set a valid commission rate."
     end
-    # Calculate the referral commission amount based on the plan's commission rate
-    referral_commission_amount = (purchase.deposit_amount * commission_rate) / 100.0
 
-    # Create the referral commission record
-    referral_commission = ReferralCommission.create!(
-      user: referred_by_user,
-      referral_user_id: id,
-      amount: referral_commission_amount,
-      purchase_id: purchase.id  # Link commission to the specific purchase
-    )
+    # Calculate the total amount on which commission has already been given
+    total_commissioned_amount = ReferralCommission
+                                  .where(user: referred_by_user, referral_user_id: id)
+                                  .joins(:purchase)
+                                  .sum('purchases.deposit_amount')
 
-    # Create a deposit entry for the referring user
-    deposit = Deposit.create!(
-      user_id: referred_by_user.id,
-      amount: referral_commission_amount,
-      status: 'referral_commission',
-      processed_at: Time.current
-    )
+    # Calculate the total approved deposit amount of the referred user
+    total_deposit_amount = purchases.where(approved: true, status: 'active').sum(:deposit_amount)
 
-    # Add transaction history for the referral commission
-    TransactionHistory.create!(
-      user: referred_by_user,
-      amount: referral_commission_amount,
-      transaction_type: "Referral Commission",
-      status: 'active',
-      referral_commission_id: referral_commission.id,
-      deposit_id: deposit.id
-    )
+    # Calculate the additional amount eligible for commission
+    additional_amount = total_deposit_amount - total_commissioned_amount
+
+    # Proceed only if there's an additional amount
+    if additional_amount > 0
+      # Calculate the referral commission amount based on the additional amount
+      referral_commission_amount = (additional_amount * commission_rate) / 100.0
+
+      # Create the referral commission record
+      referral_commission = ReferralCommission.create!(
+        user: referred_by_user,
+        referral_user_id: id,
+        amount: referral_commission_amount,
+        purchase_id: purchase.id  # Link commission to the specific purchase
+      )
+
+      # Create a deposit entry for the referring user
+      deposit = Deposit.create!(
+        user_id: referred_by_user.id,
+        amount: referral_commission_amount,
+        status: 'referral_commission',
+        processed_at: Time.current
+      )
+
+      # Add transaction history for the referral commission
+      TransactionHistory.create!(
+        user: referred_by_user,
+        amount: referral_commission_amount,
+        transaction_type: "Referral Commission",
+        status: 'active',
+        referral_commission_id: referral_commission.id,
+        deposit_id: deposit.id
+      )
+    else
+      # No additional commission to give
+      Rails.logger.info "No additional commission for referrer #{referred_by_user.id} on purchase #{purchase.id}"
+    end
   end
+
 
   def otp_valid?(submitted_otp)
     otp == submitted_otp && otp_expires_at > Time.current
@@ -180,9 +206,10 @@ class User < ApplicationRecord
     purchases
       .joins(:profit)
       .where(approved: true, status: 'active')
-      .where('DATE_PART(\'day\', NOW() - purchases.approve_at) >= 31') # Ensure 31 days have passed since approval
+      .where('NOW() >= purchases.approve_at + INTERVAL \'1 day\' * COALESCE(NULLIF(purchases.duration_in_days, 0), 31)')
       .sum('profits.amount')
   end
+
 
   def total_withdrawable_amount
     total_deposits + total_withdrawable_profit + withdrawable_referral_commission
@@ -263,7 +290,7 @@ class User < ApplicationRecord
 
       # Calculate days since the plan was approved
       days_since_approval = (Date.today - purchase.approve_at.to_date).to_i
-      next 0 if days_since_approval <= 0
+      # next 0 if days_since_approval <= 0
 
       # Calculate the accumulated profit based on the number of days passed
       accumulated_profit = [days_since_approval, plan_duration].min * daily_profit
@@ -276,6 +303,7 @@ class User < ApplicationRecord
         if purchase.profit.profit_loss_type == 'loss'
           -purchase.profit.amount.abs  # Show the loss as a negative amount
         elsif purchase.profit.profit_loss_type == 'profit'
+
           purchase.profit.amount  # Show the profit as a positive amount
         else
           accumulated_profit  # Default to calculated profit if no valid profit/loss type
@@ -311,45 +339,70 @@ class User < ApplicationRecord
     purchases_to_update.each do |purchase|
       current_profit = purchase.profit || Profit.new(user: self, purchase: purchase, profit_loss_type: profit_loss_type)
 
+      # Get the plan price based on the plan type and convert it to decimal
       plan_price = case plan_type
                    when 'trading_plan'
-                     purchase.trading_plan&.price || 0
+                     purchase.trading_plan&.price.to_d || 0.0
                    when 'staking'
-                     purchase.staking&.price || 0
+                     purchase.staking&.price.to_d || 0.0
                    else
-                     0
+                     0.0
                    end
 
-      adjustment_amount = (purchase.deposit_amount + current_profit.amount * percentage) / 100.0
+      # Calculate the total investment (deposit amount + current profit)
+      total_investment = purchase.deposit_amount.to_d + (current_profit.amount.to_d || 0.0)
+
+      # Calculate the adjustment amount
+      adjustment_amount = total_investment * (percentage / 100.0)
       adjustment_amount *= -1 if profit_loss_type == 'loss'  # Make it negative if it's a loss
 
-      if profit_loss_type == 'loss' && (current_profit.amount.nil? || current_profit.amount.zero?)
-        adjusted_deposit_amount = purchase.deposit_amount.to_f + adjustment_amount
+      # Calculate the adjusted total funds after applying the profit/loss
+      adjusted_total_funds = total_investment + adjustment_amount
 
-        if adjusted_deposit_amount < plan_price
-          purchase.update!(approved: false, status: 'inactive', deposit_amount: adjusted_deposit_amount)
+      if profit_loss_type == 'loss'
+        if adjusted_total_funds < plan_price
+          # Deactivate the purchase if adjusted funds are less than plan price
+          purchase.update!(approved: false, status: 'inactive')
           create_transaction_history(purchase, "Deactivated due to insufficient funds (#{adjustment_amount})", adjustment_amount, profit_loss_type)
-          refund_amount = adjusted_deposit_amount
-          Deposit.create!(
-            user_id: purchase.user_id,
-            amount: refund_amount,
-            processed_at: Time.current,
-            status: "refund",
-            investment_plan_id: purchase.investment_plan_id,
-            trading_plan_id: purchase.trading_plan_id,
-            staking_id: purchase.staking_id,
-            calculated_profit: 0.0,
-            profit_eligible: false
-          )
+
+          # Refund the remaining amount if any
+          if adjusted_total_funds > 0
+            Deposit.create!(
+              user_id: purchase.user_id,
+              amount: adjusted_total_funds,
+              processed_at: Time.current,
+              status: "refund",
+              investment_plan_id: purchase.investment_plan_id,
+              trading_plan_id: purchase.trading_plan_id,
+              staking_id: purchase.staking_id,
+              calculated_profit: 0.0,
+              profit_eligible: false
+            )
+          end
+
+          # Reset profit to zero
+          if current_profit.persisted?
+            current_profit.update(amount: 0.0, profit_loss_type: profit_loss_type)
+          end
         else
-          purchase.update!(deposit_amount: adjusted_deposit_amount)
-          create_transaction_history(purchase, "Deposit #{profit_loss_type}_adjustment (#{adjustment_amount})", adjustment_amount, profit_loss_type)
+          # Update the profit amount
+          new_profit_amount = adjusted_total_funds - purchase.deposit_amount.to_d
+          if current_profit.persisted?
+            current_profit.update(amount: new_profit_amount, profit_loss_type: profit_loss_type)
+          else
+            current_profit.amount = new_profit_amount
+            current_profit.profit_loss_type = profit_loss_type
+            current_profit.save!
+          end
+          create_transaction_history(purchase, "#{profit_loss_type}_adjustment", adjustment_amount, profit_loss_type)
         end
       else
+        # For profit adjustments
+        new_profit_amount = (current_profit.amount.to_d || 0.0) + adjustment_amount
         if current_profit.persisted?
-          current_profit.update(amount: current_profit.amount + adjustment_amount, profit_loss_type: profit_loss_type)
+          current_profit.update(amount: new_profit_amount, profit_loss_type: profit_loss_type)
         else
-          current_profit.amount = adjustment_amount
+          current_profit.amount = new_profit_amount
           current_profit.profit_loss_type = profit_loss_type
           current_profit.save!
         end
@@ -408,14 +461,13 @@ class User < ApplicationRecord
                     return 0
                   end
 
-    # Apply 31-day restriction for all plan types, including investment_plan
     purchases
       .joins(:profit)
       .where(approved: true, status: 'active')
       .where.not(plan_column => nil)
-      .where('DATE_PART(\'day\', NOW() - purchases.created_at) >= 31') # Apply 31-day restriction to all plans
       .sum('profits.amount')
   end
+
 
   def displayed_profit(plan_type = 'total', filter = 'total')
     case plan_type

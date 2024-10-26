@@ -1,4 +1,3 @@
-<!-- _referral_details.html.erb -->
 <h4>Team Details for <%= user.full_name %></h4>
 <div class="table-responsive">
   <table class="table mb-2 mt-2 table-borderless">
@@ -9,7 +8,9 @@
       <th scope="col" class="font-weight-bold">Referred By</th>
       <th scope="col" class="font-weight-bold">Referral Count</th>
       <th scope="col" class="font-weight-bold">Plan</th>
-      <th scope="col" class="font-weight-bold">Deposit Amount</th>
+      <th scope="col" class="font-weight-bold">Total Deposit</th>
+      <th scope="col" class="font-weight-bold">Rank</th>
+      <th scope="col" class="font-weight-bold">Last Deposit</th>
       <th scope="col" class="font-weight-bold">Status</th>
     </tr>
     </thead>
@@ -29,6 +30,8 @@
           <% end %>
         </td>
         <td><%= number_to_currency(referral.total_deposit_amount, unit: "$") %></td>
+        <td><%= (referral.rank.present? ? referral.rank.name : "Unranked") %></td>
+        <td><%= number_to_currency(referral.current_deposit, unit: "$") %></td>
         <td>
             <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
               <%= referral.is_active ? 'Active' : 'Inactive' %>

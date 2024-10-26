@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_10_160635) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_26_043738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_10_160635) do
     t.string "wallet_address"
     t.decimal "calculated_profit", precision: 15, scale: 2, default: "0.0"
     t.boolean "profit_eligible", default: false
+    t.decimal "previous_amount", precision: 15, scale: 2, default: "0.0"
+    t.string "previous_status"
   end
 
   create_table "investment_plans", force: :cascade do |t|

@@ -6,6 +6,26 @@
           <h4 class="card-title">Teams</h4>
         </div>
       </div>
+
+      <!-- Filter Form Start -->
+      <% if current_user.user_type == "administrator" %>
+        <div class="iq-card-body">
+          <%= form_with url: referrals_path, method: :get, local: true, class: 'form-inline mb-4' do |f| %>
+            <div class="form-group">
+              <%= f.label :filter, 'Filter by:', class: 'mr-2' %>
+              <%= f.select :filter, options_for_select([
+                                                         ['Teams', 'all'],
+                                                         ['Users who bought packages', 'bought_packages'],
+                                                         ['Users who joined via referrals', 'via_referrals'],
+                                                         ['Users who signed up but did not buy any plan', 'no_plan']
+                                                       ], params[:filter]), {}, class: 'form-control mr-2' %>
+            </div>
+            <%= f.submit 'Apply', class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      <% end %>
+      <!-- Filter Form End -->
+
       <div class="iq-card-body">
         <div class="table-responsive">
           <table class="table mb-2 mt-2 table-borderless">
@@ -21,68 +41,75 @@
             </tr>
             </thead>
             <tbody>
-            <% displayed_referrals = [] %> <!-- Array to track displayed referrals -->
-            <% @referrals.each do |referral| %>
-              <% referral_purchases = referral.purchases.present? ? referral.purchases : [nil] %>
-              <% referral_purchases.each_with_index do |purchase, index| %>
+            <% if @referrals.any? %>
+              <% @referrals.each do |referral| %>
                 <tr>
-                  <!-- Display the referral details only for the first purchase to avoid duplication -->
-                  <td><%= referral.full_name unless displayed_referrals.include?(referral.id) %></td>
-                  <td><%= referral.email unless displayed_referrals.include?(referral.id) %></td>
+                  <!-- Full Name -->
+                  <td><%= referral.full_name %></td>
 
-                  <!-- Display referred_by user -->
+                  <!-- Email -->
+                  <td><%= referral.email %></td>
+
+                  <!-- Referred By -->
                   <td>
                     <%= referral.referred_by_user.present? ? referral.referred_by_user.full_name : "Direct Signup" %>
                   </td>
 
-                  <!-- Display referral count beside the "View" button -->
+                  <!-- Referral Count with View Button -->
                   <td>
-                    <!-- Referral Count -->
                     <a href="#" class="btn btn-sm btn-info ml-2" data-toggle="modal" data-target="#referralDetailsModal" data-id="<%= referral.id %>">
-
-                      <i class="ri-eye-fill"></i>  <%= referral.referred_users.count %>
+                      <i class="ri-eye-fill"></i> <%= referral.referred_users.count %>
                     </a>
                   </td>
 
-                  <!-- Display plan details or show 'No Plan' if no purchase -->
+                  <!-- Plan Details -->
                   <td>
-                    <% if purchase.present? %>
-                      <% if purchase.investment_plan_id %>
-                        <%= link_to purchase.investment_plan.name, purchase.investment_plan %>
-                      <% elsif purchase.trading_plan_id %>
-                        <%= link_to purchase.trading_plan.name, purchase.trading_plan %>
-                      <% elsif purchase.staking_id %>
-                        <%= link_to purchase.staking.name, purchase.staking %>
-                      <% end %>
+                    <% if referral.purchases.present? %>
+                      <% plan_names = referral.purchases.map do |purchase|
+                        if purchase.investment_plan_id
+                          purchase.investment_plan.name
+                        elsif purchase.trading_plan_id
+                          purchase.trading_plan.name
+                        elsif purchase.staking_id
+                          purchase.staking.name
+                        end
+                      end.compact %>
+                      <%= plan_names.uniq.join(", ") %>
                     <% else %>
                       No Plan
                     <% end %>
                   </td>
 
-                  <!-- Display deposit amount or show $0 if no purchase -->
-                  <td><%= purchase.present? ? number_to_currency(purchase.deposit_amount, unit: "$") : "$0.00" %></td>
-
-                  <!-- Display status with badge -->
+                  <!-- Total Deposit Amount -->
                   <td>
-          <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
-            <%= referral.is_active ? 'Active' : 'Inactive' %>
-            <span class="ri-<%= referral.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
-          </span>
+                    <% total_deposit = referral.purchases.sum(&:deposit_amount) %>
+                    <%= number_to_currency(total_deposit, unit: "$") %>
+                  </td>
+
+                  <!-- Status with Badge -->
+                  <td>
+                      <span class="badge rounded-pill <%= referral.is_active ? 'badge-info' : 'badge-danger' %>">
+                        <%= referral.is_active ? 'Active' : 'Inactive' %>
+                        <span class="ri-<%= referral.is_active ? 'check-fill' : 'user-unfollow-line' %> mx-1"></span>
+                      </span>
                   </td>
                 </tr>
-
-                <!-- Add referral ID to displayed_referrals to prevent duplicating it for further purchases -->
-                <% displayed_referrals << referral.id unless displayed_referrals.include?(referral.id) %>
               <% end %>
+            <% else %>
+              <tr>
+                <td colspan="7" class="text-center">No users found.</td>
+              </tr>
             <% end %>
             </tbody>
-
           </table>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- Modal and JavaScript remain the same -->
 
 <!-- Modal for Referral Details -->
 <!-- Modal for displaying referral details -->

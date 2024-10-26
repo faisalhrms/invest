@@ -16,13 +16,17 @@ class WithdrawalsController < ApplicationController
                    end
 
     if params[:amount].to_f > 0 && params[:amount].to_f <= total_amount && params[:wallet_address].present?
-      withdrawal = current_user.withdrawals.create!(
-        amount: params[:amount].to_f,
-        wallet_address: params[:wallet_address],
-        withdrawal_type: withdrawal_type,
-        status: 'pending'
-      )
-      create_transaction_history(current_user, withdrawal.amount, "Withdrawal Requested", "pending", withdrawal.id)
+      ActiveRecord::Base.transaction do
+        withdrawal = current_user.withdrawals.create!(
+          amount: params[:amount].to_f,
+          wallet_address: params[:wallet_address],
+          withdrawal_type: withdrawal_type,
+          status: 'pending'
+        )
+        adjust_deposits_for_withdrawal(withdrawal)
+
+        create_transaction_history(current_user, -withdrawal.amount, "Withdrawal Requested", "pending", withdrawal.id)
+      end
 
       redirect_to dashboard_path, notice: "Your withdrawal request for $#{params[:amount]} to wallet address #{params[:wallet_address]} has been submitted successfully."
     else
@@ -32,8 +36,6 @@ class WithdrawalsController < ApplicationController
 
   def approve
     if @withdrawal.update(status: 'approved')
-      adjust_deposits_for_withdrawal(@withdrawal)
-
       create_transaction_history(@withdrawal.user, @withdrawal.amount, "Withdrawal Approved", "approved", @withdrawal.id)
 
       redirect_to withdrawals_path, notice: "Withdrawal approved successfully and funds sent to wallet address #{@withdrawal.wallet_address}."
@@ -41,16 +43,22 @@ class WithdrawalsController < ApplicationController
       redirect_to withdrawals_path, alert: "Error approving withdrawal."
     end
   end
+
   def index
     @pending_withdrawals = Withdrawal.where(status: 'pending')
     render "withdrawals/index"
   end
+
   def reject
-    if @withdrawal.update(status: 'rejected')
-      create_transaction_history(@withdrawal.user, @withdrawal.amount, "Withdrawal Rejected", "rejected", @withdrawal.id)
-      redirect_to withdrawals_path, alert: "Withdrawal rejected successfully."
-    else
-      redirect_to withdrawals_path, alert: "Error rejecting withdrawal."
+    ActiveRecord::Base.transaction do
+      if @withdrawal.update(status: 'rejected')
+        revert_deposits_for_withdrawal(@withdrawal)
+        create_transaction_history(@withdrawal.user, @withdrawal.amount, "Withdrawal Rejected", "rejected", @withdrawal.id)
+
+        redirect_to withdrawals_path, alert: "Withdrawal rejected successfully."
+      else
+        redirect_to withdrawals_path, alert: "Error rejecting withdrawal."
+      end
     end
   end
 
@@ -62,17 +70,41 @@ class WithdrawalsController < ApplicationController
 
   def adjust_deposits_for_withdrawal(withdrawal)
     remaining_amount = withdrawal.amount
-    user_deposits = withdrawal.user.deposits.where(status: ['refund','manual_deposit' ,'referral_commission']).order(:created_at)
+    user_deposits = withdrawal.user.deposits.where(status: ['refund', 'manual_deposit', 'referral_commission']).order(:created_at)
 
     user_deposits.each do |deposit|
       break if remaining_amount <= 0
 
+      original_amount = deposit.amount
+      original_status = deposit.status
+
       if deposit.amount > remaining_amount
-        deposit.update!(amount: deposit.amount - remaining_amount)
+        deposit.update!(amount: deposit.amount - remaining_amount, previous_amount: original_amount, previous_status: original_status)
         remaining_amount = 0
       else
         remaining_amount -= deposit.amount
-        deposit.update!(amount: 0, status: 'used for withdrawal')
+        deposit.update!(amount: 0, status: 'used for withdrawal', previous_amount: original_amount, previous_status: original_status)
+      end
+    end
+  end
+
+
+  def revert_deposits_for_withdrawal(withdrawal)
+    remaining_amount = withdrawal.amount
+    user_deposits = withdrawal.user.deposits.where(status: ['refund', 'manual_deposit', 'referral_commission']).order(:created_at)
+
+    user_deposits.each do |deposit|
+      break if remaining_amount <= 0
+
+      original_amount = deposit.previous_amount
+      original_status = deposit.status
+
+      if remaining_amount >= original_amount
+        deposit.update!(amount: original_amount, status: original_status)
+        remaining_amount -= original_amount
+      else
+        deposit.update!(amount: deposit.amount + remaining_amount)
+        remaining_amount = 0
       end
     end
   end

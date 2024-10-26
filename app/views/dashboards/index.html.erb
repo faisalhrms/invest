@@ -60,7 +60,7 @@
             <div class="d-flex align-items-center">
               <div class="text-left">
                 <h6 id="investment-profit-display" class=""><%= number_to_currency(current_user.displayed_profit('investment_plan', @selected_filter) || '0.00') %></h6>
-                <span class="font-size-12">Investment Plan</span>
+                <span class="font-size-12">Growth Plan</span>
               </div>
               <div class="text-left ml-5">
                 <h6 id="trading-profit-display" class=""><%= number_to_currency(current_user.displayed_profit('trading_plan', @selected_filter) || '0.00') %></h6>
@@ -276,7 +276,7 @@
                   <% if transaction.amount > 0 %>
                     <h6 class="text-primary">+ $<%= '%.2f' % transaction.amount %></h6>
                   <% else %>
-                    <h6 class="text-info"><%= transaction.status == "refund" ? "+" : "-" %> $<%= '%.2f' % transaction.amount.abs %></h6>
+                    <h6 class="text-danger"><%= transaction.status == "refund" ? "+" : "-" %> $<%= '%.2f' % transaction.amount.abs %></h6>
                   <% end %>
                 </div>
               </li>
