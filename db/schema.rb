@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_26_043738) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_05_081216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -245,6 +245,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_26_043738) do
     t.integer "duration_in_days"
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
     t.float "commission_rate"
+  end
+
+  create_table "team_leaders", force: :cascade do |t|
+    t.string "member_name"
+    t.string "country"
+    t.date "date"
+    t.decimal "investment_amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "trading_plans", force: :cascade do |t|

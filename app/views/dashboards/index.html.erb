@@ -305,7 +305,7 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Daily Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('investment_plan').round(2) %> </b>
+                  <b><span>$</span> <%= current_user.daily_profit_by_plan('investment_plan').round(2) %> </b>
                 </div>
               </div>
               <span class=""><%= current_user.withdrawal_count_by_plan_type('investment_plan') %> Transactions</span>
@@ -378,7 +378,7 @@
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
                   <b>
-                    <% profit_value = current_user.daily_profit_by_plan_type('trading_plan') || 0.00 %>
+                    <% profit_value = current_user.daily_profit_by_plan('trading_plan') || 0.00 %>
                     <%= profit_value > 0 ? "+#{number_to_currency(profit_value)}" : "#{number_to_currency(profit_value)}" %>
                   </b>
                 </div>
@@ -413,7 +413,7 @@
               <div class="d-flex align-items-center justify-content-between">
                 <span class="title text-dark">Profit</span>
                 <div class="text-primary">
-                  <b><span>$</span> <%= current_user.daily_profit_by_plan_type('staking') %> </b>
+                  <b><span>$</span> <%= current_user.daily_profit_by_plan('staking') %> </b>
                 </div>
               </div>
               <span class=""><%= current_user.withdrawal_count_by_plan_type('staking') %> Transactions</span>

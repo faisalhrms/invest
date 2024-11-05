@@ -54,7 +54,7 @@ class UsersController < ApplicationController
             profit_percentage = plan.profit_percentage || 0.0
             plan_duration = plan.duration_in_days
 
-            total_profit = (purchase.deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
+            total_profit = (purchase.deposit_amount * profit_percentage / 100.0)
             daily_profit = total_profit / plan_duration
             amount = daily_profit
             profit_loss_type = 'profit'

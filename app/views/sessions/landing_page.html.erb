@@ -14,6 +14,10 @@
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Vendor CSS Files -->
   <%= stylesheet_link_tag 'vendors/aos/aos', 'data-turbo-track': 'reload' %>
@@ -39,10 +43,9 @@
     <nav id="navmenu" class="navmenu">
       <ul>
         <li><a href="#hero" class="active">Home<br></a></li>
-        <li><a href="#about">About</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="#services">Services</a></li>
-        <li><a href="#team">Team</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -51,20 +54,51 @@
     <a class="btn-getstarted" href="<%= login_path %>">Get Started</a>
 
   </div>
+
+  <style>
+      #hero {
+          position: relative;
+          overflow: hidden;
+          height: 70vh;
+      }
+
+      .video-background {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+      }
+
+      .video-background video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+      }
+
+      .container {
+          position: relative;
+          z-index: 1;
+      }
+
+  </style>
 </header>
 
 <main class="main">
 
   <!-- Hero Section -->
-  <section id="hero" class="hero section">
-
+  <section id="hero" class="hero section mb-5">
+    <div class="video-background">
+      <video autoplay loop muted playsinline>
+        <source src="<%= asset_path('win.mp4') %>" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
     <div class="container d-flex flex-column justify-content-center align-items-center text-center position-relative" data-aos="zoom-out">
-      <img src="<%= asset_path "img/hero-img.svg" %>" class="img-fluid animated" alt="">
-      <h1>Welcome to <span>Investment-App</span></h1>
-      <p>Et voluptate esse accusantium accusamus natus reiciendis quidem voluptates similique aut.</p>
       <div class="d-flex">
         <a href="<%= login_path %>" class="btn-get-started scrollto">Get Started</a>
-        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Tutorial</span></a>
       </div>
     </div>
 
@@ -277,7 +311,11 @@
     <!-- Section Title -->
     <div class="container section-title" data-aos="fade-up">
       <h2>About Us</h2>
-      <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+      <h5>Empowering Your Financial Future Through Strategic Investment</h5>
+      <p>we empower individuals to achieve their financial goals through tailored investment strategies, active trading, and innovative staking solutions.
+        Our dedicated team prioritizes transparency and client satisfaction, ensuring your portfolio is optimized for growth.
+        Join us on your journey to financial success and unlock your investment potential.
+      </p>
     </div><!-- End Section Title -->
 
     <div class="container" data-aos="fade-up">
@@ -286,107 +324,136 @@
 
         <div class="col-lg-5">
           <div class="about-img">
-            <img src="<%= asset_path "img/about-portrait.jpg" %>" class="img-fluid" alt="">
+            <img src="<%= asset_path "about.jpg" %>" class="img-fluid" alt="">
           </div>
         </div>
 
         <div class="col-lg-7">
-          <h3 class="pt-0 pt-lg-5">Neque officiis dolore maiores et exercitationem quae est seda lidera pat claero</h3>
+          <h3 class="pt-0 pt-lg-5">What makes us the right choice?</h3>
 
           <!-- Tabs -->
           <ul class="nav nav-pills mb-3">
-            <li><a class="nav-link active" data-bs-toggle="pill" href="#about-tab1">Saepe fuga</a></li>
-            <li><a class="nav-link" data-bs-toggle="pill" href="#about-tab2">Voluptates</a></li>
-            <li><a class="nav-link" data-bs-toggle="pill" href="#about-tab3">Corrupti</a></li>
+            <li><a class="nav-link active" data-bs-toggle="pill" href="#Investment">Investment</a></li>
+            <li><a class="nav-link" data-bs-toggle="pill" href="#Trading">Trading</a></li>
+            <li><a class="nav-link" data-bs-toggle="pill" href="#Staking">Staking</a></li>
           </ul><!-- End Tabs -->
 
           <!-- Tab Content -->
           <div class="tab-content">
 
-            <div class="tab-pane fade show active" id="about-tab1">
+            <div class="tab-pane fade show active" id="Investment">
 
-              <p class="fst-italic">Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita.
-                Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
-
-              <div class="d-flex align-items-center mt-4">
-                <i class="bi bi-check2"></i>
-                <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
-              </div>
-              <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non
-                eveniet magni quaerat nemo et.</p>
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+                We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Incidunt non veritatis illum ea ut nisi</h4>
+                <h4>Expert Fund Management</h4>
               </div>
-              <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae
-                assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+              <p>Our experienced team of fund managers uses proven strategies to maximize returns while mitigating risk. We work closely with you to develop personalized investment plans tailored to your financial goals.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Omnis ab quia nemo dignissimos rem eum quos..</h4>
+                <h4>Diversified Investment Portfolios</h4>
               </div>
-              <p>Eius alias aut cupiditate. Dolor voluptates animi ut blanditiis quos nam. Magnam officia aut ut alias
-                quo explicabo ullam esse. Sunt magnam et dolorem eaque magnam odit enim quaerat. Vero error error
-                voluptatem eum.</p>
-
-            </div><!-- End Tab 1 Content -->
-
-            <div class="tab-pane fade" id="about-tab2">
-
-              <p class="fst-italic">Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita.
-                Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
+              <p>We manage diversified portfolios across a wide range of industries and asset classes. This approach helps spread risk and capture opportunities in different sectors, ensuring steady growth.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
+                <h4>Long-Term Growth Focus</h4>
               </div>
-              <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non
-                eveniet magni quaerat nemo et.</p>
+              <p>We prioritize long-term, sustainable growth over short-term gains. By investing with patience and discipline, we aim to build your wealth steadily, securing your financial future.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Incidunt non veritatis illum ea ut nisi</h4>
+                <h4>Risk Management Strategies</h4>
               </div>
-              <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae
-                assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+              <p>Our sophisticated risk management strategies are designed to protect your capital in volatile market conditions. We constantly monitor and adjust portfolios to keep your investments secure and profitable.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Omnis ab quia nemo dignissimos rem eum quos..</h4>
+                <h4>Transparent and Personalized Service</h4>
               </div>
-              <p>Eius alias aut cupiditate. Dolor voluptates animi ut blanditiis quos nam. Magnam officia aut ut alias
-                quo explicabo ullam esse. Sunt magnam et dolorem eaque magnam odit enim quaerat. Vero error error
-                voluptatem eum.</p>
+              <p> We believe in transparency and keep you informed every step of the way. Our personalized service ensures you understand your investments and feel confident in your financial journey.</p>
+
+            </div>
+
+            <div class="tab-pane fade" id="Trading">
+
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+                We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Informed Market Insights</h4>
+              </div>
+              <p>Our team provides timely and accurate market analysis to Perform trading decisions. With expert insights, We navigate the complexities of the market and seize profitable opportunities.</p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Tailored Trading Strategies</h4>
+              </div>
+              <p>We develop personalized trading strategies that align with your investment goals and risk tolerance. This customized approach ensures we have a clear plan that adapts to market conditions.</p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Advanced Trading Techniques</h4>
+              </div>
+              <p>Utilizing sophisticated trading techniques and tools, we aim to maximize your returns. Our experts employ various strategies, from technical analysis to trend-following, to enhance returns on your investment.
+              </p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Continuous Monitoring and Support</h4>
+              </div>
+              <p>We continuously monitor market trends and your investments, providing you with real-time updates and support. Our dedicated team is always available to assist you.</p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Transparent Reward Structure</h4>
+              </div>
+              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information on potential returns and fees, so you can make informed decisions about your Funds.</p>
 
             </div><!-- End Tab 2 Content -->
 
-            <div class="tab-pane fade" id="about-tab3">
+            <div class="tab-pane fade" id="Staking">
 
-              <p class="fst-italic">Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita.
-                Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
-
-              <div class="d-flex align-items-center mt-4">
-                <i class="bi bi-check2"></i>
-                <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
-              </div>
-              <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non
-                eveniet magni quaerat nemo et.</p>
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+                We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Incidunt non veritatis illum ea ut nisi</h4>
+                <h4>Stable Passive Income</h4>
               </div>
-              <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae
-                assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+              <p>Our staking services allow you to earn steady, passive income on your investments. By staking your assets, you can generate rewards without the need for constant trading or market timing.
+              </p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
-                <h4>Omnis ab quia nemo dignissimos rem eum quos..</h4>
+                <h4>Secure Staking Environment</h4>
               </div>
-              <p>Eius alias aut cupiditate. Dolor voluptates animi ut blanditiis quos nam. Magnam officia aut ut alias
-                quo explicabo ullam esse. Sunt magnam et dolorem eaque magnam odit enim quaerat. Vero error error
-                voluptatem eum.</p>
+              <p>We prioritize the security of your assets in our staking program. Utilizing advanced technology and security protocols, we ensure that your investments remain safe while earning rewards.
+              </p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>User-Friendly Staking Process</h4>
+              </div>
+              <p>Our intuitive platform makes staking easy for everyone, from beginners to experienced investors. With simple steps and clear instructions, you can start earning rewards in no time.
+              </p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Staking Options</h4>
+              </div>
+              <p>At this time, we exclusively offer USDT staking. This approach allows you to focus on assets that match your investment strategy and risk preferences.</p>
+
+              <div class="d-flex align-items-center mt-4">
+                <i class="bi bi-check2"></i>
+                <h4>Transparent Reward Structure</h4>
+              </div>
+              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information on potential returns, fees, and lock-up periods, so you can make informed decisions about your staking investments.
+              </p>
 
             </div><!-- End Tab 3 Content -->
 
@@ -400,33 +467,7 @@
 
   </section><!-- /About Section -->
 
-  <!-- Clients Section -->
-  <section id="clients" class="clients section">
 
-    <div class="container" data-aos="fade-up">
-
-      <div class="row gy-4">
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="<%= asset_path "img/clients/client-1.png" %>" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="<%= asset_path "img/clients/client-2.png" %>" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="<%= asset_path "img/clients/client-3.png" %>" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="<%= asset_path "img/clients/client-4.png" %>" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-      </div>
-
-    </div>
-
-  </section><!-- /Clients Section -->
 
   <!-- Call To Action Section -->
   <section id="call-to-action" class="call-to-action section">
@@ -436,11 +477,11 @@
       <div class="row g-5">
 
         <div class="col-lg-8 col-md-6 content d-flex flex-column justify-content-center order-last order-md-first">
-          <h3>Alias sunt quas <em>Cupiditate</em> oluptas hic minima</h3>
-          <p> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-            laborum.</p>
-          <a class="cta-btn align-self-start" href="#">Call To Action</a>
+          <h4>What Our Company Actually Does / Discover Our Investment Expertise:</h4>
+
+
+          <p>At our company, we specialize in strategic investments across a wide array of sectors, including established businesses, innovative startups, e-commerce, stocks, cryptocurrencies, artificial intelligence, IT solutions, and even gold mining ventures. Our expert team meticulously curates a diversified portfolio designed to maximize returns while minimizing risk, ensuring that you can achieve your financial goals with confidence. Whether you’re looking to grow your wealth or explore new avenues for passive income, we provide the tailored strategies and insights you need to succeed.</p>
+          <a class="cta-btn align-self-start" href="/signup">Start Your Journey</a>
         </div>
 
         <div class="col-lg-4 col-md-6 order-first order-md-last d-flex align-items-center">
@@ -466,19 +507,16 @@
         </div>
         <div class="col-lg-6">
           <div class="content d-flex flex-column justify-content-center h-100">
-            <h3>Voluptatem dignissimos provident quasi corporis</h3>
+            <h3>How to Navigate Our Website: Deposits and Withdrawals Made Easy</h3>
             <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore
-              magna aliqua.
+              In this video, we’ll guide you through the essential steps for using our website effectively, focusing on the deposit and withdrawal processes. Here’s what you need to know:
             </p>
             <ul>
-              <li><i class="bi bi-check-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-              <li><i class="bi bi-check-circle"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-              <li><i class="bi bi-check-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla
-                pariatur.
-              </li>
+              <li><i class="bi bi-check-circle"></i> <strong>Simple Deposit Process:</strong> Learn how to fund your account quickly and securely, ensuring your investments are up and running in no time.</li>
+              <li><i class="bi bi-check-circle"></i> <strong>Effortless Withdrawals:</strong> Discover the steps to withdraw your funds and access your earnings whenever you need them.</li>
+              <li><i class="bi bi-check-circle"></i> <strong>Key Considerations:</strong> Understand the crucial factors to consider while making deposits or withdrawals, ensuring that you may not lose your funds.</li>
+              <li><i class="bi bi-check-circle"></i> <strong>Stay Informed: </strong>For detailed guidelines and specific requirements, please refer to the policy page or deposit page on our website.</li>
+
             </ul>
             <a href="#" class="read-more align-self-start"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
           </div>
@@ -499,45 +537,51 @@
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
             <i class="bi bi-binoculars" style="color: #0dcaf0;"></i>
-            <h4>Modinest</h4>
+            <h5>Innovative Startups</h5>
           </a>
         </li><!-- End Tab 1 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-2">
             <i class="bi bi-box-seam" style="color: #6610f2;"></i>
-            <h4>Undaesenti</h4>
+            <h4>E-commerce</h4>
           </a>
         </li><!-- End Tab 2 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-3">
             <i class="bi bi-brightness-high" style="color: #20c997;"></i>
-            <h4>Pariatur</h4>
+            <h4>Stocks</h4>
           </a>
         </li><!-- End Tab 3 Nav -->
 
-        <li class="nav-item col-6 col-md-4 col-lg-2">
-          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-4">
-            <i class="bi bi-command" style="color: #df1529;"></i>
-            <h4>Nostrum</h4>
-          </a>
-        </li><!-- End Tab 4 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-5">
             <i class="bi bi-easel" style="color: #0d6efd;"></i>
-            <h4>Adipiscing</h4>
+            <h4>Cryptocurrencies</h4>
           </a>
         </li><!-- End Tab 5 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-6">
             <i class="bi bi-map" style="color: #fd7e14;"></i>
-            <h4>Reprehit</h4>
+            <h4>AI</h4>
+          </a>
+        </li>
+
+        <li class="nav-item col-6 col-md-4 col-lg-2">
+          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-7">
+            <i class="bi bi-hand-index-thumb" style="color: #fd7e14;"></i>
+            <h4>IT Solutions</h4>
           </a>
         </li><!-- End Tab 6 Nav -->
-
+<!--        <li class="nav-item col-6 col-md-4 col-lg-2">-->
+<!--          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-8">-->
+<!--            <i class="bi bi-heptagon" style="color: #fd7e14;"></i>-->
+<!--            <h4>Gold Mining</h4>-->
+<!--          </a>-->
+<!--        </li>-->
       </ul>
 
       <div class="tab-content">
@@ -545,29 +589,18 @@
         <div class="tab-pane fade active show" id="features-tab-1">
           <div class="row gy-4">
             <div class="col-lg-8 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="100">
-              <h3>Modinest</h3>
+              <h3>Innovative Startups</h3>
               <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore
-                magna aliqua.
+                Innovative startups are driving change across industries with their disruptive ideas and technologies.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in innovative startups with disruptive potential in various industries.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  These companies often present unique solutions and technologies that can lead to significant market growth.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat
-                  nulla pariatur.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Early investment can yield high returns as these startups scale and succeed, providing a strong growth opportunity.
                 </li>
               </ul>
-              <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                in
-                culpa qui officia deserunt mollit anim id est laborum
-              </p>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center" data-aos="fade-up" data-aos-delay="200">
               <img src="<%= asset_path "img/features-1.svg" %>" alt="" class="img-fluid">
@@ -578,30 +611,17 @@
         <div class="tab-pane fade" id="features-tab-2">
           <div class="row gy-4">
             <div class="col-lg-8 order-2 order-lg-1">
-              <h3>Undaesenti</h3>
+              <h3>E-commerce</h3>
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                in
-                culpa qui officia deserunt mollit anim id est laborum
+                The e-commerce sector has experienced remarkable growth, fueled by shifts in consumer behavior and technology.
               </p>
-              <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore
-                magna aliqua.
-              </p>
+
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We focus on established and emerging e-commerce platforms that cater to changing consumer preferences.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  The shift towards online shopping continues to grow, making e-commerce a lucrative sector.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Provident mollitia neque rerum asperiores dolores quos qui
-                  a. Ipsum neque dolor voluptate nisi sed.
-                </li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat
-                  nulla pariatur.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong>  Investing in this space allows us to capitalize on increasing sales and market expansion, ensuring steady returns.
                 </li>
               </ul>
             </div>
@@ -614,28 +634,19 @@
         <div class="tab-pane fade" id="features-tab-3">
           <div class="row gy-4">
             <div class="col-lg-8 order-2 order-lg-1">
-              <h3>Pariatur</h3>
+              <h3>Stocks</h3>
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                in
-                culpa qui officia deserunt mollit anim id est laborum
+                The stock market offers a diverse range of investment opportunities for both capital appreciation and income.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We select a diversified portfolio of stocks across various industries based on thorough research and analysis.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  Stocks offer both capital appreciation and dividend income, creating multiple revenue streams.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Provident mollitia neque rerum asperiores dolores quos qui
-                  a. Ipsum neque dolor voluptate nisi sed.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong>  A well-managed stock portfolio can provide consistent growth and help mitigate risks through diversification.
                 </li>
               </ul>
-              <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore
-                magna aliqua.
-              </p>
+
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
               <img src="<%= asset_path "img/features-3.svg" %>" alt="" class="img-fluid">
@@ -643,30 +654,19 @@
           </div>
         </div><!-- End Tab Content 3 -->
 
-        <div class="tab-pane fade" id="features-tab-4">
+        <div class="tab-pane fade" id="features-tab-5">
           <div class="row gy-4">
             <div class="col-lg-8 order-2 order-lg-1">
-              <h3>Nostrum</h3>
+              <h3>Cryptocurrencies</h3>
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                in
-                culpa qui officia deserunt mollit anim id est laborum
-              </p>
-              <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore
-                magna aliqua.
+                The cryptocurrency market is rapidly evolving, presenting unique opportunities for investors.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in a carefully selected range of cryptocurrencies to leverage market volatility.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> The cryptocurrency market is rapidly evolving, with potential for high returns on investment.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat
-                  nulla pariatur.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> By diversifying into digital assets, we aim to enhance overall portfolio performance and capture emerging trends.
                 </li>
               </ul>
             </div>
@@ -676,30 +676,44 @@
           </div>
         </div><!-- End Tab Content 4 -->
 
-        <div class="tab-pane fade" id="features-tab-5">
+        <div class="tab-pane fade" id="features-tab-6">
           <div class="row gy-4">
             <div class="col-lg-8 order-2 order-lg-1">
-              <h3>Adipiscing</h3>
+              <h3>Artificial Intelligence</h3>
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                in
-                culpa qui officia deserunt mollit anim id est laborum
+                Artificial intelligence is reshaping industries, offering transformative solutions and efficiencies.
               </p>
-              <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore
-                magna aliqua.
-              </p>
+
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We target AI-driven companies that are leading innovations across various sectors.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> AI technologies are transforming industries, providing new solutions and efficiencies.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat
-                  nulla pariatur.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Investing in AI positions us to benefit from long-term growth as demand for these technologies continues to rise.
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-4 order-1 order-lg-2 text-center">
+              <img src="<%= asset_path "img/features-5.svg" %>" alt="" class="img-fluid">
+            </div>
+          </div>
+        </div><!-- End Tab Content 5 -->
+
+
+        <div class="tab-pane fade" id="features-tab-7">
+          <div class="row gy-4">
+            <div class="col-lg-8 order-2 order-lg-1">
+              <h3>IT Solutions</h3>
+              <p>
+                The demand for IT solutions is surging as businesses increasingly rely on technology to thrive.
+              </p>
+
+              <ul>
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in companies offering essential IT solutions, including software, cloud services, and cybersecurity.
+                </li>
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>The increasing reliance on technology across businesses creates a growing demand for IT services.
+                </li>
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> These investments provide a stable revenue base, ensuring consistent returns as businesses enhance their technological capabilities.
                 </li>
               </ul>
             </div>
@@ -721,7 +735,6 @@
     <!-- Section Title -->
     <div class="container section-title" data-aos="fade-up">
       <h2>Our Services</h2>
-      <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
     </div><!-- End Section Title -->
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -738,10 +751,9 @@
                 <i class="bi bi-activity"></i>
               </div>
               <a href="service-details.html" class="stretched-link">
-                <h3>Nesciunt Mete</h3>
+                <h3>Investments</h3>
               </a>
-              <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure
-                perferendis.</p>
+              <p>We offer tailored investment strategies across diverse sectors, helping you grow your wealth through expert management and strategic planning.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -756,10 +768,9 @@
                 <i class="bi bi-broadcast"></i>
               </div>
               <a href="service-details.html" class="stretched-link">
-                <h3>Eosle Commodi</h3>
+                <h3>Mini-game</h3>
               </a>
-              <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut
-                nesciunt dolorem.</p>
+              <p>Our engaging mini-game platform combines entertainment with earning potential, allowing users to enjoy fun gameplay while unlocking rewards.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -774,10 +785,9 @@
                 <i class="bi bi-easel"></i>
               </div>
               <a href="service-details.html" class="stretched-link">
-                <h3>Ledo Markt</h3>
+                <h3>Lucky Draws</h3>
               </a>
-              <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci
-                eos earum corrupti.</p>
+              <p>Participate in our exciting lucky draws for a chance to win fantastic prizes, adding an element of thrill to your investment journey.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -791,107 +801,43 @@
   <!-- Testimonials Section -->
   <section id="testimonials" class="testimonials section dark-background">
 
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-      <h2>Testimonials</h2>
-      <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-    </div><!-- End Section Title -->
 
-    <img src="assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-      <div class="swiper init-swiper">
-        <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              }
-            }
-
-        </script>
-        <div class="swiper-wrapper">
-
-          <div class="swiper-slide">
-            <div class="testimonial-item">
-              <img src="<%= asset_path "img/testimonials/testimonials-1.jpg" %>" class="testimonial-img" alt="">
-              <h3>Saul Goodman</h3>
-              <h4>Ceo &amp; Founder</h4>
-              <div class="stars">
-                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              </div>
-              <p>
-                <i class="bi bi-quote quote-icon-left"></i>
-                <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
-                <i class="bi bi-quote quote-icon-right"></i>
-              </p>
+      <div class="col-lg-12 col-md-6">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+          <div class="iq-card-header d-flex justify-content-between">
+            <div class="iq-header-title">
+              <h4 class="card-title">Top Team Leaders</h4>
             </div>
-          </div><!-- End testimonial item -->
-
-          <div class="swiper-slide">
-            <div class="testimonial-item">
-              <img src="<%= asset_path "img/testimonials/testimonials-2.jpg" %>" class="testimonial-img" alt="">
-              <h3>Sara Wilsson</h3>
-              <h4>Designer</h4>
-              <div class="stars">
-                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              </div>
-              <p>
-                <i class="bi bi-quote quote-icon-left"></i>
-                <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
-                <i class="bi bi-quote quote-icon-right"></i>
-              </p>
-            </div>
-          </div><!-- End testimonial item -->
-
-          <div class="swiper-slide">
-            <div class="testimonial-item">
-              <img src="<%= asset_path "img/testimonials/testimonials-3.jpg" %>" class="testimonial-img" alt="">
-              <h3>Jena Karlis</h3>
-              <h4>Store Owner</h4>
-              <div class="stars">
-                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              </div>
-              <p>
-                <i class="bi bi-quote quote-icon-left"></i>
-                <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
-                <i class="bi bi-quote quote-icon-right"></i>
-              </p>
-            </div>
-          </div><!-- End testimonial item -->
-
-          <div class="swiper-slide">
-            <div class="testimonial-item">
-              <img src="<%= asset_path "img/testimonials/testimonials-4.jpg" %>" class="testimonial-img" alt="">
-              <h3>Matt Brandon</h3>
-              <h4>Freelancer</h4>
-              <div class="stars">
-                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              </div>
-              <p>
-                <i class="bi bi-quote quote-icon-left"></i>
-                <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
-                <i class="bi bi-quote quote-icon-right"></i>
-              </p>
-            </div>
-          </div><!-- End testimonial item -->
-
-
+          </div>
+          <div class="iq-card-body">
+            <ul class="list-inline p-0 m-0">
+              <% TeamLeader.all.each do |leader| %>
+                <li class="d-flex mb-3 align-items-center p-3 sell-list border-primary rounded">
+                  <div class="user-img img-fluid">
+                <span class="country-flag" style="font-size: 2rem;">
+                  <%= ISO3166::Country[leader.country]&.emoji_flag %>
+                </span>
+                  </div>
+                  <div class="media-support-info ml-3">
+                    <h6><%= leader.member_name %></h6>
+                    <p class="mb-0 font-size-12"><%= leader.date.strftime("%d %b, %Y") %></p>
+                  </div>
+                  <div class="iq-card-header-toolbar d-flex align-items-center">
+                    <div class="badge badge-pill badge-primary">
+                      <%= number_to_currency(leader.investment_amount, unit: "$") %>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
         </div>
-        <div class="swiper-pagination"></div>
       </div>
-
     </div>
 
-  </section><!-- /Testimonials Section -->
+  </section>
 
 
   <!-- Faq Section -->
@@ -905,47 +851,64 @@
 
           <div class="content px-xl-5" data-aos="fade-up" data-aos-delay="100">
             <h3><span>Frequently Asked </span><strong>Questions</strong></h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Duis aute irure dolor in reprehenderit
-            </p>
+
           </div>
 
           <div class="faq-container px-xl-5" data-aos="fade-up" data-aos-delay="200">
 
             <div class="faq-item faq-active">
               <i class="faq-icon bi bi-question-circle"></i>
-              <h3>Non consectetur a erat nam at lectus urna duis?</h3>
+              <h3>What services does your company provide?</h3>
               <div class="faq-content">
-                <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur
-                  gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
+                <p>We offer multiple ways for you to earn, including investment plans, trading, and staking. Each of these allows you to grow your wealth, and you can also earn commissions based on your Referral  investment.</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
 
             <div class="faq-item">
               <i class="faq-icon bi bi-question-circle"></i>
-              <h3>Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?</h3>
+              <h3>How do your investment plans work?</h3>
               <div class="faq-content">
-                <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id
-                  donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit
-                  ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                <p>We provide a variety of investment plans that cater to different financial goals. You invest a certain amount into a plan, and based on its performance, you earn returns and commissions over time. Each plan has a different risk level and potential return, allowing you to choose the best fit for your financial needs.</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
 
             <div class="faq-item">
               <i class="faq-icon bi bi-question-circle"></i>
-              <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
+              <h3>What is staking, and how does it work with your platform?</h3>
               <div class="faq-content">
-                <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum
-                  integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt.
-                  Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi
-                  quis</p>
+                <p>Staking involves locking your assets, primarily USDT, for a set period to earn rewards or interest on your staked funds.
+                  On our platform, we exclusively offer USDT staking. When you invest, we utilize your funds to engage in over 100 carefully selected projects, generating steady returns. This strategy not only allows you to earn passive income but also aligns your investment with stable, well-researched opportunities. Experience the benefits of staking with us and watch your investments grow!</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
 
+
+            <div class="faq-item">
+              <i class="faq-icon bi bi-question-circle"></i>
+              <h3>How can I earn commissions through your plans?</h3>
+              <div class="faq-content">
+                <p>By investing in one of our tailored plans, you not only receive potential returns on your investment but also earn commissions as part of our Team leader reward system. The commission amount depends on the Team's investments.</div>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div><!-- End Faq item-->
+
+
+            <div class="faq-item">
+              <i class="faq-icon bi bi-question-circle"></i>
+              <h3>What is the minimum amount required to start investing?</h3>
+              <div class="faq-content">
+                <p>The minimum investment varies depending on the plan you choose. Some of our plans have a low entry threshold, making it accessible to beginners, while others might require a higher initial investment for higher potential returns.</div>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div><!-- End Faq item-->
+
+            <div class="faq-item">
+              <i class="faq-icon bi bi-question-circle"></i>
+              <h3>When can I withdraw my funds?</h3>
+              <div class="faq-content">
+                <p>You can withdraw your initial investment and your team's commissions at any time. However, the withdrawal of returns from each plan is subject to different time-frames. For more details, please refer to our Policy Page.</div>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div><!-- End Faq item-->
           </div>
 
         </div>
@@ -960,78 +923,6 @@
   </section><!-- /Faq Section -->
 
 
-  <!-- Team Section -->
-  <section id="team" class="team section">
-
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-      <h2>Our Team</h2>
-      <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-    </div><!-- End Section Title -->
-
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-      <div class="row gy-5">
-
-        <div class="col-xl-4 col-md-6 d-flex" data-aos="zoom-in" data-aos-delay="200">
-          <div class="team-member">
-            <div class="member-img">
-              <img src="assets/img/team/team-1.jpg" class="img-fluid" alt="">
-            </div>
-            <div class="member-info">
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
-              <h4>Walter White</h4>
-              <span>Chief Executive Officer</span>
-            </div>
-          </div>
-        </div><!-- End Team Member -->
-
-        <div class="col-xl-4 col-md-6 d-flex" data-aos="zoom-in" data-aos-delay="400">
-          <div class="team-member">
-            <div class="member-img">
-              <img src="assets/img/team/team-2.jpg" class="img-fluid" alt="">
-            </div>
-            <div class="member-info">
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
-              <h4>Sarah Jhonson</h4>
-              <span>Product Manager</span>
-            </div>
-          </div>
-        </div><!-- End Team Member -->
-
-        <div class="col-xl-4 col-md-6 d-flex" data-aos="zoom-in" data-aos-delay="600">
-          <div class="team-member">
-            <div class="member-img">
-              <img src="assets/img/team/team-3.jpg" class="img-fluid" alt="">
-            </div>
-            <div class="member-info">
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
-              <h4>William Anderson</h4>
-              <span>CTO</span>
-            </div>
-          </div>
-        </div><!-- End Team Member -->
-
-      </div>
-
-    </div>
-
-  </section><!-- /Team Section -->
 
   <!-- Recent Posts Section -->
   <section id="recent-posts" class="recent-posts section">
@@ -1139,10 +1030,6 @@
       <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
     </div><!-- End Section Title -->
 
-    <div class="mb-5">
-      <iframe style="width: 100%; height: 400px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen=""></iframe>
-    </div><!-- End Google Maps -->
-
     <div class="container" data-aos="fade">
 
       <div class="row gy-5 gx-lg-5">
@@ -1151,15 +1038,7 @@
 
           <div class="info">
             <h3>Get in touch</h3>
-            <p>Et id eius voluptates atque nihil voluptatem enim in tempore minima sit ad mollitia commodi minus.</p>
 
-            <div class="info-item d-flex">
-              <i class="bi bi-geo-alt flex-shrink-0"></i>
-              <div>
-                <h4>Location:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
-              </div>
-            </div><!-- End Info Item -->
 
             <div class="info-item d-flex">
               <i class="bi bi-envelope flex-shrink-0"></i>
@@ -1169,13 +1048,6 @@
               </div>
             </div><!-- End Info Item -->
 
-            <div class="info-item d-flex">
-              <i class="bi bi-phone flex-shrink-0"></i>
-              <div>
-                <h4>Call:</h4>
-                <p>+1 5589 55488 55</p>
-              </div>
-            </div><!-- End Info Item -->
 
           </div>
 

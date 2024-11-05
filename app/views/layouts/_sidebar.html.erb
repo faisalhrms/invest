@@ -145,6 +145,12 @@
                   Add</a>
               </li>
             <% end %>
+            <% if permissions[:users] %>
+              <li class="<%= is_active('team_leaders') %>">
+                <a href="<%= team_leader_path %>" target="<%= link_target_attribute %>"><i class="ri-group-2-fill"></i>Team Leaders
+                  Add</a>
+              </li>
+            <% end %>
             <% if permissions[:bank_account] %>
               <li class="<%= is_active('bank_account_details') %>">
                 <a href="<%= bank_account_path %>" target="<%= link_target_attribute %>"><i class="ri-bank-line"></i>Bank

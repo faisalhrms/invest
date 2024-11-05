@@ -37,7 +37,7 @@ class Purchase < ApplicationRecord
     return unless plan_duration.present? && plan_duration > 0
 
     # Calculate total profit based on the duration and deposit amount
-    total_profit = (deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
+    total_profit = (deposit_amount * profit_percentage / 100.0)
     daily_profit = total_profit / plan_duration
 
     # Calculate days since the plan was approved

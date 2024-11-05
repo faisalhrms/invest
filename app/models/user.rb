@@ -244,6 +244,48 @@ class User < ApplicationRecord
     purchases.where(approved: true, status: "active").where.not(plan_column => nil).sum(:deposit_amount)
   end
 
+  def daily_profit_by_plan(plan_type)
+    plan_column = case plan_type
+                  when 'investment_plan'
+                    :investment_plan_id
+                  when 'trading_plan'
+                    :trading_plan_id
+                  when 'staking'
+                    :staking_id
+                  else
+                    return 0
+                  end
+
+    purchases
+      .where(approved: true, status: 'active')
+      .where.not(plan_column => nil)
+      .sum do |purchase|
+      plan = case plan_type
+             when 'investment_plan'
+               purchase.investment_plan
+             when 'trading_plan'
+               purchase.trading_plan
+             when 'staking'
+               purchase.staking
+             else
+               nil
+             end
+      next 0 unless plan.present?
+
+      profit_percentage = plan.profit_percentage || 0.0
+
+      plan_duration = if plan_type == 'staking'
+                        purchase.duration_in_days
+                      else
+                        plan.duration_in_days
+                      end
+      next 0 unless plan_duration.present? && plan_duration > 0
+
+      (purchase.deposit_amount * profit_percentage / 100.0) / plan_duration
+    end
+  end
+
+
   def daily_profit_by_plan_type(plan_type)
     plan_column = case plan_type
                   when 'investment_plan'
@@ -285,7 +327,7 @@ class User < ApplicationRecord
       next 0 unless plan_duration.present? && plan_duration > 0
 
       # Calculate total and daily profit
-      total_profit = (purchase.deposit_amount * profit_percentage / 100.0) * (plan_duration.to_f / 31)
+      total_profit = (purchase.deposit_amount * profit_percentage / 100.0)
       daily_profit = total_profit / plan_duration
 
       # Calculate days since the plan was approved

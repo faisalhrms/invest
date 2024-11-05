@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'change_password' => 'sessions#change_password'
   get 'reset_password' => 'sessions#reset_password'
 
+
   ########## Dashboard #########
   get 'dashboard' => 'dashboards#index'
   get 'admin' => 'dashboards#admin'
@@ -81,6 +82,14 @@ Rails.application.routes.draw do
   post 'update_rank' => 'ranks#update'
   post 'delete_rank' => 'ranks#destroy'
   get 'rank/:id/edit_modal', to: 'ranks#edit_modal', as: 'edit_modal_rank'
+
+
+  ##### Team Leaders #####
+  get 'team_leader' => 'team_leaders#index'
+  post 'new_team_leader' => 'team_leaders#create'
+  post 'update_team_leader' => 'team_leaders#update'
+  post 'delete_team_leader' => 'team_leaders#destroy'
+  get 'team_leader/:id/edit_modal', to: 'ranks#edit_modal', as: 'edit_modal_team_leader'
 
   ##### Trading Plan #####
   get 'trading_plan' => 'trading_plans#index'

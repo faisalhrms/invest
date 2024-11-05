@@ -1,0 +1,51 @@
+<%= form_with model: leader, url: update_team_leader_path, method: :post, local: true do |form| %>
+  <input hidden type="text" name="id" value="<%= leader.id %>">
+  <div class="modal fade" id="editModal<%= leader.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Team Leader</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="member_name<%= leader.id %>">Member Name <span style="color: red">*</span></label>
+                <%= form.text_field :member_name, class: 'form-control', id: "member_name#{leader.id}", value: leader.member_name, placeholder: "Enter Member Name", required: true %>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="country<%= leader.id %>">Country <span style="color: red">*</span></label>
+                <%= form.select :country, options_for_select(@countries.map { |country| ["#{country[:flag]} #{country[:name]}", country[:code]] }, selected: leader.country), { prompt: 'Select a country' }, class: 'form-control', required: true %>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="date<%= leader.id %>">Date <span style="color: red">*</span></label>
+                <%= form.date_field :date, class: 'form-control', id: "date#{leader.id}", value: leader.date, required: true %>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="investment_amount<%= leader.id %>">Investment Amount <span style="color: red">*</span></label>
+                <%= form.number_field :investment_amount, class: 'form-control', id: "investment_amount#{leader.id}", value: leader.investment_amount, placeholder: "Enter Investment Amount", required: true %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <%= form.submit 'Update', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+<% end %>

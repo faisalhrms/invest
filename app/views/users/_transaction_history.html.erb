@@ -7,26 +7,24 @@
   </tr>
   </thead>
   <tbody>
-  <% transactions.each do |entry| %>
+  <% transactions.sort_by { |entry| entry[:profit].created_at }.reverse.each do |entry| %>
     <tr>
       <td><%= entry[:profit].created_at.strftime("%d %B, %H:%M") %></td>
       <% if entry[:profit].profit_loss_type == 'loss' %>
-        <!-- Display loss in red -->
-        <td class="text-danger">-$<%= entry[:amount].abs %></td>
+        <td class="text-danger">-$<%= entry[:amount].abs.round(2) %></td>
         <td class="text-danger">Loss</td>
       <% elsif entry[:profit].profit_loss_type == 'profit' %>
-        <!-- Display profit in green -->
-        <td class="text-success">$<%= entry[:amount] %></td>
+        <td class="text-success">$<%= entry[:amount].round(2) %></td>
         <td class="text-success">Profit</td>
       <% else %>
-        <!-- Display automatic profit -->
-        <td class="text-success">$<%= entry[:amount] %></td>
+        <td class="text-success">$<%= entry[:amount].round(2) %></td>
         <td class="text-success">Profit</td>
       <% end %>
     </tr>
   <% end %>
   </tbody>
 </table>
+
 
 
 

@@ -71,7 +71,6 @@ class WithdrawalsController < ApplicationController
   def adjust_deposits_for_withdrawal(withdrawal)
     remaining_amount = withdrawal.amount
     user_deposits = withdrawal.user.deposits.where(status: ['refund', 'manual_deposit', 'referral_commission']).order(:created_at)
-
     user_deposits.each do |deposit|
       break if remaining_amount <= 0
 
@@ -92,7 +91,6 @@ class WithdrawalsController < ApplicationController
   def revert_deposits_for_withdrawal(withdrawal)
     remaining_amount = withdrawal.amount
     user_deposits = withdrawal.user.deposits.where(status: ['refund', 'manual_deposit', 'referral_commission']).order(:created_at)
-
     user_deposits.each do |deposit|
       break if remaining_amount <= 0
 
