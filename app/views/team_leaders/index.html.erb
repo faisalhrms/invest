@@ -6,7 +6,7 @@
           <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#userModal">
             <i class="ri-add-fill"><span class="pl-1">Add New</span></i>
           </button>
-          <%= form_with url: new_team_leader_path, method: :post, local: true do |form| %>
+          <%= form_with model: TeamLeader.new, url: new_team_leader_path, method: :post, local: true do |form| %>
             <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
               <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -26,6 +26,12 @@
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
+                          <label for="member_name">Team Members <span style="color: red">*</span></label>
+                          <%= form.number_field :team_members, class: 'form-control', placeholder: "Enter Member count", required: true %>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
                           <label for="country">Country <span style="color: red">*</span></label>
                           <%= form.select :country, options_for_select(@countries.map { |country| ["#{country[:flag]} #{country[:name]}", country[:code]] }), { prompt: 'Select a country' }, class: 'form-control', required: true %>
                         </div>
@@ -38,8 +44,20 @@
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="investment_amount">Investment Amount <span style="color: red">*</span></label>
+                          <label for="investment_amount">Referral Investment <span style="color: red">*</span></label>
                           <%= form.number_field :investment_amount, class: 'form-control', placeholder: "Enter Investment Amount", required: true %>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="investment_amount">User Capital <span style="color: red">*</span></label>
+                          <%= form.number_field :user_capital, class: 'form-control', placeholder: "Enter Investment Amount", required: true %>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="investment_amount">Total Earning <span style="color: red">*</span></label>
+                          <%= form.number_field :total_earnings, class: 'form-control', placeholder: "Enter Investment Amount", required: true %>
                         </div>
                       </div>
                     </div>
@@ -63,10 +81,12 @@
           <table id="datatable" class="table mb-0 mt-2 table-borderless">
             <thead>
             <tr>
-              <th>Member Name</th>
               <th>Country</th>
-              <th>Date</th>
+              <th>Member Name</th>
+              <th>Member count</th>
               <th>Investment Amount</th>
+              <th>User Capital</th>
+              <th>Total Earning</th>
               <th>Actions</th>
             </tr>
             </thead>
@@ -74,10 +94,12 @@
               <tbody>
               <% @team_leaders.order(id: :desc).each do |leader| %>
                 <tr>
-                  <td><%= leader.member_name %></td>
                   <td><%= leader.country %></td>
-                  <td><%= leader.date %></td>
+                  <td><%= leader.member_name %></td>
+                  <td><%= leader.team_members %></td>
                   <td><%= number_to_currency(leader.investment_amount, unit: "$") %></td>
+                  <td><%= leader.user_capital %></td>
+                  <td><%= leader.total_earnings %></td>
                   <td>
                     <% if @can_edit %>
                       <a data-toggle="modal" data-target="#editModal<%= leader.id %>" class="animate">

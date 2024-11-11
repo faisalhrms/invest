@@ -40,10 +40,12 @@ class TeamLeadersController < ApplicationController
       { name: country.translations[I18n.locale.to_s] || country.name, code: country.alpha2, flag: country.emoji_flag }
     end
   end
-
   def team_leader_params
-    params.permit(:member_name, :country, :date, :investment_amount)
+    params.require(:team_leader).permit(:member_name, :team_members, :country, :date, :investment_amount, :user_capital, :total_earnings)
   end
+
+
+
 
   def set_module_name
     @module_name = "users"

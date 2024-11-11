@@ -20,6 +20,13 @@
 
             <div class="col-md-6">
               <div class="form-group">
+                <label for="team_members<%= leader.id %>">Team Members <span style="color: red">*</span></label>
+                <%= form.number_field :team_members, class: 'form-control',id: "team_members#{leader.id}", value: leader.team_members, placeholder: "Enter Members Count", required: true %>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
                 <label for="country<%= leader.id %>">Country <span style="color: red">*</span></label>
                 <%= form.select :country, options_for_select(@countries.map { |country| ["#{country[:flag]} #{country[:name]}", country[:code]] }, selected: leader.country), { prompt: 'Select a country' }, class: 'form-control', required: true %>
               </div>
@@ -36,6 +43,18 @@
               <div class="form-group">
                 <label for="investment_amount<%= leader.id %>">Investment Amount <span style="color: red">*</span></label>
                 <%= form.number_field :investment_amount, class: 'form-control', id: "investment_amount#{leader.id}", value: leader.investment_amount, placeholder: "Enter Investment Amount", required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="investment_amount<%= leader.id %>">User Capital <span style="color: red">*</span></label>
+                <%= form.number_field :user_capital, class: 'form-control',id: "user_capital#{leader.id}", value: leader.user_capital, placeholder: "Enter User Capital", required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="investment_amount<%= leader.id %>">Total Earning <span style="color: red">*</span></label>
+                <%= form.number_field :total_earnings, class: 'form-control',id: "total_earnings#{leader.id}", value: leader.total_earnings, placeholder: "Enter Total Earning", required: true %>
               </div>
             </div>
           </div>

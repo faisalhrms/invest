@@ -14,9 +14,9 @@ Variable
   --iq-card-bg: #fff;
   --iq-dropdown-bg: #fff;
   --iq-dropdown-border: #fff;
-  --iq-bg-dark-bg: #6d73f6;  /* pending  not give dark mode */ 
+  --iq-bg-dark-bg: #6d73f6;  /* pending  not give dark mode */
   --iq-bg-light-color: #FDFAFF; /* pending  not give*/
-  --iq-primary: hsl(253deg 61% 55%);
+  --iq-primary: #40E0D0;
   --iq-primary-light: hsl(253deg 61% 85%);
   --iq-primary-dark: hsl(253deg 61% 45%);
   --iq-secondary: #FF7A29;

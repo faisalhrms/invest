@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Investment-App</title>
+  <title>6figure</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -28,15 +28,15 @@
   <%= stylesheet_link_tag 'vendors/css/main', 'data-turbo-track': 'reload' %>
 </head>
 
-<body class="index-page">
+<body class="index-page" style="background-color: #181a1b;">
 
-<header id="header" class="header d-flex align-items-center sticky-top">
+<header id="header" class="header d-flex align-items-center sticky-top" style="background-color: #181a1b;">
   <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
 
     <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
       <!-- Uncomment the line below if you also wish to use an image logo -->
       <!-- <img src="assets/img/logo.png" alt=""> -->
-      <h1 class="sitename">Investment-App</h1>
+      <h1 class="sitename">6figure</h1>
       <span>.</span>
     </a>
 
@@ -82,10 +82,274 @@
           z-index: 1;
       }
 
+      @media (min-width: 1200px) {
+          .navmenu a, .navmenu a:focus {
+              color: #b2aba1;
+          }
+      }
+
+      /* Global Styling */
+      body, .index-page, main, section, .dark-background {
+          background-color: #121212 !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Section Background */
+      section {
+          background-color: #181a1b !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Header */
+      #header {
+          background-color: #181a1b !important;
+      }
+
+      .navmenu a, .navmenu a:focus {
+          color: #b2aba1 !important;
+      }
+
+      /* Card Styling */
+      .iq-card {
+          background-color: #1f1f1f !important;
+          border: none;
+          color: #e0e0e0 !important;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Card Header */
+      .iq-card-header {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Card Body */
+      .iq-card-body {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Badge */
+      .iq-card-header-toolbar .badge-primary {
+          background-color: #333 !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Text Color for Headers and Card Titles */
+      .iq-header-title h4, .card-title, .media-support-info h6, .media-support-info p, h3, h4, h5, h6 {
+          color: #e0e0e0 !important;
+      }
+
+      /* Button Styling */
+      .buy-btn, .btn-getstarted, .btn-primary, .btn-secondary, .cta-btn, .scroll-top, .stretched-link {
+          background-color: #333 !important;
+          color: #e0e0e0 !important;
+          border: none !important;
+      }
+
+      /* Modal Background */
+      .modal-content {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Section Titles */
+      .section-title h2, .section-title p, .iq-header-title h4, .iq-card-title, .faq-item h3 {
+          color: #e0e0e0 !important;
+      }
+
+      /* Tabs */
+      .nav-tabs .nav-link {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+          border: 1px solid #333 !important;
+      }
+
+      .nav-tabs .nav-link.active {
+          background-color: #333 !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* Table Styling */
+      .table {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+          border-color: #333 !important;
+      }
+
+      .table th, .table td {
+          border-color: #333 !important;
+          color: #e0e0e0 !important;
+      }
+
+      /* FAQ */
+      .faq-container .faq-item h3 {
+          color: #e0e0e0 !important;
+      }
+
+      .faq-icon, .faq-toggle {
+          color: #b2aba1 !important;
+      }
+
+      /* Footer */
+      .footer {
+          background-color: #181a1b !important;
+          color: #b2aba1 !important;
+      }
+
+      .footer .social-links i {
+          color: #e0e0e0 !important;
+      }
+
+      /* FAQ Section Background */
+      #faq .faq-container .faq-item {
+          background-color: #1f1f1f !important;
+          color: #e0e0e0 !important;
+          border: 1px solid #333 !important;
+          border-radius: 8px;
+          padding: 15px;
+          margin-bottom: 10px;
+      }
+
+      /* FAQ Question Text Color */
+      #faq .faq-container .faq-item h3 {
+          color: #ffffff !important;
+          font-weight: bold;
+      }
+
+      /* FAQ Answer Text Color */
+      #faq .faq-container .faq-content {
+          color: #cccccc !important;
+      }
+
+      /* FAQ Icons */
+      .faq-icon, .faq-toggle {
+          color: #e0e0e0 !important;
+      }
+
+      /* Hover Effect for FAQ Items */
+      #faq .faq-container .faq-item:hover {
+          background-color: #292929 !important;
+          border-color: #555 !important;
+      }
+
+      /* Call-To-Action Section Text Color */
+      #call-to-action, #call-to-action h4, #call-to-action p {
+          color: #ffffff !important;
+      }
+
+      /* Ensuring Buttons in Call-To-Action Section are Visible */
+      #call-to-action .cta-btn {
+          background-color: #333 !important;
+          color: #ffffff !important;
+      }
+
+      /* Contact Section Styling */
+      #contact {
+          color: #ffffff !important;
+      }
+
+      #contact .info {
+          background-color: #333 !important;
+          color: #ffffff !important;
+          padding: 20px;
+          border-radius: 5px;
+      }
+
+      #contact .info h3,
+      #contact .info h4 {
+          color: #ffffff !important;
+      }
+
+      #contact .info-item i {
+          color: #40E0D0 !important;
+      }
+
+      .btn-getstarted {
+          background-color: #40E0D0 !important;
+      }
+
+      #contact .info-item p,
+      #contact .info-item a {
+          color: #ffffff !important;
+      }
+
+      #contact .php-email-form input,
+      #contact .php-email-form textarea {
+          background-color: #333 !important;
+          color: #ffffff !important;
+          border: 1px solid #555 !important;
+      }
+
+      #contact .php-email-form input::placeholder,
+      #contact .php-email-form textarea::placeholder {
+          color: #aaaaaa !important;
+      }
+
+      #contact .php-email-form button {
+          background-color: #40E0D0 !important;
+          color: #ffffff !important;
+          border: none;
+      }
+
+      /* Pricing Section - Ensure Text is Visible on Dark Background */
+      .pricing-item {
+          background-color: #181a1b !important;
+          border: 1px solid #333 !important;
+          color: #ffffff !important;
+          border-radius: 10px;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .pricing-header {
+          background-color: #40E0D0 !important;
+          color: #ffffff;
+          padding: 20px;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+      }
+
+      .pricing-header h3,
+      .pricing-header h4 {
+          color: #ffffff !important;
+      }
+
+      .pricing-item ul li {
+          color: #ffffff !important;
+          font-size: 14px;
+      }
+
+      .pricing-item ul li i {
+          color: #40E0D0 !important;
+      }
+
+      .pricing-item .buy-btn {
+          background-color: #333 !important;
+          color: #ffffff !important;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+      }
+
+      .pricing-item .buy-btn:hover {
+          background-color: #40E0D0 !important;
+          color: #ffffff !important;
+      }
+
+      .section-title h2 {
+          color: #ffffff !important;
+      }
+
+      .section-title p {
+          color: #bbbbbb !important;
+      }
+
+
   </style>
 </header>
 
-<main class="main">
+<main class="main" style="background-color: #181a1b;">
 
   <!-- Hero Section -->
   <section id="hero" class="hero section mb-5">
@@ -312,8 +576,10 @@
     <div class="container section-title" data-aos="fade-up">
       <h2>About Us</h2>
       <h5>Empowering Your Financial Future Through Strategic Investment</h5>
-      <p>we empower individuals to achieve their financial goals through tailored investment strategies, active trading, and innovative staking solutions.
-        Our dedicated team prioritizes transparency and client satisfaction, ensuring your portfolio is optimized for growth.
+      <p>we empower individuals to achieve their financial goals through tailored investment strategies, active trading,
+        and innovative staking solutions.
+        Our dedicated team prioritizes transparency and client satisfaction, ensuring your portfolio is optimized for
+        growth.
         Join us on your journey to financial success and unlock your investment potential.
       </p>
     </div><!-- End Section Title -->
@@ -324,7 +590,7 @@
 
         <div class="col-lg-5">
           <div class="about-img">
-            <img src="<%= asset_path "about.jpg" %>" class="img-fluid" alt="">
+            <img src="<%= asset_path "make.png" %>" class="img-fluid" alt="">
           </div>
         </div>
 
@@ -343,116 +609,137 @@
 
             <div class="tab-pane fade show active" id="Investment">
 
-              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving
+                consistent growth while minimizing risks.
                 We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Expert Fund Management</h4>
               </div>
-              <p>Our experienced team of fund managers uses proven strategies to maximize returns while mitigating risk. We work closely with you to develop personalized investment plans tailored to your financial goals.</p>
+              <p>Our experienced team of fund managers uses proven strategies to maximize returns while mitigating risk.
+                We work closely with you to develop personalized investment plans tailored to your financial goals.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Diversified Investment Portfolios</h4>
               </div>
-              <p>We manage diversified portfolios across a wide range of industries and asset classes. This approach helps spread risk and capture opportunities in different sectors, ensuring steady growth.</p>
+              <p>We manage diversified portfolios across a wide range of industries and asset classes. This approach
+                helps spread risk and capture opportunities in different sectors, ensuring steady growth.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Long-Term Growth Focus</h4>
               </div>
-              <p>We prioritize long-term, sustainable growth over short-term gains. By investing with patience and discipline, we aim to build your wealth steadily, securing your financial future.</p>
+              <p>We prioritize long-term, sustainable growth over short-term gains. By investing with patience and
+                discipline, we aim to build your wealth steadily, securing your financial future.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Risk Management Strategies</h4>
               </div>
-              <p>Our sophisticated risk management strategies are designed to protect your capital in volatile market conditions. We constantly monitor and adjust portfolios to keep your investments secure and profitable.</p>
+              <p>Our sophisticated risk management strategies are designed to protect your capital in volatile market
+                conditions. We constantly monitor and adjust portfolios to keep your investments secure and
+                profitable.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Transparent and Personalized Service</h4>
               </div>
-              <p> We believe in transparency and keep you informed every step of the way. Our personalized service ensures you understand your investments and feel confident in your financial journey.</p>
+              <p> We believe in transparency and keep you informed every step of the way. Our personalized service
+                ensures you understand your investments and feel confident in your financial journey.</p>
 
             </div>
 
             <div class="tab-pane fade" id="Trading">
 
-              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving
+                consistent growth while minimizing risks.
                 We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Informed Market Insights</h4>
               </div>
-              <p>Our team provides timely and accurate market analysis to Perform trading decisions. With expert insights, We navigate the complexities of the market and seize profitable opportunities.</p>
+              <p>Our team provides timely and accurate market analysis to Perform trading decisions. With expert
+                insights, We navigate the complexities of the market and seize profitable opportunities.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Tailored Trading Strategies</h4>
               </div>
-              <p>We develop personalized trading strategies that align with your investment goals and risk tolerance. This customized approach ensures we have a clear plan that adapts to market conditions.</p>
+              <p>We develop personalized trading strategies that align with your investment goals and risk tolerance.
+                This customized approach ensures we have a clear plan that adapts to market conditions.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Advanced Trading Techniques</h4>
               </div>
-              <p>Utilizing sophisticated trading techniques and tools, we aim to maximize your returns. Our experts employ various strategies, from technical analysis to trend-following, to enhance returns on your investment.
+              <p>Utilizing sophisticated trading techniques and tools, we aim to maximize your returns. Our experts
+                employ various strategies, from technical analysis to trend-following, to enhance returns on your
+                investment.
               </p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Continuous Monitoring and Support</h4>
               </div>
-              <p>We continuously monitor market trends and your investments, providing you with real-time updates and support. Our dedicated team is always available to assist you.</p>
+              <p>We continuously monitor market trends and your investments, providing you with real-time updates and
+                support. Our dedicated team is always available to assist you.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Transparent Reward Structure</h4>
               </div>
-              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information on potential returns and fees, so you can make informed decisions about your Funds.</p>
+              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information
+                on potential returns and fees, so you can make informed decisions about your Funds.</p>
 
             </div><!-- End Tab 2 Content -->
 
             <div class="tab-pane fade" id="Staking">
 
-              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving consistent growth while minimizing risks.
+              <p class="fst-italic">Our seasoned fund managers work diligently to optimize your investments, driving
+                consistent growth while minimizing risks.
                 We handle the complexities of the market so you can achieve your financial goals with peace of mind.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Stable Passive Income</h4>
               </div>
-              <p>Our staking services allow you to earn steady, passive income on your investments. By staking your assets, you can generate rewards without the need for constant trading or market timing.
+              <p>Our staking services allow you to earn steady, passive income on your investments. By staking your
+                assets, you can generate rewards without the need for constant trading or market timing.
               </p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Secure Staking Environment</h4>
               </div>
-              <p>We prioritize the security of your assets in our staking program. Utilizing advanced technology and security protocols, we ensure that your investments remain safe while earning rewards.
+              <p>We prioritize the security of your assets in our staking program. Utilizing advanced technology and
+                security protocols, we ensure that your investments remain safe while earning rewards.
               </p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>User-Friendly Staking Process</h4>
               </div>
-              <p>Our intuitive platform makes staking easy for everyone, from beginners to experienced investors. With simple steps and clear instructions, you can start earning rewards in no time.
+              <p>Our intuitive platform makes staking easy for everyone, from beginners to experienced investors. With
+                simple steps and clear instructions, you can start earning rewards in no time.
               </p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Staking Options</h4>
               </div>
-              <p>At this time, we exclusively offer USDT staking. This approach allows you to focus on assets that match your investment strategy and risk preferences.</p>
+              <p>At this time, we exclusively offer USDT staking. This approach allows you to focus on assets that match
+                your investment strategy and risk preferences.</p>
 
               <div class="d-flex align-items-center mt-4">
                 <i class="bi bi-check2"></i>
                 <h4>Transparent Reward Structure</h4>
               </div>
-              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information on potential returns, fees, and lock-up periods, so you can make informed decisions about your staking investments.
+              <p>Our transparent reward structure ensures you know exactly what to expect. We provide clear information
+                on potential returns, fees, and lock-up periods, so you can make informed decisions about your staking
+                investments.
               </p>
 
             </div><!-- End Tab 3 Content -->
@@ -468,7 +755,6 @@
   </section><!-- /About Section -->
 
 
-
   <!-- Call To Action Section -->
   <section id="call-to-action" class="call-to-action section">
 
@@ -480,13 +766,18 @@
           <h4>What Our Company Actually Does / Discover Our Investment Expertise:</h4>
 
 
-          <p>At our company, we specialize in strategic investments across a wide array of sectors, including established businesses, innovative startups, e-commerce, stocks, cryptocurrencies, artificial intelligence, IT solutions, and even gold mining ventures. Our expert team meticulously curates a diversified portfolio designed to maximize returns while minimizing risk, ensuring that you can achieve your financial goals with confidence. Whether you’re looking to grow your wealth or explore new avenues for passive income, we provide the tailored strategies and insights you need to succeed.</p>
+          <p>At our company, we specialize in strategic investments across a wide array of sectors, including
+            established businesses, innovative startups, e-commerce, stocks, cryptocurrencies, artificial intelligence,
+            IT solutions, and even gold mining ventures. Our expert team meticulously curates a diversified portfolio
+            designed to maximize returns while minimizing risk, ensuring that you can achieve your financial goals with
+            confidence. Whether you’re looking to grow your wealth or explore new avenues for passive income, we provide
+            the tailored strategies and insights you need to succeed.</p>
           <a class="cta-btn align-self-start" href="/signup">Start Your Journey</a>
         </div>
 
         <div class="col-lg-4 col-md-6 order-first order-md-last d-flex align-items-center">
           <div class="img">
-            <img src="<%= asset_path "img/cta.jpg" %>" alt="" class="img-fluid">
+            <img src="<%= asset_path "company.png" %>" alt="" class="img-fluid">
           </div>
         </div>
 
@@ -509,13 +800,22 @@
           <div class="content d-flex flex-column justify-content-center h-100">
             <h3>How to Navigate Our Website: Deposits and Withdrawals Made Easy</h3>
             <p class="fst-italic">
-              In this video, we’ll guide you through the essential steps for using our website effectively, focusing on the deposit and withdrawal processes. Here’s what you need to know:
+              In this video, we’ll guide you through the essential steps for using our website effectively, focusing on
+              the deposit and withdrawal processes. Here’s what you need to know:
             </p>
             <ul>
-              <li><i class="bi bi-check-circle"></i> <strong>Simple Deposit Process:</strong> Learn how to fund your account quickly and securely, ensuring your investments are up and running in no time.</li>
-              <li><i class="bi bi-check-circle"></i> <strong>Effortless Withdrawals:</strong> Discover the steps to withdraw your funds and access your earnings whenever you need them.</li>
-              <li><i class="bi bi-check-circle"></i> <strong>Key Considerations:</strong> Understand the crucial factors to consider while making deposits or withdrawals, ensuring that you may not lose your funds.</li>
-              <li><i class="bi bi-check-circle"></i> <strong>Stay Informed: </strong>For detailed guidelines and specific requirements, please refer to the policy page or deposit page on our website.</li>
+              <li><i class="bi bi-check-circle"></i> <strong>Simple Deposit Process:</strong> Learn how to fund your
+                account quickly and securely, ensuring your investments are up and running in no time.
+              </li>
+              <li><i class="bi bi-check-circle"></i> <strong>Effortless Withdrawals:</strong> Discover the steps to
+                withdraw your funds and access your earnings whenever you need them.
+              </li>
+              <li><i class="bi bi-check-circle"></i> <strong>Key Considerations:</strong> Understand the crucial factors
+                to consider while making deposits or withdrawals, ensuring that you may not lose your funds.
+              </li>
+              <li><i class="bi bi-check-circle"></i> <strong>Stay Informed: </strong>For detailed guidelines and
+                specific requirements, please refer to the policy page or deposit page on our website.
+              </li>
 
             </ul>
             <a href="#" class="read-more align-self-start"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
@@ -536,21 +836,21 @@
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
-            <i class="bi bi-binoculars" style="color: #0dcaf0;"></i>
+            <img src="<%= asset_path "icon/startup.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h5>Innovative Startups</h5>
           </a>
         </li><!-- End Tab 1 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-2">
-            <i class="bi bi-box-seam" style="color: #6610f2;"></i>
+            <img src="<%= asset_path "icon/Ecommerce.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h4>E-commerce</h4>
           </a>
         </li><!-- End Tab 2 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-3">
-            <i class="bi bi-brightness-high" style="color: #20c997;"></i>
+            <img src="<%= asset_path "icon/Stock.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h4>Stocks</h4>
           </a>
         </li><!-- End Tab 3 Nav -->
@@ -558,14 +858,14 @@
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-5">
-            <i class="bi bi-easel" style="color: #0d6efd;"></i>
+            <img src="<%= asset_path "icon/cryptocurrency.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h4>Cryptocurrencies</h4>
           </a>
         </li><!-- End Tab 5 Nav -->
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-6">
-            <i class="bi bi-map" style="color: #fd7e14;"></i>
+            <img src="<%= asset_path "icon/AI.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h4>AI</h4>
           </a>
         </li>
@@ -576,12 +876,12 @@
             <h4>IT Solutions</h4>
           </a>
         </li><!-- End Tab 6 Nav -->
-<!--        <li class="nav-item col-6 col-md-4 col-lg-2">-->
-<!--          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-8">-->
-<!--            <i class="bi bi-heptagon" style="color: #fd7e14;"></i>-->
-<!--            <h4>Gold Mining</h4>-->
-<!--          </a>-->
-<!--        </li>-->
+        <!--        <li class="nav-item col-6 col-md-4 col-lg-2">-->
+        <!--          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-8">-->
+        <!--            <i class="bi bi-heptagon" style="color: #fd7e14;"></i>-->
+        <!--            <h4>Gold Mining</h4>-->
+        <!--          </a>-->
+        <!--        </li>-->
       </ul>
 
       <div class="tab-content">
@@ -594,16 +894,19 @@
                 Innovative startups are driving change across industries with their disruptive ideas and technologies.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in innovative startups with disruptive potential in various industries.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in
+                  innovative startups with disruptive potential in various industries.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  These companies often present unique solutions and technologies that can lead to significant market growth.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> These companies often present
+                  unique solutions and technologies that can lead to significant market growth.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Early investment can yield high returns as these startups scale and succeed, providing a strong growth opportunity.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Early investment can yield high
+                  returns as these startups scale and succeed, providing a strong growth opportunity.
                 </li>
               </ul>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center" data-aos="fade-up" data-aos-delay="200">
-              <img src="<%= asset_path "img/features-1.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/5.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 1 -->
@@ -613,20 +916,24 @@
             <div class="col-lg-8 order-2 order-lg-1">
               <h3>E-commerce</h3>
               <p>
-                The e-commerce sector has experienced remarkable growth, fueled by shifts in consumer behavior and technology.
+                The e-commerce sector has experienced remarkable growth, fueled by shifts in consumer behavior and
+                technology.
               </p>
 
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We focus on established and emerging e-commerce platforms that cater to changing consumer preferences.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We focus on
+                  established and emerging e-commerce platforms that cater to changing consumer preferences.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  The shift towards online shopping continues to grow, making e-commerce a lucrative sector.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> The shift towards online
+                  shopping continues to grow, making e-commerce a lucrative sector.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong>  Investing in this space allows us to capitalize on increasing sales and market expansion, ensuring steady returns.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Investing in this space allows us
+                  to capitalize on increasing sales and market expansion, ensuring steady returns.
                 </li>
               </ul>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
-              <img src="<%= asset_path "img/features-2.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/4.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 2 -->
@@ -636,20 +943,24 @@
             <div class="col-lg-8 order-2 order-lg-1">
               <h3>Stocks</h3>
               <p>
-                The stock market offers a diverse range of investment opportunities for both capital appreciation and income.
+                The stock market offers a diverse range of investment opportunities for both capital appreciation and
+                income.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We select a diversified portfolio of stocks across various industries based on thorough research and analysis.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We select a
+                  diversified portfolio of stocks across various industries based on thorough research and analysis.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>  Stocks offer both capital appreciation and dividend income, creating multiple revenue streams.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> Stocks offer both capital
+                  appreciation and dividend income, creating multiple revenue streams.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong>  A well-managed stock portfolio can provide consistent growth and help mitigate risks through diversification.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> A well-managed stock portfolio can
+                  provide consistent growth and help mitigate risks through diversification.
                 </li>
               </ul>
 
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
-              <img src="<%= asset_path "img/features-3.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/6.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 3 -->
@@ -662,16 +973,19 @@
                 The cryptocurrency market is rapidly evolving, presenting unique opportunities for investors.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in a carefully selected range of cryptocurrencies to leverage market volatility.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in a
+                  carefully selected range of cryptocurrencies to leverage market volatility.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> The cryptocurrency market is rapidly evolving, with potential for high returns on investment.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> The cryptocurrency market is
+                  rapidly evolving, with potential for high returns on investment.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> By diversifying into digital assets, we aim to enhance overall portfolio performance and capture emerging trends.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> By diversifying into digital
+                  assets, we aim to enhance overall portfolio performance and capture emerging trends.
                 </li>
               </ul>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
-              <img src="<%= asset_path "img/features-4.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/3.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 4 -->
@@ -685,16 +999,19 @@
               </p>
 
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We target AI-driven companies that are leading innovations across various sectors.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We target AI-driven
+                  companies that are leading innovations across various sectors.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> AI technologies are transforming industries, providing new solutions and efficiencies.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong> AI technologies are
+                  transforming industries, providing new solutions and efficiencies.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Investing in AI positions us to benefit from long-term growth as demand for these technologies continues to rise.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> Investing in AI positions us to
+                  benefit from long-term growth as demand for these technologies continues to rise.
                 </li>
               </ul>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
-              <img src="<%= asset_path "img/features-5.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/2.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 5 -->
@@ -709,16 +1026,19 @@
               </p>
 
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in companies offering essential IT solutions, including software, cloud services, and cybersecurity.
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Investment Approach:</strong> We invest in companies
+                  offering essential IT solutions, including software, cloud services, and cybersecurity.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>The increasing reliance on technology across businesses creates a growing demand for IT services.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Why We Invest:</strong>The increasing reliance on
+                  technology across businesses creates a growing demand for IT services.
                 </li>
-                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> These investments provide a stable revenue base, ensuring consistent returns as businesses enhance their technological capabilities.
+                <li><i class="bi bi-check-circle-fill"></i><strong>Benefits:</strong> These investments provide a stable
+                  revenue base, ensuring consistent returns as businesses enhance their technological capabilities.
                 </li>
               </ul>
             </div>
             <div class="col-lg-4 order-1 order-lg-2 text-center">
-              <img src="<%= asset_path "img/features-5.svg" %>" alt="" class="img-fluid">
+              <img src="<%= asset_path "icon/1.png" %>" alt="" class="img-fluid">
             </div>
           </div>
         </div><!-- End Tab Content 5 -->
@@ -744,7 +1064,7 @@
         <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
           <div class="service-item">
             <div class="img">
-              <img src="<%= asset_path "img/services-1.jpg" %>" class="img-fluid" alt="">
+              <img src="<%= asset_path "icon/INVESTMENT.png" %>" alt="" class="img-fluid">
             </div>
             <div class="details position-relative">
               <div class="icon">
@@ -753,7 +1073,8 @@
               <a href="service-details.html" class="stretched-link">
                 <h3>Investments</h3>
               </a>
-              <p>We offer tailored investment strategies across diverse sectors, helping you grow your wealth through expert management and strategic planning.</p>
+              <p>We offer tailored investment strategies across diverse sectors, helping you grow your wealth through
+                expert management and strategic planning.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -761,7 +1082,7 @@
         <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
           <div class="service-item">
             <div class="img">
-              <img src="<%= asset_path "img/services-2.jpg" %>" class="img-fluid" alt="">
+              <img src="<%= asset_path "icon/MINI games.png" %>" alt="" class="img-fluid">
             </div>
             <div class="details position-relative">
               <div class="icon">
@@ -770,7 +1091,8 @@
               <a href="service-details.html" class="stretched-link">
                 <h3>Mini-game</h3>
               </a>
-              <p>Our engaging mini-game platform combines entertainment with earning potential, allowing users to enjoy fun gameplay while unlocking rewards.</p>
+              <p>Our engaging mini-game platform combines entertainment with earning potential, allowing users to enjoy
+                fun gameplay while unlocking rewards.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -778,7 +1100,7 @@
         <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
           <div class="service-item">
             <div class="img">
-              <img src="<%= asset_path "img/services-3.jpg" %>" class="img-fluid" alt="">
+              <img src="<%= asset_path "icon/Lucky Draw.png" %>" alt="" class="img-fluid">
             </div>
             <div class="details position-relative">
               <div class="icon">
@@ -787,7 +1109,8 @@
               <a href="service-details.html" class="stretched-link">
                 <h3>Lucky Draws</h3>
               </a>
-              <p>Participate in our exciting lucky draws for a chance to win fantastic prizes, adding an element of thrill to your investment journey.</p>
+              <p>Participate in our exciting lucky draws for a chance to win fantastic prizes, adding an element of
+                thrill to your investment journey.</p>
             </div>
           </div>
         </div><!-- End Service Item -->
@@ -802,7 +1125,6 @@
   <section id="testimonials" class="testimonials section dark-background">
 
 
-
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="col-lg-12 col-md-6">
         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
@@ -811,28 +1133,45 @@
               <h4 class="card-title">Top Team Leaders</h4>
             </div>
           </div>
-          <div class="iq-card-body">
-            <ul class="list-inline p-0 m-0">
-              <% TeamLeader.all.each do |leader| %>
-                <li class="d-flex mb-3 align-items-center p-3 sell-list border-primary rounded">
-                  <div class="user-img img-fluid">
-                <span class="country-flag" style="font-size: 2rem;">
-                  <%= ISO3166::Country[leader.country]&.emoji_flag %>
-                </span>
-                  </div>
-                  <div class="media-support-info ml-3">
-                    <h6><%= leader.member_name %></h6>
-                    <p class="mb-0 font-size-12"><%= leader.date.strftime("%d %b, %Y") %></p>
-                  </div>
-                  <div class="iq-card-header-toolbar d-flex align-items-center">
-                    <div class="badge badge-pill badge-primary">
-                      <%= number_to_currency(leader.investment_amount, unit: "$") %>
-                    </div>
-                  </div>
-                </li>
-              <% end %>
-            </ul>
+              <div class="iq-card-body">
+            <div class="table-responsive">
+              <table id="datatable" class="table mb-0 mt-2 table-borderless">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Team Members</th>
+                  <th>Referral Investment</th>
+                  <th>User Capital</th>
+                  <th>Total Earning</th>
+                </tr>
+                </thead>
+                <% TeamLeader.all.each do |leader| %>
+                  <tbody>
+                  <tr>
+                    <td>
+                      <div class="user-img img-fluid">
+                        <span class="country-flag" style="font-size: 2rem;">
+                          <%= ISO3166::Country[leader.country]&.emoji_flag %>
+                        </span>
+                        <h6><%= leader.member_name %></h6>
+
+                      </div>
+                    </td>
+                    <td><%= leader.team_members %></td>
+                    <td>                      <%= number_to_currency(leader.investment_amount, unit: "$") %>
+                    </td>
+                    <td>                      <%= number_to_currency(leader.user_capital, unit: "$") %>
+                    </td>
+                    <td>                      <%= number_to_currency(leader.total_earnings, unit: "$") %>
+                    </td>
+                  </tr>
+                  </tbody>
+                <% end %>
+              </table>
+            </div>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -860,7 +1199,9 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>What services does your company provide?</h3>
               <div class="faq-content">
-                <p>We offer multiple ways for you to earn, including investment plans, trading, and staking. Each of these allows you to grow your wealth, and you can also earn commissions based on your Referral  investment.</p>
+                <p>We offer multiple ways for you to earn, including investment plans, trading, and staking. Each of
+                  these allows you to grow your wealth, and you can also earn commissions based on your Referral
+                  investment.</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
@@ -869,7 +1210,10 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>How do your investment plans work?</h3>
               <div class="faq-content">
-                <p>We provide a variety of investment plans that cater to different financial goals. You invest a certain amount into a plan, and based on its performance, you earn returns and commissions over time. Each plan has a different risk level and potential return, allowing you to choose the best fit for your financial needs.</p>
+                <p>We provide a variety of investment plans that cater to different financial goals. You invest a
+                  certain amount into a plan, and based on its performance, you earn returns and commissions over time.
+                  Each plan has a different risk level and potential return, allowing you to choose the best fit for
+                  your financial needs.</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
@@ -878,8 +1222,12 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>What is staking, and how does it work with your platform?</h3>
               <div class="faq-content">
-                <p>Staking involves locking your assets, primarily USDT, for a set period to earn rewards or interest on your staked funds.
-                  On our platform, we exclusively offer USDT staking. When you invest, we utilize your funds to engage in over 100 carefully selected projects, generating steady returns. This strategy not only allows you to earn passive income but also aligns your investment with stable, well-researched opportunities. Experience the benefits of staking with us and watch your investments grow!</p>
+                <p>Staking involves locking your assets, primarily USDT, for a set period to earn rewards or interest on
+                  your staked funds.
+                  On our platform, we exclusively offer USDT staking. When you invest, we utilize your funds to engage
+                  in over 100 carefully selected projects, generating steady returns. This strategy not only allows you
+                  to earn passive income but also aligns your investment with stable, well-researched opportunities.
+                  Experience the benefits of staking with us and watch your investments grow!</p>
               </div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
@@ -889,7 +1237,9 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>How can I earn commissions through your plans?</h3>
               <div class="faq-content">
-                <p>By investing in one of our tailored plans, you not only receive potential returns on your investment but also earn commissions as part of our Team leader reward system. The commission amount depends on the Team's investments.</div>
+                <p>By investing in one of our tailored plans, you not only receive potential returns on your investment
+                  but also earn commissions as part of our Team leader reward system. The commission amount depends on
+                  the Team's investments.</div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
 
@@ -898,7 +1248,9 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>What is the minimum amount required to start investing?</h3>
               <div class="faq-content">
-                <p>The minimum investment varies depending on the plan you choose. Some of our plans have a low entry threshold, making it accessible to beginners, while others might require a higher initial investment for higher potential returns.</div>
+                <p>The minimum investment varies depending on the plan you choose. Some of our plans have a low entry
+                  threshold, making it accessible to beginners, while others might require a higher initial investment
+                  for higher potential returns.</div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
 
@@ -906,7 +1258,9 @@
               <i class="faq-icon bi bi-question-circle"></i>
               <h3>When can I withdraw my funds?</h3>
               <div class="faq-content">
-                <p>You can withdraw your initial investment and your team's commissions at any time. However, the withdrawal of returns from each plan is subject to different time-frames. For more details, please refer to our Policy Page.</div>
+                <p>You can withdraw your initial investment and your team's commissions at any time. However, the
+                  withdrawal of returns from each plan is subject to different time-frames. For more details, please
+                  refer to our Policy Page.</div>
               <i class="faq-toggle bi bi-chevron-right"></i>
             </div><!-- End Faq item-->
           </div>
@@ -914,14 +1268,13 @@
         </div>
 
         <div class="col-lg-5 order-1 order-lg-2">
-          <img src="<%= asset_path "img/faq.jpg" %>" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100">
+          <img src="<%= asset_path "icon/Questions.png" %>" alt="" class="img-fluid">
         </div>
       </div>
 
     </div>
 
   </section><!-- /Faq Section -->
-
 
 
   <!-- Recent Posts Section -->
@@ -1095,7 +1448,7 @@
 
       <div class="d-flex flex-column align-items-center align-items-lg-start">
         <div>
-          © Copyright <strong><span>Investment-App</span></strong>. All Rights Reserved
+          © Copyright <strong><span>6figure</span></strong>. All Rights Reserved
         </div>
       </div>
 
