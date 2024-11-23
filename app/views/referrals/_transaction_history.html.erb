@@ -1,0 +1,36 @@
+<h4>Transaction History for Referred Members of <%= user.full_name %></h4>
+<div class="table-responsive">
+  <table class="table mb-2 mt-2 table-bordered">
+    <thead>
+    <tr>
+      <th scope="col" class="font-weight-bold">Referred Member</th>
+      <th scope="col" class="font-weight-bold">Type</th>
+      <th scope="col" class="font-weight-bold">Date</th>
+      <th scope="col" class="font-weight-bold">Amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% referrals.each do |referral| %>
+      <% if referral.transaction_histories.any? %>
+        <% referral.transaction_histories.each do |transaction| %>
+          <tr>
+            <td><%= referral.full_name %></td>
+            <td><%= transaction.transaction_type.humanize %></td>
+            <td><%= transaction.transaction_date.strftime("%d %B, %H:%M") %></td>
+            <% if transaction.amount > 0 %>
+              <td>+ $<%= '%.2f' % transaction.amount %></td>
+            <% else %>
+              <td><%= transaction.status == "refund" ? "+" : "-" %> $<%= '%.2f' % transaction.amount.abs %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td><%= referral.full_name %></td>
+          <td colspan="3">No transactions available</td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+</div>

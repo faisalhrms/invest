@@ -67,6 +67,12 @@ class UsersController < ApplicationController
             cumulative_profit += amount
           end
 
+          # profits_with_cumulative << {
+          #   profit: existing_profit || OpenStruct.new(created_at: date_for_profit, profit_loss_type: profit_loss_type),
+          #   amount: amount,
+          #   cumulative_profit: cumulative_profit
+          # } unless profits_with_cumulative.any? { |p| p[:profit].created_at&.to_date == date_for_profit }
+          #
           # Append result only once per day
           profits_with_cumulative << {
             profit: existing_profit || OpenStruct.new(created_at: date_for_profit, profit_loss_type: profit_loss_type),

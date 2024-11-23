@@ -35,6 +35,7 @@
               <th scope="col" class="font-weight-bold">Email</th>
               <th scope="col" class="font-weight-bold">Referred By</th>
               <th scope="col" class="font-weight-bold">Referral Count</th>
+              <th scope="col" class="font-weight-bold">Transaction History</th>
               <th scope="col" class="font-weight-bold">Plan</th>
               <th scope="col" class="font-weight-bold">Deposit Amount</th>
               <th scope="col" class="font-weight-bold">Status</th>
@@ -59,6 +60,13 @@
                   <td>
                     <a href="#" class="btn btn-sm btn-info ml-2" data-toggle="modal" data-target="#referralDetailsModal" data-id="<%= referral.id %>">
                       <i class="ri-eye-fill"></i> <%= referral.referred_users.count %>
+                    </a>
+                  </td>
+
+                  <!-- Transaction History -->
+                  <td>
+                    <a href="#" class="btn btn-sm btn-warning ml-2" data-toggle="modal" data-target="#referralDetailsModal1" data-id="<%= referral.id %>">
+                      <i class="ri-time-fill"></i>
                     </a>
                   </td>
 
@@ -132,6 +140,25 @@
 </div>
 
 
+<!-- Modal for displaying transaction history -->
+<div class="modal fade" id="referralDetailsModal1" tabindex="-1" role="dialog" aria-labelledby="referralDetailsModalLabel1" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="referralDetailsModalLabel1">Transaction History</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="referral-details-content1">
+          <p>Loading Transaction History...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     $(document).ready(function() {
         // Use jQuery to dynamically load referral details when the modal is triggered
@@ -151,6 +178,29 @@
                 error: function() {
                     // Display error message in case of failure
                     $('#referral-details-content').html('<p class="text-danger">Unable to load referral details.</p>');
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        // Use jQuery to dynamically load referral details when the modal is triggered
+        $('#referralDetailsModal1').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);  // Button that triggered the modal
+            var userId = button.data('id');  // Extract the user ID from the data-* attribute
+
+            // AJAX request to fetch referral details
+            $.ajax({
+                url: '/referrals/' + userId + '/transaction_history',
+                method: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    // Load response into the modal's content
+                    $('#referral-details-content1').html(response);
+                },
+                error: function() {
+                    // Display error message in case of failure
+                    $('#referral-details-content1').html('<p class="text-danger">Unable to load transaction history.</p>');
                 }
             });
         });

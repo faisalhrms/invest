@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   resources :referrals, only: [:index] do
     member do
       get :referral_details
+      get :transaction_history
     end
   end
   resources :purchases do

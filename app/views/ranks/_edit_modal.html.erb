@@ -27,13 +27,19 @@
               </div>
             </div>
 
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="monthly_salary<%= rank.id %>">Monthly Salary <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="monthly_salary<%= rank.id %>" value="<%= rank.monthly_salary %>"  name="monthly_salary" placeholder="Enter Monthly Salary">
+              </div>
+            </div>
 
-<!--            <div class="col-md-6">-->
-<!--              <div class="form-group">-->
-<!--                <label for="profit_percentage<%#= rank.id %>">Profit Percentage <span style="color: red">*</span></label>-->
-<!--                <input type="number" class="form-control" id="profit_percentage<%#= rank.id %>" value="<%#= rank.profit_percentage %>"  name="profit_percentage" placeholder="Enter Profit Percentage">-->
-<!--              </div>-->
-<!--            </div>-->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="profit_percentage<%= rank.id %>">Commission Percentage <span style="color: red">*</span></label>
+                <input type="number" class="form-control" id="profit_percentage<%= rank.id %>" value="<%= rank.referral_percentage %>"  name="referral_percentage" placeholder="Enter Commission Percentage">
+              </div>
+            </div>
 
 
 

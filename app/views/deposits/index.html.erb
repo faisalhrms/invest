@@ -28,7 +28,7 @@
                       <li><%= bank.account_name %></li>
                       <li><strong>NETWORK:</strong> <%= bank.account_number %></li>
                       <li>
-                        <strong>WALLET ADDRESS:</strong>
+                        <strong>YOUR WALLET ADDRESS:</strong>
                         <%= bank.bank_name %>
                         <button onclick="copyToClipboardFallback('<%= bank.bank_name %>')" class="btn btn-link p-0" title="Copy Bank Name" style="color: #007bff;">
                           <i class="fas fa-copy"></i>
@@ -62,8 +62,8 @@
 
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="wallet_address">Wallet Address <span style="color: red">*</span></label>
-                        <%= form.text_field :wallet_address, class: "form-control", placeholder: "Enter Wallet Address", required: true %>
+                        <label for="wallet_address">Your Wallet Address <span style="color: red">*</span></label>
+                        <%= form.text_field :wallet_address, class: "form-control", placeholder: "Your Wallet Address", required: true %>
                       </div>
                     </div>
 

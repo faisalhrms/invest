@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_11_120311) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_23_080234) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -213,6 +213,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_11_120311) do
     t.decimal "profit_percentage", precision: 5, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "monthly_salary"
+    t.float "referral_percentage"
   end
 
   create_table "referral_commissions", force: :cascade do |t|

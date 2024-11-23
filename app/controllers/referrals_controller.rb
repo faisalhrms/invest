@@ -47,4 +47,12 @@ class ReferralsController < ApplicationController
     @referrals = @user.referred_users.includes(:purchases)
     render partial: 'referral_details', locals: { user: @user, referrals: @referrals }
   end
+
+  def transaction_history
+    @user = User.find(params[:id])
+    @referrals = @user.referred_users.includes(:transaction_histories)
+    render partial: 'transaction_history', locals: { user: @user, referrals: @referrals }
+  end
+
+
 end

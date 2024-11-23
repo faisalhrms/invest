@@ -32,14 +32,13 @@
             </div>
           </div>
           <p class=" mb-0 mt-3">.</p>
-          <div class="background-image">
-            <img src="<%= asset_path "page-img/36.png" %>" class="img-fluid" alt="img-36">
-          </div>
+
         </div>
       </div>
     </div>
     <div class="col-md-6 col-lg-3">
       <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+        <h5 class="text-center mt-3">Profit</h5>
 
         <div class="ml-auto">
           <div class="dropdown">
@@ -53,6 +52,7 @@
             </div>
           </div>
         </div>
+
         <div class="iq-card-body relative-background">
           <div class="d-flex align-items-center">
 
@@ -73,7 +73,6 @@
 
             </div>
           </div>
-          <h5 class="text-center mt-3">Profit</h5>
 
         </div>
       </div>
@@ -682,7 +681,10 @@
                 <div class="achievement-content">
                   <h5><%= rank.name.titleize %></h5>
                   <p class="mb-0">Minimum Deposit: <%= number_to_currency(rank.minimum_deposit) %></p>
-                  <p class="mb-0">Daily Profit: <%= rank.profit_percentage %>%</p>
+                  <p class="mb-0">Referral commission: <%= rank.referral_percentage %>%</p>
+                  <% if rank.monthly_salary.present? %>
+                  <p class="mb-0">Monthly Salary: <%= rank.monthly_salary %>$</p>
+                    <% end %>
                 </div>
                 <!-- Arrow Line -->
                 <div class="arrow-line"></div>
@@ -733,7 +735,7 @@
 
       .achievement-item {
           min-width: 200px;
-          margin: 0 50px;
+          margin: 0 40px;
           flex-shrink: 0;
       }
 
@@ -746,7 +748,7 @@
           position: absolute;
           top: 50%;
           right: -60px;
-          width: 120px;
+          width: 80px;
           height: 2px;
           background-color: #000;
           z-index: 1;

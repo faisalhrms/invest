@@ -55,7 +55,7 @@ class RanksController < ApplicationController
 
   private
   def rank_params
-    params.permit(:name, :minimum_deposit, :profit_percentage)
+    params.permit(:name, :minimum_deposit, :profit_percentage,:monthly_salary,:referral_percentage)
   end
   def set_module_name
     @module_name = "purchases"

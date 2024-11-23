@@ -34,12 +34,19 @@
                         </div>
 
 
-<!--                      <div class="col-md-6">-->
-<!--                        <div class="form-group">-->
-<!--                          <label for="profit_percentage">Profit Percentage <span style="color: red">*</span></label>-->
-<!--                          <input type="number" class="form-control" id="profit_percentage" name="profit_percentage" placeholder="Enter Profit Percentage">-->
-<!--                        </div>-->
-<!--                      </div>-->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="monthly_salary">Monthly Salary  <span style="color: red">*</span></label>
+                          <input type="number" class="form-control" id="monthly_salary" name="monthly_salary" placeholder="Enter Monthly Salary">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="referral_percentage">Commission Percentage <span style="color: red">*</span></label>
+                          <input type="number" class="form-control" id="referral_percentage" name="referral_percentage" placeholder="Enter Commission Percentage">
+                        </div>
+                      </div>
 
                       </div>
                     </div>
@@ -66,7 +73,8 @@
               <tr>
                 <th>Name</th>
                 <th>Minimum Deposit</th>
-<!--                <th>Profit Percentage</th>-->
+                <th>Monthly Salary</th>
+                <th>Commission Percentage</th>
                 <th>Actions</th>
               </tr>
               </thead>
@@ -76,7 +84,8 @@
                   <tr>
                     <td><%= rank.name %></td>
                     <td><%= number_to_currency(rank.minimum_deposit, unit: "$") %></td>
-<!--                    <td><%#= rank.profit_percentage %>%</td>-->
+                    <td><%= rank.monthly_salary %></td>
+                    <td><%= rank.referral_percentage %></td>
                     <td>
                       <% if @can_edit %>
                         <a data-toggle="modal" data-target="#editModal<%= rank.id %>" class="animate">

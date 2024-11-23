@@ -33,12 +33,11 @@
 <header id="header" class="header d-flex align-items-center sticky-top" style="background-color: #181a1b;">
   <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
 
-    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+    <div href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
       <!-- Uncomment the line below if you also wish to use an image logo -->
       <!-- <img src="assets/img/logo.png" alt=""> -->
-      <h1 class="sitename">6figure</h1>
-      <span>.</span>
-    </a>
+      <img src="<%= asset_path "logo6.png" %>" alt="" class="img-fluid">
+    </div>
 
     <nav id="navmenu" class="navmenu">
       <ul>
@@ -51,7 +50,7 @@
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
-    <a class="btn-getstarted" href="<%= login_path %>">Get Started</a>
+    <a class="btn-getstarted" style="color: #FFFFFF;" href="<%= login_path %>">Get Started</a>
 
   </div>
 
@@ -86,6 +85,14 @@
           .navmenu a, .navmenu a:focus {
               color: #b2aba1;
           }
+      }
+
+      .nav-pills .nav-item a {
+          color: var(--iq-black);
+      }
+
+      .nav-pills .nav-item a {
+          background-color: var(--iq-white);
       }
 
       /* Global Styling */
@@ -353,20 +360,25 @@
 
   <!-- Hero Section -->
   <section id="hero" class="hero section mb-5">
-    <div class="video-background">
-      <video autoplay loop muted playsinline>
-        <source src="<%= asset_path('win.mp4') %>" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
     <div class="container d-flex flex-column justify-content-center align-items-center text-center position-relative" data-aos="zoom-out">
-      <div class="d-flex">
-        <a href="<%= login_path %>" class="btn-get-started scrollto">Get Started</a>
-        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Tutorial</span></a>
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h1 class="display-4 font-weight-bold" style="text-align: initial">TURN YOUR</h1>
+          <h1 class="display-4 font-weight-bold " style="text-align: initial">INVESTMENTS INTO</h1>
+          <h1 class="display-4 font-weight-bold " style="text-align: initial">PROFITS</h1>
+          <p class="lead mt-3 text-white" style="text-align: justify">AT 6FIGURE, WE HELP YOU MAXIMIZE RETURNS WITH EXPERT TRADING AND SMART FUND MANAGEMENT. LET US TURN YOUR INVESTMENTS INTO REAL, MEASURABLE PROFITS — EFFORTLESSLY.</p>
+          <div class="mt-4" style="text-align: initial" >
+            <a href="<%= login_path %>" class="btn-get-started scrollto">Get Started</a>
+            <a href="<%= login_path %>" class="btn btn-outline-light btn-lg font-weight-bold px-4 mx-3">LOGIN</a>
+          </div>
+        </div>
+        <div class="col-lg-6 text-center">
+          <img src="<%= asset_path('main.png') %>" alt="Investment Dashboard" class="img-fluid" style="max-height: 500px;">
+        </div>
       </div>
     </div>
+  </section>
 
-  </section><!-- /Hero Section -->
 
   <!-- Pricing Section -->
 
@@ -413,36 +425,46 @@
 
                   <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-                    <div class="row gy-4">
-                      <% investment_plan.each do |investment| %>
-
-                        <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-                          <div class="pricing-item featured">
-
-                            <div class="pricing-header">
-                              <h3><%= investment.name.titleize %></h3>
-                              <h4><sup>$</sup><%= investment.price %><span></span></h4>
+                    <div id="investmentCarousel" class="carousel slide" data-ride="carousel">
+                      <div class="carousel-inner">
+                        <% investment_plan.each_slice(3).with_index do |group, index| %>
+                          <div class="carousel-item <%= 'active' if index == 0 %>">
+                            <div class="row">
+                              <% group.each do |investment| %>
+                                <div class="col-lg-4">
+                                  <div class="pricing-item featured">
+                                    <div class="pricing-header">
+                                      <h3><%= investment.name.titleize %></h3>
+                                      <h4><sup>$</sup><%= investment.price %></h4>
+                                    </div>
+                                    <ul>
+                                      <li><%= investment.description %></li>
+                                    </ul>
+                                    <div class="text-center">
+                                      <%= link_to "Buy", new_purchase_path(plan_id: investment.id, plan_type: 'InvestmentPlan'), class: 'buy-btn' %>
+                                    </div>
+                                  </div>
+                                </div>
+                              <% end %>
                             </div>
-
-                            <ul>
-                              <li><i class="bi bi-dot"></i> <span><%= investment.description %></span></li>
-
-                            </ul>
-
-                            <div class="text-center mt-auto">
-                              <%= link_to "Buy", new_purchase_path(plan_id: investment.id, plan_type: 'InvestmentPlan'), class: 'buy-btn' %>
-                            </div>
-
                           </div>
-                        </div>
-                      <% end %>
+                        <% end %>
+                      </div>
 
                     </div>
+
 
                   </div>
 
                 </section>
-
+                <a class="carousel-control-prev" href="#investmentCarousel" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#investmentCarousel" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
               </div>
             </div>
 
@@ -450,45 +472,49 @@
             <div class="tab-pane fade" id="pills-profile-fill" role="tabpanel" aria-labelledby="pills-profile-tab-fill">
               <div>
                 <section id="pricing" class="pricing section">
-                  <!-- Section Title -->
                   <div class="container section-title" data-aos="fade-up">
                     <h2>Our Pricing</h2>
                     <p>Trading Plan</p>
-                  </div><!-- End Section Title -->
-
-                  <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                    <div class="row gy-4">
-                      <% trading_plan.each do |trading| %>
-
-                        <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-                          <div class="pricing-item featured">
-
-                            <div class="pricing-header">
-                              <h3><%= trading.name.titleize %></h3>
-                              <h4><sup>$</sup><%= trading.price %><span></span></h4>
-                            </div>
-
-                            <ul>
-                              <li><i class="bi bi-dot"></i> <span><%= trading.description %></span></li>
-
-                            </ul>
-
-                            <div class="text-center mt-auto">
-                              <%= link_to "Buy", new_purchase_path(plan_id: trading.id, plan_type: 'TradingPlan'), class: 'buy-btn' %>
-
-                            </div>
-
-                          </div>
-                        </div>
-                      <% end %>
-
-                    </div>
-
                   </div>
 
-                </section>
+                  <div class="container" data-aos="fade-up" data-aos-delay="100">
+                    <div id="tradingCarousel" class="carousel slide" data-ride="carousel">
+                      <div class="carousel-inner">
+                        <% trading_plan.each_slice(3).with_index do |group, index| %>
+                          <div class="carousel-item <%= 'active' if index == 0 %>">
+                            <div class="row gy-4">
+                              <% group.each do |trading| %>
+                                <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                                  <div class="pricing-item featured">
+                                    <div class="pricing-header">
+                                      <h3><%= trading.name.titleize %></h3>
+                                      <h4><sup>$</sup><%= trading.price %><span></span></h4>
+                                    </div>
+                                    <ul>
+                                      <li><i class="bi bi-dot"></i> <span><%= trading.description %></span></li>
+                                    </ul>
+                                    <div class="text-center mt-auto">
+                                      <%= link_to "Buy", new_purchase_path(plan_id: trading.id, plan_type: 'TradingPlan'), class: 'buy-btn' %>
+                                    </div>
+                                  </div>
+                                </div>
+                              <% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
 
+                    </div>
+                  </div>
+                </section>
+                <a class="carousel-control-prev" href="#tradingCarousel" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#tradingCarousel" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
               </div>
             </div>
 
@@ -496,43 +522,49 @@
             <div class="tab-pane fade" id="pills-contact-fill" role="tabpanel" aria-labelledby="pills-contact-tab-fill">
               <div>
                 <section id="pricing" class="pricing section">
-                  <!-- Section Title -->
                   <div class="container section-title" data-aos="fade-up">
                     <h2>Our Pricing</h2>
                     <p>Staking Plan</p>
-                  </div><!-- End Section Title -->
+                  </div>
 
                   <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                    <div class="row gy-4">
-                      <% staking_plan.each do |staking| %>
-
-                        <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-                          <div class="pricing-item featured">
-
-                            <div class="pricing-header">
-                              <h3><%= staking.name.titleize %></h3>
-                              <h4><sup>$</sup><%= staking.price %><span></span></h4>
+                    <div id="stakingCarousel" class="carousel slide" data-ride="carousel">
+                      <div class="carousel-inner">
+                        <% staking_plan.each_slice(3).with_index do |group, index| %>
+                          <div class="carousel-item <%= 'active' if index == 0 %>">
+                            <div class="row gy-4">
+                              <% group.each do |staking| %>
+                                <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                                  <div class="pricing-item featured">
+                                    <div class="pricing-header">
+                                      <h3><%= staking.name.titleize %></h3>
+                                      <h4><sup>$</sup><%= staking.price %><span></span></h4>
+                                    </div>
+                                    <ul>
+                                      <li><i class="bi bi-dot"></i> <span><%= staking.description %></span></li>
+                                    </ul>
+                                    <div class="text-center mt-auto">
+                                      <%= link_to "Buy", new_purchase_path(plan_id: staking.id, plan_type: 'Staking'), class: 'buy-btn' %>
+                                    </div>
+                                  </div>
+                                </div>
+                              <% end %>
                             </div>
-
-                            <ul>
-                              <li><i class="bi bi-dot"></i> <span><%= staking.description %></span></li>
-
-                            </ul>
-
-                            <div class="text-center mt-auto">
-                              <%= link_to "Buy", new_purchase_path(plan_id: staking.id, plan_type: 'Staking'), class: 'buy-btn' %>
-                            </div>
-
                           </div>
-                        </div>
-
-                        </div>
-                      <% end %>
-
+                        <% end %>
                       </div>
 
+                    </div>
+                  </div>
                 </section>
+                <a class="carousel-control-prev" href="#stakingCarousel" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#stakingCarousel" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
 
               </div>
             </div>
@@ -599,9 +631,9 @@
 
           <!-- Tabs -->
           <ul class="nav nav-pills mb-3">
-            <li><a class="nav-link active" data-bs-toggle="pill" href="#Investment">Investment</a></li>
-            <li><a class="nav-link" data-bs-toggle="pill" href="#Trading">Trading</a></li>
-            <li><a class="nav-link" data-bs-toggle="pill" href="#Staking">Staking</a></li>
+            <li><a class="nav-link text-white active" data-bs-toggle="pill" href="#Investment">Investment</a></li>
+            <li><a class="nav-link text-white" data-bs-toggle="pill" href="#Trading">Trading</a></li>
+            <li><a class="nav-link text-white" data-bs-toggle="pill" href="#Staking">Staking</a></li>
           </ul><!-- End Tabs -->
 
           <!-- Tab Content -->
@@ -837,7 +869,7 @@
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
             <img src="<%= asset_path "icon/startup.png" %>" style="width: 50px" alt="" class="img-fluid">
-            <h5>Innovative Startups</h5>
+            <h5>Startups</h5>
           </a>
         </li><!-- End Tab 1 Nav -->
 
@@ -872,7 +904,7 @@
 
         <li class="nav-item col-6 col-md-4 col-lg-2">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-7">
-            <i class="bi bi-hand-index-thumb" style="color: #fd7e14;"></i>
+            <img src="<%= asset_path "icon/2752467.png" %>" style="width: 50px" alt="" class="img-fluid">
             <h4>IT Solutions</h4>
           </a>
         </li><!-- End Tab 6 Nav -->
@@ -1133,36 +1165,36 @@
               <h4 class="card-title">Top Team Leaders</h4>
             </div>
           </div>
-              <div class="iq-card-body">
-            <div class="table-responsive">
-              <table id="datatable" class="table mb-0 mt-2 table-borderless">
+          <div class="iq-card-body" style="background-color: #FFFFFF !important; color: black!important;">
+            <div class="table-responsive" style="background-color: #FFFFFF!important; color: black!important;">
+              <table id="datatable" class="table mb-0 mt-2 table-borderless" style="background-color: #FFFFFF!important; color: black!important;">
                 <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Team Members</th>
-                  <th>Referral Investment</th>
-                  <th>User Capital</th>
-                  <th>Total Earning</th>
+                  <th style="background-color: #FFFFFF!important; color: black!important;">Name</th>
+                  <th style="background-color: #FFFFFF!important; color: black!important;">Team Members</th>
+                  <th style="background-color: #FFFFFF!important; color: black!important;">Referral Investment</th>
+                  <th style="background-color: #FFFFFF!important; color: black!important;">User Capital</th>
+                  <th style="background-color: #FFFFFF!important; color: black!important;">Total Earning</th>
                 </tr>
                 </thead>
                 <% TeamLeader.all.each do |leader| %>
                   <tbody>
                   <tr>
-                    <td>
+                    <td style="background-color: #FFFFFF!important; color: black!important;">
                       <div class="user-img img-fluid">
                         <span class="country-flag" style="font-size: 2rem;">
                           <%= ISO3166::Country[leader.country]&.emoji_flag %>
                         </span>
-                        <h6><%= leader.member_name %></h6>
+                        <h6 style="background-color: #FFFFFF!important; color: black!important;"><%= leader.member_name %></h6>
 
                       </div>
                     </td>
-                    <td><%= leader.team_members %></td>
-                    <td>                      <%= number_to_currency(leader.investment_amount, unit: "$") %>
+                    <td style="background-color: #FFFFFF!important; color: black!important;"><%= leader.team_members %></td>
+                    <td style="background-color: #FFFFFF!important; color: black!important;">                      <%= number_to_currency(leader.investment_amount, unit: "$") %>
                     </td>
-                    <td>                      <%= number_to_currency(leader.user_capital, unit: "$") %>
+                    <td style="background-color: #FFFFFF!important; color: black!important;">                      <%= number_to_currency(leader.user_capital, unit: "$") %>
                     </td>
-                    <td>                      <%= number_to_currency(leader.total_earnings, unit: "$") %>
+                    <td style="background-color: #FFFFFF!important; color: black!important;">                      <%= number_to_currency(leader.total_earnings, unit: "$") %>
                     </td>
                   </tr>
                   </tbody>
@@ -1278,101 +1310,6 @@
 
 
   <!-- Recent Posts Section -->
-  <section id="recent-posts" class="recent-posts section">
-
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-      <h2>Recent Blog Posts</h2>
-      <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-    </div><!-- End Section Title -->
-
-    <div class="container">
-
-      <div class="row gy-4">
-
-        <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <article>
-
-            <div class="post-img">
-              <img src="assets/img/blog/blog-1.jpg" alt="" class="img-fluid">
-            </div>
-
-            <p class="post-category">Politics</p>
-
-            <h2 class="title">
-              <a href="blog-details.html">Dolorum optio tempore voluptas dignissimos</a>
-            </h2>
-
-            <div class="d-flex align-items-center">
-              <img src="assets/img/blog/blog-author.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-              <div class="post-meta">
-                <p class="post-author">Maria Doe</p>
-                <p class="post-date">
-                  <time datetime="2022-01-01">Jan 1, 2022</time>
-                </p>
-              </div>
-            </div>
-
-          </article>
-        </div><!-- End post list item -->
-
-        <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <article>
-
-            <div class="post-img">
-              <img src="assets/img/blog/blog-2.jpg" alt="" class="img-fluid">
-            </div>
-
-            <p class="post-category">Sports</p>
-
-            <h2 class="title">
-              <a href="blog-details.html">Nisi magni odit consequatur autem nulla dolorem</a>
-            </h2>
-
-            <div class="d-flex align-items-center">
-              <img src="assets/img/blog/blog-author-2.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-              <div class="post-meta">
-                <p class="post-author">Allisa Mayer</p>
-                <p class="post-date">
-                  <time datetime="2022-01-01">Jun 5, 2022</time>
-                </p>
-              </div>
-            </div>
-
-          </article>
-        </div><!-- End post list item -->
-
-        <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <article>
-
-            <div class="post-img">
-              <img src="assets/img/blog/blog-3.jpg" alt="" class="img-fluid">
-            </div>
-
-            <p class="post-category">Entertainment</p>
-
-            <h2 class="title">
-              <a href="blog-details.html">Possimus soluta ut id suscipit ea ut in quo quia et soluta</a>
-            </h2>
-
-            <div class="d-flex align-items-center">
-              <img src="assets/img/blog/blog-author-3.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-              <div class="post-meta">
-                <p class="post-author">Mark Dower</p>
-                <p class="post-date">
-                  <time datetime="2022-01-01">Jun 22, 2022</time>
-                </p>
-              </div>
-            </div>
-
-          </article>
-        </div><!-- End post list item -->
-
-      </div><!-- End recent posts list -->
-
-    </div>
-
-  </section><!-- /Recent Posts Section -->
 
   <!-- Contact Section -->
   <section id="contact" class="contact section">
